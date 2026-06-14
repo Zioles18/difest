@@ -152,7 +152,7 @@ export function Orders() {
         </div>
       </div>
 
-      <SpotlightCard className="p-0">
+      <SpotlightCard className="p-0" allowOverflow={true}>
         {/* Search + Filter Bar */}
         <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 !bg-white dark:!bg-slate-900 z-20 relative">
           <div className="relative group w-full sm:w-80">

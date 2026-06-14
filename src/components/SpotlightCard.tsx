@@ -5,9 +5,10 @@ interface SpotlightCardProps {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  allowOverflow?: boolean;
 }
 
-export function SpotlightCard({ children, className = "", onClick }: SpotlightCardProps) {
+export function SpotlightCard({ children, className = "", onClick, allowOverflow = false }: SpotlightCardProps) {
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
@@ -30,15 +31,19 @@ export function SpotlightCard({ children, className = "", onClick }: SpotlightCa
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
       }}
-      className={`bento-card relative overflow-hidden group ${onClick ? "cursor-pointer" : ""} ${className}`}
+      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : ""} ${onClick ? "cursor-pointer" : ""} ${className}`}
     >
-      <div
-        className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-0"
-        style={{
-          opacity,
-          background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(99, 102, 241, 0.15), transparent 40%)`,
-        }}
-      />
+      {/* Background Spotlight Layer with its own clipping */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
+        <div
+          className="pointer-events-none absolute -inset-px transition-opacity duration-300"
+          style={{
+            opacity,
+            background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(99, 102, 241, 0.15), transparent 40%)`,
+          }}
+        />
+      </div>
+
       <div className="relative z-10 w-full h-full flex flex-col">
         {children}
       </div>
