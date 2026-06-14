@@ -159,54 +159,98 @@ export function Customers() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-        {filteredCustomers.map((customer) => (
-          <div key={customer.id}>
-            <SpotlightCard className="p-0 overflow-hidden">
-              <div className="p-6 z-10 relative">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="relative">
-                    <img 
-                      src={customer.avatar} 
-                      alt={customer.name} 
-                      className="w-16 h-16 rounded-2xl border-2 border-white dark:border-slate-700/50 shadow-md object-cover cursor-pointer hover:scale-105 transition-transform"
-                      onClick={() => setSelectedCustomer(customer)}
-                    />
-                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-700/50 flex items-center justify-center">
-                      <CheckCircle2 className="w-3 h-3 text-white" />
+        {filteredCustomers.length > 0 ? (
+          filteredCustomers.map((customer) => (
+            <div key={customer.id}>
+              <SpotlightCard className="p-0 overflow-hidden">
+                <div className="p-6 z-10 relative">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="relative">
+                      <img 
+                        src={customer.avatar} 
+                        alt={customer.name} 
+                        className="w-16 h-16 rounded-2xl border-2 border-white dark:border-slate-700/50 shadow-md object-cover cursor-pointer hover:scale-105 transition-transform"
+                        onClick={() => setSelectedCustomer(customer)}
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-700/50 flex items-center justify-center">
+                        <CheckCircle2 className="w-3 h-3 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => { setActiveMessenger(customer); }}
+                        className="p-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-100 transition-colors"
+                      >
+                        <MessageSquare className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={() => { setActiveMessenger(customer); }}
-                      className="p-2 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl hover:bg-indigo-100 transition-colors"
+
+                  <div className="mb-6">
+                    <h3 
+                      onClick={() => setSelectedCustomer(customer)}
+                      className="text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 transition-colors cursor-pointer"
                     >
-                      <MessageSquare className="w-4 h-4" />
+                      {customer.name}
+                    </h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium break-all">{customer.email}</p>
+                  </div>
+
+                  <div className="mt-6">
+                    <button 
+                      onClick={() => setSelectedCustomer(customer)}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 text-slate-600 dark:text-slate-300 hover:text-indigo-600 text-xs font-bold rounded-xl transition-all border border-transparent hover:border-indigo-100"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" /> View Profile
                     </button>
                   </div>
                 </div>
-
-                <div className="mb-6">
-                  <h3 
-                    onClick={() => setSelectedCustomer(customer)}
-                    className="text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 transition-colors cursor-pointer"
-                  >
-                    {customer.name}
-                  </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium break-all">{customer.email}</p>
-                </div>
-
-                <div className="mt-6">
-                  <button 
-                    onClick={() => setSelectedCustomer(customer)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 text-slate-600 dark:text-slate-300 hover:text-indigo-600 text-xs font-bold rounded-xl transition-all border border-transparent hover:border-indigo-100"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" /> View Profile
-                  </button>
-                </div>
+              </SpotlightCard>
+            </div>
+          ))
+        ) : (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="col-span-full py-20 text-center"
+          >
+            <div className="flex flex-col items-center gap-6">
+              <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-[2rem] flex items-center justify-center shadow-inner">
+                {searchTerm ? (
+                  <Search className="w-7 h-7 text-slate-300 dark:text-slate-600" />
+                ) : (
+                  <Users className="w-7 h-7 text-slate-300 dark:text-slate-600" />
+                )}
               </div>
-            </SpotlightCard>
-          </div>
-        ))}
+              <div className="max-w-xs mx-auto text-center">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">
+                  {searchTerm ? "No matching customers" : "No customers found"}
+                </h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                  {searchTerm 
+                    ? "Try adjusting your search query to find specific customers."
+                    : "Your customer directory is currently empty. Start by adding one."
+                  }
+                </p>
+              </div>
+              {searchTerm ? (
+                <button 
+                  onClick={() => setSearchTerm("")}
+                  className="mt-2 px-6 py-2.5 bg-slate-900 dark:bg-slate-800 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-black dark:hover:bg-slate-700 transition-all border border-slate-800 dark:border-slate-700 shadow-lg"
+                >
+                  Reset Search
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setIsAddingCustomer(true)}
+                  className="mt-2 px-6 py-2.5 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Add First Customer
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
       </div>
 
       {/* Message Interface Slide-over */}
@@ -345,7 +389,7 @@ export function Customers() {
                     </div>
                  </div>
                  <div className="pt-6 flex gap-3">
-                   <button type="button" onClick={() => setIsAddingCustomer(false)} className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition-colors">Cancel</button>
+                   <button type="button" onClick={() => setIsAddingCustomer(false)} className="flex-1 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm text-sm">Cancel</button>
                    <button type="submit" className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10">Add Customer</button>
                  </div>
                </form>
@@ -424,7 +468,7 @@ export function Customers() {
                   </button>
                   <button 
                     onClick={() => { setSelectedCustomer(null); setIsAddingCustomer(true); }}
-                    className="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition-colors"
+                    className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm text-sm"
                   >
                     Edit
                   </button>

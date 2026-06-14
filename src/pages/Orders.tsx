@@ -333,12 +333,12 @@ export function Orders() {
                     className="bg-white dark:bg-slate-900"
                   >
                     <td colSpan={6} className="px-6 py-20 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800/50 rounded-3xl flex items-center justify-center">
-                          <Search className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                      <div className="flex flex-col items-center gap-6">
+                        <div className="w-16 h-16 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-[2rem] flex items-center justify-center shadow-inner">
+                          <Search className="w-7 h-7 text-slate-300 dark:text-slate-600" />
                         </div>
-                        <div>
-                          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">No matching orders found</h3>
+                        <div className="text-center">
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-1">No matching orders found</h3>
                           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Try adjusting your filters or search query.</p>
                         </div>
                         {(searchQuery || filterStatus !== "All") && (
