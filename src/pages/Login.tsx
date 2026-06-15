@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Mail, Lock, Zap, Sun, Moon } from "lucide-react";
-import { RetroGrid } from "../components/RetroGrid";
+import { ArrowRight, Mail, Lock, Sun, Moon } from "lucide-react";
+import { NXLogo } from "../components/NXLogo";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 
@@ -58,9 +58,6 @@ export function Login() {
 
   return (
     <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
-      {/* React Bits inspired Background */}
-      <RetroGrid />
-      
       {/* Floating Blobs for extra depth */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px]" />
@@ -78,9 +75,9 @@ export function Login() {
           <div className="flex items-center gap-3 mb-10">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-12 h-12 rounded-2xl accent-gradient flex items-center justify-center shadow-xl shadow-indigo-500/30"
+              className="shadow-xl shadow-indigo-500/30"
             >
-              <Zap className="w-6 h-6 text-white" />
+              <NXLogo size={48} />
             </motion.div>
             <span className="font-display font-bold text-3xl tracking-tighter text-slate-900 dark:text-slate-100">
               NexBiz

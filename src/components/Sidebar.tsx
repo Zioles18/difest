@@ -11,9 +11,9 @@ import {
   LogOut,
   ChevronRight,
   TrendingUp,
-  Award,
-  Zap
+  Award
 } from "lucide-react";
+import { NXLogo } from "./NXLogo";
 import { getBusinessData, BUSINESS_DATA_UPDATED } from "../utils/store";
 import { auth } from "../utils/auth";
 
@@ -92,9 +92,8 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
       {/* Logo */}
       <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-800/50 shrink-0">
         <NavLink to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3.5 group">
-          <div className="w-10 h-10 rounded-2xl accent-gradient flex items-center justify-center shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10 group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors" />
-            <Zap className="w-5 h-5 text-white relative z-10" />
+          <div className="group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+            <NXLogo size={40} />
           </div>
           <span className="font-display font-bold text-2xl tracking-tighter text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">NexBiz</span>
         </NavLink>
