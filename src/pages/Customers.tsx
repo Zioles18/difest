@@ -28,7 +28,7 @@ const initialCustomers = [
   { id: 3, name: "Marcus Johnson", email: "marcus.j@example.com", phone: "+1 (555) 456-7890", location: "London, UK", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", spend: "$8,400", orders: 24, rating: 5, role: "CTO", joined: "Jun 2021" },
 ];
 
-const CUSTOMERS_KEY = "lumina_customers";
+const CUSTOMERS_KEY = "NexBiz_customers";
 
 export function Customers() {
   const [customers, setCustomers] = useState(() => {
@@ -46,7 +46,7 @@ export function Customers() {
   // Broadcast modal state so Header/Layout can blur
   useEffect(() => {
     const isModalOpen = !!selectedCustomer || isAddingCustomer || !!activeMessenger;
-    window.dispatchEvent(new CustomEvent("lumina_modal_state", { detail: { open: isModalOpen } }));
+    window.dispatchEvent(new CustomEvent("NexBiz_modal_state", { detail: { open: isModalOpen } }));
   }, [selectedCustomer, isAddingCustomer, activeMessenger]);
   
   // Persist customers to localStorage

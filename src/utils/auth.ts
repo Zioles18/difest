@@ -3,17 +3,17 @@
  */
 export const auth = {
   isAuthenticated: (): boolean => {
-    return localStorage.getItem("lumina_auth") === "true";
+    return localStorage.getItem("NexBiz_auth") === "true";
   },
   login: (email?: string) => {
-    localStorage.setItem("lumina_auth", "true");
-    if (email) localStorage.setItem("lumina_current_email", email);
+    localStorage.setItem("NexBiz_auth", "true");
+    if (email) localStorage.setItem("NexBiz_current_email", email);
   },
   logout: () => {
-    localStorage.removeItem("lumina_auth");
-    localStorage.removeItem("lumina_current_email");
+    localStorage.removeItem("NexBiz_auth");
+    localStorage.removeItem("NexBiz_current_email");
   },
   getCurrentEmail: (): string | null => {
-    return localStorage.getItem("lumina_current_email");
+    return localStorage.getItem("NexBiz_current_email");
   }
 };

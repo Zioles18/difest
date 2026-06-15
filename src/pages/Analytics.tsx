@@ -57,7 +57,7 @@ export function Analytics() {
   const [toastMsg, setToastMsg] = useState("");
 
   const [deviceData, setDeviceData] = useState(() => {
-    const saved = localStorage.getItem("lumina_device_share");
+    const saved = localStorage.getItem("NexBiz_device_share");
     return saved ? JSON.parse(saved) : [
       { name: "Desktop", value: 65, color: "#4f46e5" },
       { name: "Mobile", value: 25, color: "#10b981" },
@@ -77,7 +77,7 @@ export function Analytics() {
           ...d,
           value: Math.round((d.value / total) * 100)
         }));
-        localStorage.setItem("lumina_device_share", JSON.stringify(normalized));
+        localStorage.setItem("NexBiz_device_share", JSON.stringify(normalized));
         return normalized;
       });
     }, 4000);

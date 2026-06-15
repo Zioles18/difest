@@ -8,7 +8,6 @@ import {
   Settings,
   PieChart,
   X,
-  Sparkles,
   LogOut,
   ChevronRight,
   TrendingUp,
@@ -36,7 +35,7 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
   const [data, setData] = useState(getBusinessData());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profile, setProfile] = useState(() => {
-    const saved = localStorage.getItem("lumina_profile");
+    const saved = localStorage.getItem("NexBiz_profile");
     const email = auth.getCurrentEmail();
     return saved ? JSON.parse(saved) : {
       name: email ? email.split("@")[0] : "User",
@@ -46,7 +45,7 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
   });
 
   const [isPremium, setIsPremium] = useState(() => {
-    const saved = localStorage.getItem("lumina_settings");
+    const saved = localStorage.getItem("NexBiz_settings");
     if (!saved) return false;
     try {
       const parsed = JSON.parse(saved);
@@ -61,7 +60,7 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
     const handleBusinessUpdate = () => setData(getBusinessData());
     const handleModalState = (e: any) => setIsModalOpen(e.detail?.open ?? false);
     const handleSettingsUpdate = () => {
-       const saved = localStorage.getItem("lumina_settings");
+       const saved = localStorage.getItem("NexBiz_settings");
        if (saved) {
          try {
            const parsed = JSON.parse(saved);
@@ -72,16 +71,16 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
        }
     };
 
-    window.addEventListener("lumina_profile_updated", handleProfileUpdate);
+    window.addEventListener("NexBiz_profile_updated", handleProfileUpdate);
     window.addEventListener(BUSINESS_DATA_UPDATED, handleBusinessUpdate);
-    window.addEventListener("lumina_settings_updated", handleSettingsUpdate);
-    window.addEventListener("lumina_modal_state", handleModalState);
+    window.addEventListener("NexBiz_settings_updated", handleSettingsUpdate);
+    window.addEventListener("NexBiz_modal_state", handleModalState);
 
     return () => {
-      window.removeEventListener("lumina_profile_updated", handleProfileUpdate);
+      window.removeEventListener("NexBiz_profile_updated", handleProfileUpdate);
       window.removeEventListener(BUSINESS_DATA_UPDATED, handleBusinessUpdate);
-      window.removeEventListener("lumina_settings_updated", handleSettingsUpdate);
-      window.removeEventListener("lumina_modal_state", handleModalState);
+      window.removeEventListener("NexBiz_settings_updated", handleSettingsUpdate);
+      window.removeEventListener("NexBiz_modal_state", handleModalState);
     };
   }, []);
 
@@ -93,11 +92,11 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
       {/* Logo */}
       <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-800/50 shrink-0">
         <NavLink to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3.5 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10 group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+          <div className="w-10 h-10 rounded-2xl accent-gradient flex items-center justify-center shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10 group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
             <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-colors" />
-            <Sparkles className="w-5 h-5 text-white relative z-10" />
+            <Zap className="w-5 h-5 text-white relative z-10" />
           </div>
-          <span className="font-display font-bold text-2xl tracking-tighter text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">Lumina</span>
+          <span className="font-display font-bold text-2xl tracking-tighter text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">NexBiz</span>
         </NavLink>
         <button
           className="lg:hidden p-2 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-lg transition-colors"

@@ -48,8 +48,8 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
   // Listen to modal state from children pages
   useEffect(() => {
     const handleModalState = (e: any) => setIsModalOpen(e.detail?.open ?? false);
-    window.addEventListener("lumina_modal_state", handleModalState);
-    return () => window.removeEventListener("lumina_modal_state", handleModalState);
+    window.addEventListener("NexBiz_modal_state", handleModalState);
+    return () => window.removeEventListener("NexBiz_modal_state", handleModalState);
   }, []);
 
   // Close notifications when clicking outside
@@ -66,7 +66,7 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
   }, [showNotifications]);
 
   const [profile, setProfile] = useState(() => {
-    const saved = localStorage.getItem("lumina_profile");
+    const saved = localStorage.getItem("NexBiz_profile");
     const email = auth.getCurrentEmail();
     return saved ? JSON.parse(saved) : {
       avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email || "user"}&backgroundColor=6366f1&textColor=ffffff`
@@ -77,8 +77,8 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
     const handleUpdate = (e: any) => {
       setProfile(e.detail);
     };
-    window.addEventListener("lumina_profile_updated", handleUpdate);
-    return () => window.removeEventListener("lumina_profile_updated", handleUpdate);
+    window.addEventListener("NexBiz_profile_updated", handleUpdate);
+    return () => window.removeEventListener("NexBiz_profile_updated", handleUpdate);
   }, []);
 
   return (

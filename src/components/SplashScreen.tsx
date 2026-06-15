@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Sparkles } from "lucide-react";
+import { Zap } from "lucide-react";
 import { RetroGrid } from "./RetroGrid";
 import { SplitText } from "./SplitText";
 
@@ -55,11 +55,11 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
                 }}
                 className="w-20 h-20 rounded-3xl accent-gradient flex items-center justify-center shadow-[0_0_50px_-12px_rgba(79,70,229,0.5)]"
               >
-                <Sparkles className="w-10 h-10 text-white" />
+                <Zap className="w-10 h-10 text-white" />
               </motion.div>
               <div className="flex flex-col items-start translate-y-1">
                 <SplitText 
-                  text="Lumina" 
+                  text="NexBiz" 
                   className="text-7xl font-display font-bold tracking-tighter text-white"
                   delay={0.8}
                 />

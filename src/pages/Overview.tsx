@@ -31,7 +31,7 @@ export function Overview() {
   const currentKPI = KPI_DATA[dateRange];
 
   const profile = (() => {
-    try { return JSON.parse(localStorage.getItem("lumina_profile") || "{}"); } catch { return {}; }
+    try { return JSON.parse(localStorage.getItem("NexBiz_profile") || "{}"); } catch { return {}; }
   })();
   const greetingName = profile.name || auth.getCurrentEmail()?.split("@")[0] || "User";
 

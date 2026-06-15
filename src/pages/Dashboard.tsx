@@ -82,7 +82,7 @@ export function Dashboard() {
 
   // Broadcast modal state so Header can blur
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("lumina_modal_state", { detail: { open: !!selectedKPI || chartEditorOpen } }));
+    window.dispatchEvent(new CustomEvent("NexBiz_modal_state", { detail: { open: !!selectedKPI || chartEditorOpen } }));
   }, [selectedKPI, chartEditorOpen]);
 
   const openChartEditor = () => {

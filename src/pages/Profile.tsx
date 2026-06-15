@@ -25,7 +25,7 @@ export function Profile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [profile, setProfile] = useState(() => {
-    const saved = localStorage.getItem("lumina_profile");
+    const saved = localStorage.getItem("NexBiz_profile");
     const email = auth.getCurrentEmail();
     return saved ? JSON.parse(saved) : {
       name: email ? email.split("@")[0] : "User",
@@ -33,7 +33,7 @@ export function Profile() {
       location: "Remote",
       email: email || "",
       phone: "+1 (555) 000-0000",
-      bio: "Member of Lumina platform.",
+      bio: "Member of NexBiz platform.",
       avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email || "user"}&backgroundColor=6366f1&textColor=ffffff`
     };
   });
@@ -45,10 +45,10 @@ export function Profile() {
       setIsSaving(false);
       setIsEditing(false);
       setShowSavedToast(true);
-      localStorage.setItem("lumina_profile", JSON.stringify(profile));
+      localStorage.setItem("NexBiz_profile", JSON.stringify(profile));
       
       // Dispatch custom event for global sync
-      window.dispatchEvent(new CustomEvent("lumina_profile_updated", { detail: profile }));
+      window.dispatchEvent(new CustomEvent("NexBiz_profile_updated", { detail: profile }));
       
       setTimeout(() => setShowSavedToast(false), 3000);
     }, 1000);
@@ -64,8 +64,8 @@ export function Profile() {
       // In a real app we'd upload and get a URL, here we'll use URL.createObjectURL for simulation
       const url = URL.createObjectURL(file);
       setProfile({...profile, avatar: url});
-      localStorage.setItem("lumina_profile", JSON.stringify({...profile, avatar: url}));
-      window.dispatchEvent(new CustomEvent("lumina_profile_updated", { detail: {...profile, avatar: url} }));
+      localStorage.setItem("NexBiz_profile", JSON.stringify({...profile, avatar: url}));
+      window.dispatchEvent(new CustomEvent("NexBiz_profile_updated", { detail: {...profile, avatar: url} }));
     }
   };
 

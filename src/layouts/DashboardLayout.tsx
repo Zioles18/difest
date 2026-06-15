@@ -16,9 +16,9 @@ export function DashboardLayout() {
 
   useEffect(() => {
     const handleModalState = (e: any) => setIsModalActive(e.detail?.open ?? false);
-    window.addEventListener("lumina_modal_state", handleModalState);
+    window.addEventListener("NexBiz_modal_state", handleModalState);
 
-    return () => window.removeEventListener("lumina_modal_state", handleModalState);
+    return () => window.removeEventListener("NexBiz_modal_state", handleModalState);
   }, []);
 
   // Determine active tab name based on pathname

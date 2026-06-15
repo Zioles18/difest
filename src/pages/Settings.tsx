@@ -47,7 +47,7 @@ export function Settings() {
 
   // Notify layout when modal opens/closes
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("lumina_modal_state", { detail: { open: showDeleteConfirm || isPaying } }));
+    window.dispatchEvent(new CustomEvent("NexBiz_modal_state", { detail: { open: showDeleteConfirm || isPaying } }));
   }, [showDeleteConfirm, isPaying]);
 
   // Active sessions state (mock)
@@ -64,11 +64,11 @@ export function Settings() {
   const handleDeleteAccount = () => {
     if (deleteConfirmText !== "DELETE") return;
     // Clear all app data
-    localStorage.removeItem("lumina_settings");
-    localStorage.removeItem("lumina_business_hub");
-    localStorage.removeItem("lumina_profile");
-    localStorage.removeItem("lumina_invoices");
-    localStorage.removeItem("lumina_orders");
+    localStorage.removeItem("NexBiz_settings");
+    localStorage.removeItem("NexBiz_business_hub");
+    localStorage.removeItem("NexBiz_profile");
+    localStorage.removeItem("NexBiz_invoices");
+    localStorage.removeItem("NexBiz_orders");
     setShowDeleteConfirm(false);
     setDeleteConfirmText("");
     navigate("/login");
@@ -76,7 +76,7 @@ export function Settings() {
 
   // Billing history - persisted to localStorage
   const [invoices, setInvoices] = useState(() => {
-    const saved = localStorage.getItem("lumina_invoices");
+    const saved = localStorage.getItem("NexBiz_invoices");
     return saved ? JSON.parse(saved) : [
       { id: "#INV-2024-001", date: "Jun 01, 2024", amount: "$49.00", status: "Paid" },
       { id: "#INV-2024-002", date: "May 01, 2024", amount: "$49.00", status: "Paid" },
@@ -84,7 +84,7 @@ export function Settings() {
   });
 
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("lumina_settings");
+    const saved = localStorage.getItem("NexBiz_settings");
     const email = auth.getCurrentEmail();
     const name = email ? email.split("@")[0] : "User";
     return saved ? JSON.parse(saved) : {
@@ -102,7 +102,7 @@ export function Settings() {
   const handleSave = () => {
     setIsSaving(true);
     setTimeout(() => {
-      localStorage.setItem("lumina_settings", JSON.stringify(settings));
+      localStorage.setItem("NexBiz_settings", JSON.stringify(settings));
       setIsSaving(false);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -117,14 +117,14 @@ export function Settings() {
       const newSettings = {...settings, plan: newPlan};
       setPaymentStep(2);
       setSettings(newSettings);
-      localStorage.setItem("lumina_settings", JSON.stringify(newSettings));
+      localStorage.setItem("NexBiz_settings", JSON.stringify(newSettings));
       // Add invoice to billing history and persist
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
       const newInvId = `#INV-${now.getFullYear()}-${String(Math.floor(Math.random()*900)+100)}`;
       setInvoices(prev => {
         const updated = [{ id: newInvId, date: dateStr, amount: "$99.00", status: "Paid" }, ...prev];
-        localStorage.setItem("lumina_invoices", JSON.stringify(updated));
+        localStorage.setItem("NexBiz_invoices", JSON.stringify(updated));
         return updated;
       });
     }, 3000);
@@ -648,7 +648,7 @@ export function Settings() {
                      <CheckCircle2 className="w-10 h-10 text-emerald-500 dark:text-emerald-400" />
                    </div>
                    <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">Payment Successful!</h3>
-                   <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">Welcome to Lumina Business Premium. Your new features are now unlocked and ready to use.</p>
+                   <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">Welcome to NexBiz Business Premium. Your new features are now unlocked and ready to use.</p>
                    <button 
                     onClick={() => setIsPaying(false)}
                     className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/30 dark:shadow-indigo-500/10"

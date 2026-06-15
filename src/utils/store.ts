@@ -1,5 +1,5 @@
 // Centralized Integrated Data Hub
-export const BUSINESS_DATA_UPDATED = "lumina_business_data_updated";
+export const BUSINESS_DATA_UPDATED = "NexBiz_business_data_updated";
 
 export interface Order {
   id: string;
@@ -83,7 +83,7 @@ const DEFAULT_DATA: BusinessData = {
 };
 
 export const getBusinessData = (): BusinessData => {
-  const saved = localStorage.getItem("lumina_business_hub");
+  const saved = localStorage.getItem("NexBiz_business_hub");
   if (!saved) return DEFAULT_DATA;
   try {
     const parsed = JSON.parse(saved);
@@ -99,7 +99,7 @@ export const getBusinessData = (): BusinessData => {
 };
 
 export const syncStore = (data: BusinessData) => {
-  localStorage.setItem("lumina_business_hub", JSON.stringify(data));
+  localStorage.setItem("NexBiz_business_hub", JSON.stringify(data));
   window.dispatchEvent(new CustomEvent(BUSINESS_DATA_UPDATED, { detail: data }));
   return data;
 };

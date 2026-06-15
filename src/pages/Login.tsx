@@ -1,19 +1,19 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Mail, Lock, Sparkles, Sun, Moon } from "lucide-react";
+import { ArrowRight, Mail, Lock, Zap, Sun, Moon } from "lucide-react";
 import { RetroGrid } from "../components/RetroGrid";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 
 function getUsers(): Record<string, any> {
   try {
-    return JSON.parse(localStorage.getItem("lumina_users") || "{}");
+    return JSON.parse(localStorage.getItem("NexBiz_users") || "{}");
   } catch { return {}; }
 }
 
 function saveUsers(users: Record<string, any>) {
-  localStorage.setItem("lumina_users", JSON.stringify(users));
+  localStorage.setItem("NexBiz_users", JSON.stringify(users));
 }
 
 function createUserProfile(email: string, count: number) {
@@ -23,7 +23,7 @@ function createUserProfile(email: string, count: number) {
     email,
     phone: "+1 (555) 000-0000",
     location: "Remote",
-    bio: `User ${count} of Lumina platform.`,
+    bio: `User ${count} of NexBiz platform.`,
     avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email}&backgroundColor=6366f1&textColor=ffffff`
   };
 }
@@ -50,7 +50,7 @@ export function Login() {
         saveUsers(users);
       }
 
-      localStorage.setItem("lumina_profile", JSON.stringify(users[email]));
+      localStorage.setItem("NexBiz_profile", JSON.stringify(users[email]));
       auth.login(email);
       navigate("/");
     }, 1500);
@@ -80,10 +80,10 @@ export function Login() {
               whileHover={{ scale: 1.05, rotate: 5 }}
               className="w-12 h-12 rounded-2xl accent-gradient flex items-center justify-center shadow-xl shadow-indigo-500/30"
             >
-              <Sparkles className="w-6 h-6 text-white" />
+              <Zap className="w-6 h-6 text-white" />
             </motion.div>
             <span className="font-display font-bold text-3xl tracking-tighter text-slate-900 dark:text-slate-100">
-              Lumina
+              NexBiz
             </span>
           </div>
 
@@ -201,7 +201,7 @@ export function Login() {
               Strategic insights for the next generation of commerce.
             </h3>
             <p className="text-indigo-100/70 text-lg leading-relaxed mb-8">
-              Lumina delivers real-time analytics and predictive modeling to help you stay ahead of the competition and maximize operational efficiency.
+              NexBiz delivers real-time analytics and predictive modeling to help you stay ahead of the competition and maximize operational efficiency.
             </p>
             <div className="flex items-center gap-6">
                <div className="flex -space-x-3">
@@ -209,7 +209,7 @@ export function Login() {
                     <div key={i} className="w-10 h-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] text-white">VP</div>
                   ))}
                </div>
-               <p className="text-sm text-slate-400"><span className="text-white font-bold">500+</span> leaders trust Lumina daily</p>
+               <p className="text-sm text-slate-400"><span className="text-white font-bold">500+</span> leaders trust NexBiz daily</p>
             </div>
           </motion.div>
         </div>
