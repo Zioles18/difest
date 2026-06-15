@@ -129,12 +129,19 @@ export function Customers() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }}
       className="space-y-6 sm:space-y-8"
     >
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Customers</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">View and manage your customer relationship.</p>
@@ -145,9 +152,13 @@ export function Customers() {
         >
           <UserPlus className="w-4 h-4" /> Add Customer
         </button>
-      </div>
+      </motion.div>
 
-      <div className="relative group max-w-full sm:max-w-md">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="relative group max-w-full sm:max-w-md"
+      >
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
         <input 
           type="text" 
@@ -156,12 +167,21 @@ export function Customers() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl py-2.5 sm:py-3 pl-10 sm:pl-12 pr-4 text-xs sm:text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all shadow-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
         />
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ staggerChildren: 0.05 }}
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
+      >
         {filteredCustomers.length > 0 ? (
           filteredCustomers.map((customer) => (
-            <div key={customer.id}>
+            <motion.div 
+              key={customer.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <SpotlightCard className="p-0 overflow-hidden">
                 <div className="p-6 z-10 relative">
                   <div className="flex justify-between items-start mb-6">
@@ -206,7 +226,7 @@ export function Customers() {
                   </div>
                 </div>
               </SpotlightCard>
-            </div>
+            </motion.div>
           ))
         ) : (
           <motion.div 
@@ -251,7 +271,7 @@ export function Customers() {
             </div>
           </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Message Interface Slide-over */}
       <AnimatePresence>

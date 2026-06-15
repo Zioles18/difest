@@ -71,10 +71,13 @@ export function Profile() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="max-w-4xl mx-auto space-y-6 sm:space-y-8 pb-20 relative px-1 sm:px-0"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }}
+      className="space-y-6 sm:space-y-8"
     >
        <input 
          type="file" 
@@ -102,7 +105,11 @@ export function Profile() {
       </AnimatePresence>
 
       {/* Cover Profile */}
-      <div className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden mb-6 sm:mb-8 shadow-2xl shadow-indigo-500/10">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden mb-6 sm:mb-8 shadow-2xl shadow-indigo-500/10"
+      >
         <div className="h-52 sm:h-72 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative">
           <img 
             src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80&w=2000" 
@@ -174,9 +181,13 @@ export function Profile() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8"
+      >
         <div className="space-y-8">
           <div className="bento-card p-5 sm:p-8">
             <h3 className="font-bold text-xl mb-6 text-slate-900 dark:text-slate-100 font-display">Introduction</h3>
@@ -254,7 +265,7 @@ export function Profile() {
             </form>
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }

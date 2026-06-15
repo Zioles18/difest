@@ -110,13 +110,20 @@ export function Orders() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }}
       className="space-y-4 sm:space-y-6"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Orders Hub</h1>
           <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Integrated Data Center • Persistent Order State</p>
@@ -150,9 +157,13 @@ export function Orders() {
             <Plus className="w-4 h-4" /> Create Order
           </button>
         </div>
-      </div>
+      </motion.div>
 
-      <SpotlightCard className="p-0" allowOverflow={true}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <SpotlightCard className="p-0" allowOverflow={true}>
         {/* Search + Filter Bar */}
         <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 !bg-white dark:!bg-slate-900 z-20 relative">
           <div className="relative group w-full sm:w-80">
@@ -358,6 +369,7 @@ export function Orders() {
           </table>
         </div>
       </SpotlightCard>
+      </motion.div>
 
       {/* Toast */}
       <AnimatePresence>

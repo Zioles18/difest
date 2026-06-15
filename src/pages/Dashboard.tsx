@@ -172,10 +172,13 @@ export function Dashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 sm:space-y-8 lg:space-y-10"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }}
+      className="space-y-4 sm:space-y-6 lg:space-y-10"
     >
       {/* Header section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
@@ -209,16 +212,44 @@ export function Dashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+      <motion.div 
+        variants={{
+          hidden: { opacity: 0, y: 20 },
+          visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { staggerChildren: 0.05 }
+          }
+        }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
+      >
         {kpis.map((kpi, idx) => (
-          <div key={idx} onClick={() => setSelectedKPI(kpi.id)} className="cursor-pointer group">
+          <motion.div 
+            key={idx} 
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            onClick={() => setSelectedKPI(kpi.id)} 
+            className="cursor-pointer group"
+          >
             <KPICard {...kpi} trendPositive={kpi.trend === "up"} />
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+      <motion.div 
+        variants={{
+          hidden: { opacity: 0, y: 40 },
+          visible: { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
+          }
+        }}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+      >
         {/* Revenue Chart with Glassmorphism */}
         <SpotlightCard className="lg:col-span-2 p-5 sm:p-8 lg:p-10 bg-white/40 dark:bg-slate-800/40 border border-white dark:border-slate-700/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10">
@@ -338,7 +369,7 @@ export function Dashboard() {
              Monitoring Center <ArrowUpRight className="w-4 h-4" />
            </button>
         </SpotlightCard>
-      </div>
+      </motion.div>
 
       {/* Chart Data Editor Modal */}
       <AnimatePresence>

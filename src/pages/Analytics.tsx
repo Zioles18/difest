@@ -96,12 +96,19 @@ export function Analytics() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ 
+        staggerChildren: 0.1,
+        delayChildren: 0.1
+      }}
       className="space-y-6 sm:space-y-8"
     >
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+      >
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Advanced Analytics</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Real-time data synchronization across all business units.</p>
@@ -114,9 +121,13 @@ export function Analytics() {
             <Zap className="w-4 h-4" /> Optimization Report
           </button>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8"
+      >
         <SpotlightCard className="lg:col-span-2 p-5 sm:p-8 lg:p-10 bg-white/40 dark:bg-slate-900 border border-white dark:border-slate-800/50">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-10">
              <div className="flex items-center gap-4">
@@ -195,7 +206,7 @@ export function Analytics() {
              </div>
           </SpotlightCard>
         </div>
-      </div>
+      </motion.div>
 
       {/* Optimization Report Modal */}
       <AnimatePresence>

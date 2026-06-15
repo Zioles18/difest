@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Sparkles } from "lucide-react";
+import { RetroGrid } from "./RetroGrid";
+import { SplitText } from "./SplitText";
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [isVisible, setIsVisible] = useState(true);
@@ -8,8 +10,8 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-      setTimeout(onComplete, 800); // Wait for exit animation
-    }, 2500);
+      setTimeout(onComplete, 1000); // Increased wait for exit animation
+    }, 3200); // Slightly longer for the more complex entrance
 
     return () => clearTimeout(timer);
   }, [onComplete]);
@@ -19,49 +21,71 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
       {isVisible && (
         <motion.div
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900 overflow-hidden"
+          exit={{ 
+            opacity: 0, 
+            scale: 1.05, 
+            filter: "blur(40px)",
+            transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } 
+          }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950 overflow-hidden"
         >
           {/* Background effects */}
+          <RetroGrid />
+          
           <div className="absolute inset-0 z-0">
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px]" />
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[80px]" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-indigo-500/5 rounded-full blur-[150px]" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[100px]" />
           </div>
 
           <div className="relative z-10 text-center">
             <motion.div
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="flex items-center justify-center gap-4 mb-8"
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center justify-center gap-6 mb-12"
             >
-              <div className="w-16 h-16 rounded-2xl accent-gradient flex items-center justify-center shadow-2xl shadow-indigo-500/40">
-                <Sparkles className="w-8 h-8 text-white" />
+              <motion.div 
+                initial={{ rotate: -180, scale: 0, opacity: 0 }}
+                animate={{ rotate: 0, scale: 1, opacity: 1 }}
+                transition={{ 
+                  duration: 0.8, 
+                  type: "spring", 
+                  stiffness: 100, 
+                  damping: 15 
+                }}
+                className="w-20 h-20 rounded-3xl accent-gradient flex items-center justify-center shadow-[0_0_50px_-12px_rgba(79,70,229,0.5)]"
+              >
+                <Sparkles className="w-10 h-10 text-white" />
+              </motion.div>
+              <div className="flex flex-col items-start translate-y-1">
+                <SplitText 
+                  text="Lumina" 
+                  className="text-7xl font-display font-bold tracking-tighter text-white"
+                  delay={0.8}
+                />
               </div>
-              <span className="text-5xl font-display font-bold tracking-tighter text-white">
-                Lumina
-              </span>
             </motion.div>
 
-            <div className="h-1 w-48 bg-slate-800 rounded-full mx-auto overflow-hidden">
+            <div className="h-1 w-64 bg-slate-800/50 rounded-full mx-auto overflow-hidden backdrop-blur-md">
                <motion.div 
                  initial={{ width: 0 }}
                  animate={{ width: "100%" }}
-                 transition={{ duration: 2, ease: "easeInOut" }}
+                 transition={{ duration: 2.5, ease: [0.65, 0, 0.35, 1] }}
                  className="h-full accent-gradient"
                />
             </div>
             
             <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="mt-6 text-slate-400 font-medium tracking-widest uppercase text-xs"
+              initial={{ opacity: 0, letterSpacing: "0.2em" }}
+              animate={{ opacity: 1, letterSpacing: "0.4em" }}
+              transition={{ delay: 1.2, duration: 1.5, ease: "easeOut" }}
+              className="mt-8 text-slate-500 font-bold uppercase text-[10px] tracking-[0.4em]"
             >
               Intelligence for Business Excellence
             </motion.p>
           </div>
+          
+          {/* Subtle noise/texture overlay if needed, currently skipping for performance */}
         </motion.div>
       )}
     </AnimatePresence>
