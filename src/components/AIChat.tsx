@@ -83,7 +83,7 @@ export function AIChat() {
   };
 
   return (
-    <div className="fixed bottom-10 right-10 z-[100]">
+    <div className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-[100]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -91,7 +91,9 @@ export function AIChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col mb-4 ${
-              isExpanded ? 'w-[90vw] h-[80vh] max-w-[500px] max-h-[700px]' : 'w-[90vw] h-[550px] max-w-[420px]'
+              isExpanded 
+                ? 'w-[95vw] h-[75vh] sm:w-[90vw] sm:h-[80vh] max-w-[500px] max-h-[700px]' 
+                : 'w-[95vw] h-[500px] sm:w-[90vw] sm:h-[550px] max-w-[420px]'
             }`}
           >
             {/* Chat Header */}
@@ -185,7 +187,7 @@ export function AIChat() {
                     whileTap={{ scale: 0.98 }}
                     onClick={() => handleQuestionClick(item.question, item.response)}
                     disabled={isTyping}
-                    className="px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {item.question}
                   </motion.button>
