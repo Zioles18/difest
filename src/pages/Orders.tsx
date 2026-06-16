@@ -96,7 +96,7 @@ export function Orders() {
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
       total: `$${amount.toFixed(2)}`,
       rawTotal: amount,
-      status: "Pending",
+      status: (formData.get("status") as Order["status"]) || "Pending",
       items: parseInt(formData.get("items") as string) || 1,
       avatar: orderAvatarPreview || `https://ui-avatars.com/api/?name=${customer}&background=random`
     };
@@ -452,9 +452,17 @@ export function Orders() {
                         <input required name="items" type="number" min="1" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="1" />
                       </div>
                     </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Initial Status</label>
+                      <select name="status" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 appearance-none cursor-pointer">
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Completed">Completed</option>
+                      </select>
+                    </div>
                   </div>
                   <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4">
-                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors text-sm">Discard</button>
+                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm">Discard</button>
                     <button type="submit" className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 text-sm">Submit Order</button>
                   </div>
                 </form>
@@ -523,16 +531,38 @@ export function Orders() {
                       </div>
                       <h4 className="text-lg font-bold text-amber-900 dark:text-amber-100">Awaiting Executive Approval</h4>
                       <p className="text-sm text-amber-700 dark:text-amber-200 mt-2 font-medium leading-relaxed max-w-xs">Approving this order will instantly update the global business revenue and growth diagrams.</p>
-                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8 w-full">
-                        <button
-                          onClick={() => handleApprove(selectedOrder.id)}
-                          className="flex-1 py-3 sm:py-4 bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
-                        >
-                          <Check className="w-4 h-4" /> Approve
-                        </button>
-                        <button className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20 text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all">
-                          Reject
-                        </button>
+                      <div className="flex flex-col gap-3 mt-6 sm:mt-8 w-full">
+                        {selectedOrder.status === "Pending" && (
+                          <button
+                            onClick={() => {
+                              updateOrder(selectedOrder.id, "Processing");
+                              setToastMsg(`Order ${selectedOrder.id} is now being processed.`);
+                              setShowToast(true);
+                              setTimeout(() => setShowToast(false), 3000);
+                              setSelectedOrder(null);
+                            }}
+                            className="w-full py-3 sm:py-4 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2"
+                          >
+                            <Clock className="w-4 h-4 flex-shrink-0" /> Start Processing
+                          </button>
+                        )}
+                        <div className="grid grid-cols-2 gap-3">
+                          <button
+                            onClick={() => handleApprove(selectedOrder.id)}
+                            className="py-3 sm:py-4 bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
+                          >
+                            <Check className="w-4 h-4 flex-shrink-0" /> Approve
+                          </button>
+                          <button
+                            onClick={() => {
+                              handleDeleteOrder(selectedOrder.id);
+                              setSelectedOrder(null);
+                            }}
+                            className="py-3 sm:py-4 bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20 text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all flex items-center justify-center gap-2"
+                          >
+                            <X className="w-4 h-4 flex-shrink-0" /> Reject
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -547,7 +577,7 @@ export function Orders() {
                           { event: "Asset Dispatch", time: "Complete", active: true }
                         ].map((t, i) => (
                           <div key={i} className="flex gap-6 relative">
-                            {i < 2 && <div className="absolute left-[13px] top-8 w-0.5 h-8 bg-slate-100 dark:bg-slate-800" />}
+                            {i < 2 && <div className="absolute left-[13px] top-8 w-0.5 h-8 bg-slate-100 dark:bg-slate-600/50" />}
                             <div className={`w-7 h-7 rounded-full border-[6px] border-white dark:border-slate-700/50 shadow-md flex-shrink-0 z-10 ${t.active ? "bg-indigo-600" : "bg-slate-200 dark:bg-slate-700"}`} />
                             <div className="flex-1">
                               <p className={`text-sm font-bold ${t.active ? "text-slate-900 dark:text-slate-100" : "text-slate-400 dark:text-slate-500"}`}>{t.event}</p>
