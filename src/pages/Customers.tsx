@@ -326,7 +326,7 @@ export function Customers() {
                     <div className={`max-w-[80%] p-4 rounded-2xl text-sm ${
                       msg.sender === "me" 
                         ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 dark:shadow-indigo-500/10 rounded-br-none" 
-                        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-bl-none"
+                        : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-100 rounded-bl-none"
                     }`}>
                       <p className="leading-relaxed font-medium">{msg.text}</p>
                       <p className={`text-[10px] mt-2 font-bold opacity-50 ${msg.sender === "me" ? "text-white" : "text-slate-500 dark:text-slate-400"}`}>{msg.time}</p>
