@@ -83,14 +83,14 @@ export function AIChat() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[100]">
+    <div className="fixed bottom-10 right-10 z-[100]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col ${
+            className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col mb-4 ${
               isExpanded ? 'w-[90vw] h-[80vh] max-w-[500px] max-h-[700px]' : 'w-[90vw] h-[550px] max-w-[420px]'
             }`}
           >
@@ -118,13 +118,6 @@ export function AIChat() {
                   ) : (
                     <Maximize2 className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                   )}
-                </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1.5 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
-                  aria-label="Close"
-                >
-                  <X className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                 </button>
               </div>
             </div>
@@ -208,7 +201,7 @@ export function AIChat() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 text-white"
+        className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 text-white"
       >
         <AnimatePresence mode="wait">
           {isOpen ? (
@@ -218,7 +211,7 @@ export function AIChat() {
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: 90, opacity: 0 }}
             >
-              <X className="w-7 h-7" />
+              <X className="w-4 h-4" />
             </motion.div>
           ) : (
             <motion.div
@@ -227,7 +220,7 @@ export function AIChat() {
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: -90, opacity: 0 }}
             >
-              <Sparkles className="w-7 h-7" />
+              <Sparkles className="w-4 h-4" />
             </motion.div>
           )}
         </AnimatePresence>
