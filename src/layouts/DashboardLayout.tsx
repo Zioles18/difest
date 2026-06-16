@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
+import { AIChat } from "../components/AIChat";
 import { useTheme } from "../utils/ThemeContext";
 
 export type DateRange = "7d" | "30d" | "12m";
@@ -51,6 +52,7 @@ export function DashboardLayout() {
           </div>
         </main>
       </div>
+      <AIChat />
     </div>
   );
 }
