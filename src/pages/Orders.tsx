@@ -512,7 +512,7 @@ export function Orders() {
                       <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Entry Date</p>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{selectedOrder.date}</p>
                     </div>
-                    <div className="space-y-1 text-center">
+                    <div className="space-y-1 text-left sm:text-center">
                       <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Volume</p>
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{selectedOrder.items} SKU</p>
                     </div>
