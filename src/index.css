@@ -8,17 +8,19 @@
   --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
 }
 
-body {
-  @apply text-slate-900 dark:text-slate-100 antialiased font-sans min-h-screen transition-colors duration-300;
-  background-color: #f8fafc;
+html, body {
+  @apply text-slate-900 antialiased font-sans min-h-screen;
+  background-color: #f1f5f9;
   background-image: 
-    radial-gradient(at 0% 0%, hsla(253,100%,70%,0.05) 0, transparent 50%), 
-    radial-gradient(at 50% 0%, hsla(225,100%,70%,0.05) 0, transparent 50%), 
-    radial-gradient(at 100% 0%, hsla(339,100%,70%,0.05) 0, transparent 50%);
+    radial-gradient(at 0% 0%, hsla(253,100%,70%,0.08) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(225,100%,70%,0.08) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(339,100%,70%,0.08) 0, transparent 50%);
   background-attachment: fixed;
+  transition: background-color 0.5s cubic-bezier(0.22,1,0.36,1), color 0.5s cubic-bezier(0.22,1,0.36,1), background-image 0.5s cubic-bezier(0.22,1,0.36,1);
 }
 
-.dark body {
+.dark, .dark body {
+  @apply text-slate-100;
   background-color: #020617;
   background-image: 
     radial-gradient(at 0% 0%, hsla(253,100%,70%,0.08) 0, transparent 50%), 
@@ -27,24 +29,24 @@ body {
 }
 
 * {
-  @apply transition-[background-color,border-color,color,box-shadow,opacity] duration-300;
+  transition: background-color 0.4s cubic-bezier(0.22,1,0.36,1), border-color 0.4s cubic-bezier(0.22,1,0.36,1), color 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s cubic-bezier(0.22,1,0.36,1), opacity 0.4s cubic-bezier(0.22,1,0.36,1), transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 
 @layer components {
   .bento-card {
-    @apply bg-white/80 dark:bg-slate-900/60 border border-white/80 dark:border-slate-800/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] rounded-3xl p-4 sm:p-6 transition-all duration-300 ease-out;
+    @apply bg-white/70 dark:bg-slate-900/40 border border-slate-200/70 dark:border-slate-700/50 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] rounded-2xl p-4 sm:p-6 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)];
   }
   .bento-card:hover {
-    @apply -translate-y-1 shadow-[0_20px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] border-white dark:border-slate-700/50;
+    @apply -translate-y-1 shadow-[0_20px_40px_rgb(0,0,0,0.12)] dark:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.6)] border-indigo-100/70 dark:border-slate-700/50;
   }
   .accent-gradient {
     @apply bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500;
   }
   .glass-panel {
-    @apply bg-white/70 dark:bg-slate-900/50 border border-white/60 dark:border-slate-800/40 shadow-[0_8px_32px_rgb(0,0,0,0.04)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)];
+    @apply bg-white/90 dark:bg-slate-900/50 border border-slate-200/70 dark:border-slate-800/40 shadow-[0_8px_32px_rgb(0,0,0,0.06)] dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)];
   }
   .status-badge {
-    @apply px-3 py-1.5 rounded-full text-xs font-bold tracking-wide transition-colors;
+    @apply px-3 py-1.5 rounded-full text-xs font-bold tracking-wide transition-colors duration-300 ease-[cubic-bezier(0.22,1,0.36,1)];
   }
 }
 

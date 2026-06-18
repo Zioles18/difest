@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Mail, Lock, Sun, Moon } from "lucide-react";
 import { NXLogo } from "../components/NXLogo";
+import ShinyText from "../components/ShinyText";
+import Lightfall from "../components/Lightfall";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 
@@ -58,6 +60,17 @@ export function Login() {
 
   return (
     <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
+      <Lightfall
+        className="absolute inset-0 z-0"
+        colors={['#0ea5e9', '#6366f1', '#7c3aed']}
+        backgroundColor={theme === 'dark' ? '#0f172a' : '#f8fafc'}
+        speed={0.4}
+        streakCount={3}
+        density={0.7}
+        glow={0.8}
+        opacity={0.6}
+        backgroundGlow={0.3}
+      />
       {/* Floating Blobs for extra depth */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px]" />
@@ -79,8 +92,14 @@ export function Login() {
             >
               <NXLogo size={48} />
             </motion.div>
-            <span className="font-display font-bold text-3xl tracking-tighter text-slate-900 dark:text-slate-100">
-              NexBiz
+            <span className="font-display font-bold text-3xl tracking-tighter">
+              <ShinyText 
+                text="NexBiz" 
+                color={theme === "dark" ? "#e2e8f0" : "#1e293b"} 
+                shineColor="#60a5fa" 
+                speed={3} 
+                yoyo={true}
+              />
             </span>
           </div>
 

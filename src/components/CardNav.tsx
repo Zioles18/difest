@@ -1,0 +1,373 @@
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { gsap } from 'gsap';
+import { ArrowUpRight, Bell, Sun, Moon, X } from 'lucide-react';
+import ShinyText from './ShinyText';
+import { NXLogo } from './NXLogo';
+import { useTheme } from '../utils/ThemeContext';
+import { auth } from '../utils/auth';
+import './CardNav.css';
+
+type CardNavLink = {
+  label: string;
+  href: string;
+  ariaLabel: string;
+};
+
+export type CardNavItem = {
+  label: string;
+  bgColor: string;
+  textColor: string;
+  links: CardNavLink[];
+};
+
+export interface CardNavProps {
+  logo: string;
+  logoAlt?: string;
+  items: CardNavItem[];
+  className?: string;
+  ease?: string;
+  baseColor?: string;
+  menuColor?: string;
+}
+
+const notifications = [
+  { id: 1, text: "New order #2890 received", time: "2m ago", dot: "bg-emerald-500" },
+  { id: 2, text: "Monthly report is ready", time: "1h ago", dot: "bg-indigo-500" },
+  { id: 3, text: "Server usage at 82%", time: "3h ago", dot: "bg-amber-500" },
+];
+
+const CardNav: React.FC<CardNavProps> = ({
+  logo,
+  logoAlt = "Logo",
+  items,
+  className = "",
+  ease = "power4.out",
+  baseColor = "#fff",
+  menuColor,
+}) => {
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [profile, setProfile] = useState(() => {
+    const saved = localStorage.getItem("NexBiz_profile");
+    const email = auth.getCurrentEmail();
+    return saved ? JSON.parse(saved) : {
+      name: email ? email.split("@")[0] : "User",
+      avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email || "user"}&backgroundColor=6366f1&textColor=ffffff`
+    };
+  });
+
+  // Close menu when route changes
+  useEffect(() => {
+    closeMenu();
+    setShowNotifications(false);
+  }, [location.pathname]);
+
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const cardsRef = useRef<HTMLDivElement[]>([]);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const notifRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const handleProfileUpdate = (e: any) => setProfile(e.detail);
+    window.addEventListener("NexBiz_profile_updated", handleProfileUpdate);
+    return () => window.removeEventListener("NexBiz_profile_updated", handleProfileUpdate);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    if (showNotifications) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showNotifications]);
+
+  const calculateHeight = () => {
+    const navEl = navRef.current;
+    if (!navEl) return 260;
+
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) {
+      const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement;
+      if (contentEl) {
+        const wasVisible = contentEl.style.visibility;
+        const wasPointerEvents = contentEl.style.pointerEvents;
+        const wasPosition = contentEl.style.position;
+        const wasHeight = contentEl.style.height;
+
+        contentEl.style.visibility = 'visible';
+        contentEl.style.pointerEvents = 'auto';
+        contentEl.style.position = 'static';
+        contentEl.style.height = 'auto';
+
+        contentEl.offsetHeight;
+
+        const topBar = 60;
+        const padding = 16;
+        const contentHeight = contentEl.scrollHeight;
+
+        contentEl.style.visibility = wasVisible;
+        contentEl.style.pointerEvents = wasPointerEvents;
+        contentEl.style.position = wasPosition;
+        contentEl.style.height = wasHeight;
+
+        return topBar + contentHeight + padding;
+      }
+    }
+    return 260;
+  };
+
+  const createTimeline = () => {
+    const navEl = navRef.current;
+    if (!navEl) return null;
+
+    gsap.set(navEl, { height: 60, overflow: 'hidden' });
+    gsap.set(cardsRef.current, { y: 30, opacity: 0 });
+
+    const tl = gsap.timeline({ paused: true });
+
+    tl.to(navEl, {
+      height: calculateHeight,
+      duration: 0.2,
+      ease
+    });
+
+    tl.to(cardsRef.current, { y: 0, opacity: 1, duration: 0.15, ease, stagger: 0.05 }, '-=0.1');
+
+    return tl;
+  };
+
+  useLayoutEffect(() => {
+    const tl = createTimeline();
+    tlRef.current = tl;
+
+    return () => {
+      tl?.kill();
+      tlRef.current = null;
+    };
+  }, [ease, items]);
+
+  useLayoutEffect(() => {
+    const handleResize = () => {
+      if (!tlRef.current) return;
+
+      if (isExpanded) {
+        const newHeight = calculateHeight();
+        gsap.set(navRef.current, { height: newHeight });
+
+        tlRef.current.kill();
+        const newTl = createTimeline();
+        if (newTl) {
+          newTl.progress(1);
+          tlRef.current = newTl;
+        }
+      } else {
+        tlRef.current.kill();
+        const newTl = createTimeline();
+        if (newTl) {
+          tlRef.current = newTl;
+        }
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isExpanded]);
+
+  const toggleMenu = () => {
+    // Ensure timeline is fresh
+    const tl = createTimeline();
+    if (!tl) return;
+    tlRef.current = tl;
+
+    if (!isExpanded) {
+      setIsHamburgerOpen(true);
+      setIsExpanded(true);
+      tl.play(0);
+    } else {
+      setIsHamburgerOpen(false);
+      tl.eventCallback('onReverseComplete', () => {
+        setIsExpanded(false);
+        if (navRef.current) {
+          gsap.set(navRef.current, { height: 60, overflow: 'hidden' });
+        }
+      });
+      tl.reverse(0);
+    }
+  };
+
+  const closeMenu = () => {
+    if (isExpanded) {
+      setIsHamburgerOpen(false);
+      const tl = tlRef.current;
+      if (tl) {
+        tl.eventCallback('onReverseComplete', () => {
+          setIsExpanded(false);
+          // Ensure the nav is reset properly
+          if (navRef.current) {
+            gsap.set(navRef.current, { height: 60, overflow: 'hidden' });
+          }
+        });
+        tl.reverse(0);
+      }
+    }
+  };
+
+  const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
+    if (el) cardsRef.current[i] = el;
+  };
+
+  const handleLinkClick = () => {
+    setShowNotifications(false);
+    closeMenu();
+  };
+
+  return (
+    <div className={`card-nav-container ${className}`}>
+      <nav ref={navRef} className={`card-nav ${isExpanded ? 'open' : ''}`} style={{ 
+        backgroundColor: baseColor,
+        transition: 'background-color 0.5s cubic-bezier(0.22,1,0.36,1)'
+      }}>
+        <div className="card-nav-top">
+          <div
+            className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''}`}
+            onClick={toggleMenu}
+            role="button"
+            aria-label={isExpanded ? 'Close menu' : 'Open menu'}
+            tabIndex={0}
+            style={{ color: menuColor || '#000' }}
+          >
+            <div className="hamburger-line" />
+            <div className="hamburger-line" />
+          </div>
+
+          <div className="logo-container">
+            <div className="flex items-center gap-3">
+              <NXLogo size={40} />
+              <span className="font-display font-bold text-2xl tracking-tighter">
+                <ShinyText 
+                  text="NexBiz" 
+                  color={theme === "dark" ? "#e2e8f0" : "#1e293b"} 
+                  shineColor="#60a5fa" 
+                  speed={3} 
+                  yoyo={true}
+                />
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
+            </button>
+
+            {/* Notifications */}
+            <div className="relative" ref={notifRef}>
+              <button
+                onClick={() => {
+                  setShowNotifications((p) => !p);
+                  closeMenu();
+                }}
+                className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4.5 h-4.5" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
+              </button>
+
+              {showNotifications && (
+                <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">3 New</span>
+                      <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    {notifications.map((n) => (
+                      <button
+                        key={n.id}
+                        onClick={() => {
+                          console.log(`Notification clicked: ${n.text}`);
+                          setShowNotifications(false);
+                        }}
+                        className="w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left border-b border-slate-50 dark:border-slate-700/50 last:border-0"
+                      >
+                        <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                        <div>
+                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.text}</p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Profile avatar */}
+            <NavLink
+              to="/profile"
+              onClick={handleLinkClick}
+              aria-label="Go to profile"
+            >
+              <div className="w-9 h-9 rounded-full overflow-hidden border-2 cursor-pointer transition-all hover:scale-105 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-400">
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </NavLink>
+          </div>
+        </div>
+
+        <div className="card-nav-content" aria-hidden={!isExpanded}>
+          {(items || []).slice(0, 3).map((item, idx) => (
+            <div
+              key={`${item.label}-${idx}`}
+              className="nav-card"
+              ref={setCardRef(idx)}
+              style={{ backgroundColor: item.bgColor, color: item.textColor }}
+            >
+              <div className="nav-card-label">{item.label}</div>
+              <div className="nav-card-links">
+                {item.links?.map((lnk, i) => (
+                  <NavLink
+                    key={`${lnk.label}-${i}`}
+                    to={lnk.href}
+                    aria-label={lnk.ariaLabel}
+                    className="nav-card-link"
+                    end={lnk.href === "/"}
+                    onClick={handleLinkClick}
+                  >
+                    <ArrowUpRight className="nav-card-link-icon" aria-hidden="true" />
+                    {lnk.label}
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </nav>
+    </div>
+  );
+};
+
+export default CardNav;

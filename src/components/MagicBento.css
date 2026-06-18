@@ -1,0 +1,39 @@
+.particle-container {
+  overflow: hidden;
+}
+
+.magic-bento-card {
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 300px;
+  --glow-color: 99, 102, 241;
+  position: relative;
+}
+
+.magic-bento-card--border-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: radial-gradient(
+    circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), var(--glow-intensity)) 0%,
+    rgba(var(--glow-color), 0.1) 40%,
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-grid {
+  position: relative;
+}
+
+.global-spotlight {
+  transition: left 0.1s ease-out, top 0.1s ease-out;
+}

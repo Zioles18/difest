@@ -14,6 +14,8 @@ import {
   Award
 } from "lucide-react";
 import { NXLogo } from "./NXLogo";
+import ShinyText from "./ShinyText";
+import { useTheme } from "../utils/ThemeContext";
 import { getBusinessData, BUSINESS_DATA_UPDATED } from "../utils/store";
 import { auth } from "../utils/auth";
 
@@ -32,6 +34,7 @@ const menuItems = [
 
 function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [data, setData] = useState(getBusinessData());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profile, setProfile] = useState(() => {
@@ -95,7 +98,15 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
           <div className="group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
             <NXLogo size={40} />
           </div>
-          <span className="font-display font-bold text-2xl tracking-tighter text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">NexBiz</span>
+          <span className="font-display font-bold text-2xl tracking-tighter group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+            <ShinyText 
+              text="NexBiz" 
+              color={theme === "dark" ? "#e2e8f0" : "#1e293b"} 
+              shineColor="#60a5fa" 
+              speed={3} 
+              yoyo={true}
+            />
+          </span>
         </NavLink>
         <button
           className="lg:hidden p-2 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50 rounded-lg transition-colors"

@@ -32,8 +32,10 @@ import {
 import { useState, useEffect } from "react";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { getBusinessData, BUSINESS_DATA_UPDATED, applyOptimization } from "../utils/store";
+import { useTheme } from "../utils/ThemeContext";
 
 export function Analytics() {
+  const { theme } = useTheme();
   const [businessData, setBusinessData] = useState(getBusinessData());
   const [showReport, setShowReport] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -128,7 +130,7 @@ export function Analytics() {
         animate={{ opacity: 1, y: 0 }}
         className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8"
       >
-        <SpotlightCard className="lg:col-span-2 p-5 sm:p-8 lg:p-10 bg-white/40 dark:bg-slate-900 border border-white dark:border-slate-800/50">
+        <SpotlightCard allowOverflow={true} className="lg:col-span-2 p-5 sm:p-8 lg:p-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-10">
              <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-indigo-600 dark:bg-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-500/20 dark:shadow-indigo-500/10">
@@ -144,15 +146,23 @@ export function Analytics() {
              </div>
           </div>
           
-          <div className="h-[220px] sm:h-[300px] lg:h-[350px] w-full">
+          <div className="h-[220px] sm:h-[300px] lg:h-[350px] w-full bg-white/30 dark:bg-slate-900/20 rounded-2xl p-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={businessData.chartDataPeriods.week}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800" opacity={0.5} />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderRadius: '16px', border: 'none', color: '#fff' }}
-                  itemStyle={{ color: '#818cf8', fontWeight: 700 }}
+                  contentStyle={{ 
+                    backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
+                    backdropFilter: 'blur(12px)',
+                    borderRadius: '8px', 
+                    border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
+                    padding: '12px'
+                  }}
+                  itemStyle={{ color: '#4f46e5', fontWeight: 800, fontSize: '14px' }}
+                  labelStyle={{ color: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}
                 />
                 <Line 
                   type="monotone" 
@@ -189,7 +199,18 @@ export function Analytics() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
+                        backdropFilter: 'blur(12px)',
+                        borderRadius: '8px', 
+                        border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
+                        boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
+                        padding: '12px'
+                      }}
+                      itemStyle={{ color: '#4f46e5', fontWeight: 800, fontSize: '14px' }}
+                      labelStyle={{ color: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
              </div>

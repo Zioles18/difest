@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { NXLogo } from "./NXLogo";
+import ShinyText from "./ShinyText";
+import Ferrofluid from "./Ferrofluid";
+import { useTheme } from "../utils/ThemeContext";
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [isVisible, setIsVisible] = useState(true);
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -20,8 +25,22 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.35, ease: "easeOut" } }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-slate-950"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-100 dark:bg-slate-950"
         >
+          <Ferrofluid
+            className="absolute inset-0 z-0"
+            colors={['#0ea5e9', '#6366f1', '#7c3aed']}
+            speed={0.4}
+            scale={1.6}
+            turbulence={1}
+            fluidity={0.1}
+            rimWidth={0.2}
+            sharpness={2.5}
+            shimmer={1.5}
+            glow={isDark ? 0.8 : 0.9}
+            opacity={isDark ? 0.6 : 0.7}
+            mixBlendMode={isDark ? "screen" : "multiply"}
+          />
           <div className="relative z-10 text-center">
             <motion.div
               initial={{ scale: 0.5, opacity: 0, y: 30 }}
@@ -60,9 +79,15 @@ export function SplashScreen({ onComplete }: { onComplete: () => void }) {
                 initial={{ opacity: 0, y: 8, letterSpacing: "0.1em" }}
                 animate={{ opacity: 1, y: 0, letterSpacing: "0em" }}
                 transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-                className="text-3xl md:text-4xl font-display font-bold tracking-tighter text-slate-900 dark:text-white"
+                className="text-3xl md:text-4xl font-display font-bold tracking-tighter"
               >
-                NexBiz
+                <ShinyText 
+                  text="NexBiz" 
+                  color="#1e293b" 
+                  shineColor="#60a5fa" 
+                  speed={3} 
+                  yoyo={true}
+                />
               </motion.span>
             </motion.div>
 

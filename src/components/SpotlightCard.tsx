@@ -31,7 +31,7 @@ export function SpotlightCard({ children, className = "", onClick, allowOverflow
         hidden: { opacity: 0, y: 20 },
         show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
       }}
-      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : ""} ${onClick ? "cursor-pointer" : ""} ${className}`}
+      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : "overflow-visible"} ${onClick ? "cursor-pointer" : ""} ${className}`}
     >
       {/* Background Spotlight Layer with its own clipping */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">

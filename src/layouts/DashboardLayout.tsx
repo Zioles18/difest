@@ -1,57 +1,95 @@
 import { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "../components/Sidebar";
-import { Header } from "../components/Header";
 import { AIChat } from "../components/AIChat";
+import Ferrofluid from "../components/Ferrofluid";
+import CardNav from "../components/CardNav";
 import { useTheme } from "../utils/ThemeContext";
 
 export type DateRange = "7d" | "30d" | "12m";
 
 export function DashboardLayout() {
-  const { theme, toggleTheme } = useTheme();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { theme } = useTheme();
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [isModalActive, setIsModalActive] = useState(false);
   const isDark = theme === "dark";
   const location = useLocation();
 
+  // Track active tab for UI
+  const activeTab = location.pathname === "/"
+    ? "Overview"
+    : location.pathname.replace("/", "").charAt(0).toUpperCase() + location.pathname.slice(1);
+
+  const cardNavItems = [
+    {
+      label: "Dashboard",
+      bgColor: isDark ? "#1e293b" : "#ffffff",
+      textColor: isDark ? "#e2e8f0" : "#1e293b",
+      links: [
+        { label: "Overview", href: "/", ariaLabel: "Go to Overview page" },
+        { label: "Analytics", href: "/analytics", ariaLabel: "Go to Analytics page" }
+      ]
+    },
+    {
+      label: "Business",
+      bgColor: isDark ? "#312e81" : "#eff6ff",
+      textColor: isDark ? "#c7d2fe" : "#3730a3",
+      links: [
+        { label: "Orders", href: "/orders", ariaLabel: "Go to Orders page" },
+        { label: "Customers", href: "/customers", ariaLabel: "Go to Customers page" }
+      ]
+    },
+    {
+      label: "Account",
+      bgColor: isDark ? "#1e1b4b" : "#f3e8ff",
+      textColor: isDark ? "#ddd6fe" : "#4c1d95",
+      links: [
+        { label: "Profile", href: "/profile", ariaLabel: "Go to Profile page" },
+        { label: "Settings", href: "/settings", ariaLabel: "Go to Settings page" }
+      ]
+    }
+  ];
+
   useEffect(() => {
     const handleModalState = (e: any) => setIsModalActive(e.detail?.open ?? false);
     window.addEventListener("NexBiz_modal_state", handleModalState);
-
     return () => window.removeEventListener("NexBiz_modal_state", handleModalState);
   }, []);
 
-  // Determine active tab name based on pathname
-  let activeTab = "Overview";
-  if (location.pathname === "/orders") activeTab = "Orders";
-  if (location.pathname === "/customers") activeTab = "Customers";
-  if (location.pathname === "/analytics") activeTab = "Analytics";
-  if (location.pathname === "/settings") activeTab = "Settings";
-  if (location.pathname === "/profile") activeTab = "Profile";
-
   return (
-    <div className="flex h-screen bg-transparent overflow-hidden font-sans">
-      <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        {isModalActive && (
-          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1000]" />
-        )}
-
-        <Header
-          setSidebarOpen={setSidebarOpen}
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-          activeTab={activeTab}
+    <div className="flex flex-col h-screen overflow-hidden font-sans">
+      <Ferrofluid
+        className="absolute inset-0 z-0"
+        colors={isDark 
+          ? ['#0ea5e9', '#6366f1', '#7c3aed'] 
+          : ['#0ea5e9', '#6366f1', '#7c3aed']}
+        speed={0.4}
+        scale={1.6}
+        turbulence={1}
+        fluidity={0.1}
+        rimWidth={0.2}
+        sharpness={2.5}
+        shimmer={1.5}
+        glow={isDark ? 0.8 : 0.9}
+        opacity={isDark ? 0.6 : 0.7}
+        mixBlendMode={isDark ? "screen" : "multiply"}
+      />
+      
+      <div className="relative z-10 p-4 sm:p-6">
+        <CardNav
+          logo="/logo.png"
+          logoAlt="NexBiz Logo"
+          items={cardNavItems}
+          baseColor={isDark ? "rgba(15, 23, 42, 0.85)" : "rgba(255, 255, 255, 0.95)"}
+          menuColor={isDark ? "#e2e8f0" : "#1e293b"}
         />
-
-        <main className={`flex-1 w-full relative transition-all duration-300 ${isModalActive ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-          <div className="max-w-7xl mx-auto p-3 sm:p-6 lg:p-8">
-            <Outlet context={{ dateRange, activeTab }} />
-          </div>
-        </main>
       </div>
+
+      <main className={`flex-1 w-full relative transition-all duration-300 ${isModalActive ? 'overflow-hidden' : 'overflow-y-auto'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+          <Outlet context={{ dateRange, activeTab }} />
+        </div>
+      </main>
+      
       <AIChat />
     </div>
   );

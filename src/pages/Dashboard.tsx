@@ -218,7 +218,11 @@ export function Dashboard() {
           visible: { 
             opacity: 1, 
             y: 0,
-            transition: { staggerChildren: 0.05 }
+            transition: { 
+              staggerChildren: 0.12,
+              delayChildren: 0.1,
+              ease: [0.22, 1, 0.36, 1]
+            }
           }
         }}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
@@ -228,7 +232,14 @@ export function Dashboard() {
             key={idx} 
             variants={{
               hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 }
+              visible: { 
+                opacity: 1, 
+                y: 0, 
+                transition: { 
+                  duration: 0.6, 
+                  ease: [0.22, 1, 0.36, 1] 
+                } 
+              }
             }}
             onClick={() => setSelectedKPI(kpi.id)} 
             className="cursor-pointer group"
@@ -245,13 +256,19 @@ export function Dashboard() {
           visible: { 
             opacity: 1, 
             y: 0,
-            transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
+            transition: { 
+              duration: 0.8, 
+              ease: [0.22, 1, 0.36, 1],
+              staggerChildren: 0.15,
+              delayChildren: 0.15
+            }
           }
         }}
         className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
       >
         {/* Revenue Chart with Glassmorphism */}
-        <SpotlightCard className="lg:col-span-2 p-5 sm:p-8 lg:p-10 bg-white/40 dark:bg-slate-800/40 border border-white dark:border-slate-700/50 relative overflow-hidden">
+        <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }} className="lg:col-span-2">
+          <SpotlightCard allowOverflow={true} className="p-5 sm:p-8 lg:p-10 bg-white/70 dark:bg-slate-800/15 border border-slate-200/70 dark:border-slate-700/30">
           <div className="absolute top-0 right-0 p-8 opacity-10">
              <TrendingUp className="w-32 h-32 text-indigo-600 dark:text-indigo-400" />
           </div>
@@ -266,7 +283,7 @@ export function Dashboard() {
                   <p className="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mt-0.5">Live Diagnostic Sync</p>
                </div>
             </div>
-            <div className="flex bg-slate-100/50 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-100 dark:border-slate-700/50 self-start sm:self-auto">
+            <div className="flex bg-slate-100/80 dark:bg-slate-800/50 p-1 rounded-xl border border-slate-200/70 dark:border-slate-700/50 self-start sm:self-auto">
                {(["Week", "Month", "Year"] as const).map(t => (
                  <button 
                    key={t} 
@@ -279,7 +296,7 @@ export function Dashboard() {
             </div>
           </div>
           
-          <div className="h-[220px] sm:h-[300px] lg:h-[350px] w-full relative z-10">
+          <div className="h-[220px] sm:h-[320px] lg:h-[400px] w-full relative z-10 bg-white/30 dark:bg-slate-900/20 rounded-2xl p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartDisplayData}>
                 <defs>
@@ -306,13 +323,13 @@ export function Dashboard() {
                   contentStyle={{ 
                     backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
                     backdropFilter: 'blur(12px)',
-                    borderRadius: '16px', 
+                    borderRadius: '8px', 
                     border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
-                    boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
                     padding: '12px'
                   }}
-                  itemStyle={{ color: '#818cf8', fontWeight: 800, fontSize: '14px' }}
-                  labelStyle={{ color: '#94a3b8', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}
+                  itemStyle={{ color: '#4f46e5', fontWeight: 800, fontSize: '14px' }}
+                  labelStyle={{ color: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}
                 />
                 <Area 
                   type="monotone" 
@@ -326,9 +343,11 @@ export function Dashboard() {
             </ResponsiveContainer>
           </div>
         </SpotlightCard>
+        </motion.div>
 
         {/* Sync-Ready Activity feed - Redesigned to Light/Glass */}
-        <SpotlightCard className="p-5 sm:p-8 lg:p-10 bg-white/40 dark:bg-slate-800/40 border border-white dark:border-slate-700/50 relative overflow-hidden">
+        <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}>
+          <SpotlightCard className="p-5 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-700/50 relative overflow-hidden">
            <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
            
            <div className="flex items-center gap-4 mb-6 sm:mb-10 relative z-10">
@@ -369,6 +388,7 @@ export function Dashboard() {
              Monitoring Center <ArrowUpRight className="w-4 h-4" />
            </button>
         </SpotlightCard>
+        </motion.div>
       </motion.div>
 
       {/* Chart Data Editor Modal */}
@@ -384,10 +404,10 @@ export function Dashboard() {
             />
             <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 pointer-events-none">
               <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                className="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 lg:p-10 shadow-2xl border border-slate-100 dark:border-slate-700/50 pointer-events-auto max-h-[85vh] flex flex-col"
+              initial={{ scale: 0.92, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
+              exit={{ scale: 0.92, opacity: 0, y: 40, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }}
+              className="relative w-full max-w-2xl bg-white dark:bg-slate-800 rounded-[1.5rem] sm:rounded-[2.5rem] p-5 sm:p-8 lg:p-10 shadow-2xl border border-slate-100 dark:border-slate-700/50 pointer-events-auto max-h-[85vh] flex flex-col"
               >
                 {/* Modal Header */}
                 <div className="flex items-center justify-between mb-5 sm:mb-8">
