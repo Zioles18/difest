@@ -38,7 +38,6 @@ export function Analytics() {
   const { theme } = useTheme();
   const [businessData, setBusinessData] = useState(getBusinessData());
   const [showReport, setShowReport] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
     const handleUpdate = () => {
@@ -50,13 +49,8 @@ export function Analytics() {
 
   const handleApplyOptimization = () => {
     applyOptimization();
-    setToastMsg("Business optimizations applied! All charts updated.");
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
     setShowReport(false);
   };
-
-  const [toastMsg, setToastMsg] = useState("");
 
   const [deviceData, setDeviceData] = useState(() => {
     const saved = localStorage.getItem("NexBiz_device_share");
@@ -146,12 +140,12 @@ export function Analytics() {
              </div>
           </div>
           
-          <div className="h-[220px] sm:h-[300px] lg:h-[350px] w-full bg-white/30 dark:bg-slate-900/20 rounded-2xl p-4">
+          <div className="h-[220px] sm:h-[300px] lg:h-[350px] w-full bg-white/60 dark:bg-slate-900/20 rounded-2xl p-4">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={businessData.chartDataPeriods.week}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="text-slate-100 dark:text-slate-800" opacity={0.5} />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)'} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 12, fontWeight: 600 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 12, fontWeight: 600 }} />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)', 
@@ -307,21 +301,6 @@ export function Analytics() {
                </div>
             </motion.div>
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* Analytics Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 bg-slate-900 dark:bg-slate-800 text-white rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 dark:border-slate-700/50"
-          >
-            <Zap className="w-5 h-5 text-indigo-400" />
-            <span className="text-sm font-bold tracking-tight">{toastMsg}</span>
-          </motion.div>
         )}
       </AnimatePresence>
     </motion.div>

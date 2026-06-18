@@ -296,27 +296,27 @@ export function Dashboard() {
             </div>
           </div>
           
-          <div className="h-[220px] sm:h-[320px] lg:h-[400px] w-full relative z-10 bg-white/30 dark:bg-slate-900/20 rounded-2xl p-4">
+          <div className="h-[220px] sm:h-[320px] lg:h-[400px] w-full relative z-10 bg-white/60 dark:bg-slate-900/20 rounded-2xl p-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartDisplayData}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.15}/>
+                    <stop offset="5%" stopColor="#4f46e5" stopOpacity={theme === 'dark' ? 0.15 : 0.2}/>
                     <stop offset="95%" stopColor="#4f46e5" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="6 6" vertical={false} stroke={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'} />
+                <CartesianGrid strokeDasharray="6 6" vertical={false} stroke={theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.1)'} />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                  tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 700 }}
                   dy={15}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
+                  tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 700 }}
                   tickFormatter={(val) => `$${val/1000}k`}
                 />
                 <Tooltip 

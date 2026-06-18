@@ -24,8 +24,6 @@ import { getBusinessData, updateOrder, addOrder, deleteOrder, BUSINESS_DATA_UPDA
 export function Orders() {
   const [data, setData] = useState(getBusinessData());
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
   const [isAddingOrder, setIsAddingOrder] = useState(false);
   const orderFileRef = useRef<HTMLInputElement>(null);
   const [orderAvatarPreview, setOrderAvatarPreview] = useState<string | null>(null);
@@ -67,16 +65,10 @@ export function Orders() {
 
   const handleDeleteOrder = (id: string) => {
     deleteOrder(id);
-    setToastMsg(`Order ${id} has been removed from the persistent hub.`);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleApprove = (id: string) => {
     updateOrder(id, "Completed");
-    setToastMsg(`Order ${id} approved! All diagrams and KPIs updated.`);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
     if (selectedOrder?.id === id) setSelectedOrder(null);
   };
 
@@ -103,9 +95,6 @@ export function Orders() {
     addOrder(newOrder);
     setIsAddingOrder(false);
     setOrderAvatarPreview(null);
-    setToastMsg(`New order ${newOrder.id} added to persistent hub. Awaiting approval.`);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
@@ -142,9 +131,6 @@ export function Orders() {
               a.click();
               document.body.removeChild(a);
               URL.revokeObjectURL(url);
-              setToastMsg("Orders exported as CSV successfully!");
-              setShowToast(true);
-              setTimeout(() => setShowToast(false), 3000);
             }}
             className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors shadow-sm text-sm"
           >
@@ -371,22 +357,7 @@ export function Orders() {
       </SpotlightCard>
       </motion.div>
 
-      {/* Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[200] px-8 py-4 bg-slate-900 dark:bg-slate-800 text-white rounded-[2rem] shadow-2xl flex items-center gap-4 border border-slate-800 dark:border-slate-700/50"
-          >
-            <div className="w-8 h-8 bg-emerald-500 rounded-2xl flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-sm font-bold tracking-tight">{toastMsg}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* Create Order Modal */}
       <AnimatePresence>
@@ -536,9 +507,6 @@ export function Orders() {
                           <button
                             onClick={() => {
                               updateOrder(selectedOrder.id, "Processing");
-                              setToastMsg(`Order ${selectedOrder.id} is now being processed.`);
-                              setShowToast(true);
-                              setTimeout(() => setShowToast(false), 3000);
                               setSelectedOrder(null);
                             }}
                             className="w-full py-3 sm:py-4 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2"
@@ -600,9 +568,6 @@ export function Orders() {
                       const receipt = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Receipt ${order.id}</title><style>body{font-family:Inter,sans-serif;max-width:520px;margin:40px auto;color:#1e293b;padding:32px}h1{font-size:24px;font-weight:800;margin:0 0 4px}p{margin:0;color:#64748b;font-size:14px}.badge{display:inline-block;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:${order.status==="Completed"?"#ecfdf5":order.status==="Processing"?"#eef2ff":"#fffbeb"};color:${order.status==="Completed"?"#059669":order.status==="Processing"?"#4f46e5":"#d97706"}}.row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #f1f5f9;font-size:14px}.label{color:#94a3b8;font-weight:600}.value{font-weight:700}.total{font-size:22px;font-weight:800;color:#4f46e5}.logo{font-size:18px;font-weight:900;color:#4f46e5;margin-bottom:32px}hr{border:none;border-top:2px solid #f1f5f9;margin:24px 0}@media print{body{margin:0}}</style></head><body><div class="logo">⚡ NexBiz</div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px"><div><h1>${order.customer}</h1><p>Order ${order.id}</p></div><span class="badge">${order.status}</span></div><hr/><div class="row"><span class="label">Date</span><span class="value">${order.date}</span></div><div class="row"><span class="label">Items</span><span class="value">${order.items} SKU</span></div><div class="row"><span class="label">Total Amount</span><span class="value total">${order.total}</span></div><hr/><p style="font-size:12px;color:#94a3b8;text-align:center">Thank you for choosing NexBiz Business Suite · NexBiz.co</p><script>window.onload=()=>window.print();</script></body></html>`;
                       const win = window.open("", "_blank");
                       if (win) { win.document.write(receipt); win.document.close(); }
-                      setToastMsg("Receipt opened — use browser Print → Save as PDF.");
-                      setShowToast(true);
-                      setTimeout(() => setShowToast(false), 4000);
                     }}
                     className="flex-1 py-3 sm:py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl text-sm flex items-center justify-center gap-2"
                   >

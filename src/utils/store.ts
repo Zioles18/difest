@@ -1,5 +1,6 @@
 // Centralized Integrated Data Hub
 export const BUSINESS_DATA_UPDATED = "NexBiz_business_data_updated";
+export const NEW_NOTIFICATION = "NexBiz_new_notification";
 
 export interface Order {
   id: string;
@@ -12,6 +13,13 @@ export interface Order {
   avatar: string;
 }
 
+export interface Notification {
+  id: string;
+  text: string;
+  time: string;
+  dot: "bg-emerald-500" | "bg-indigo-500" | "bg-amber-500" | "bg-rose-500";
+}
+
 export interface BusinessData {
   revenue: number;
   revenueGoal: number;
@@ -19,6 +27,7 @@ export interface BusinessData {
   activeUsers: number;
   conversion: number;
   orders: Order[];
+  notifications: Notification[];
   chartData: { name: string; value: number }[]; // Keeping for backward compatibility or Analytics
   chartDataPeriods: {
     week: { name: string; value: number }[];
@@ -33,6 +42,12 @@ const INITIAL_ORDERS: Order[] = [
   { id: "#2888", customer: "Marcus Johnson", date: "Jun 07, 2024", total: "$892.00", rawTotal: 892.0, status: "Pending", items: 5, avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" },
 ];
 
+const INITIAL_NOTIFICATIONS: Notification[] = [
+  { id: "n1", text: "New order #2890 received", time: "2m ago", dot: "bg-emerald-500" },
+  { id: "n2", text: "Monthly report is ready", time: "1h ago", dot: "bg-indigo-500" },
+  { id: "n3", text: "Server usage at 82%", time: "3h ago", dot: "bg-amber-500" },
+];
+
 const DEFAULT_DATA: BusinessData = {
   revenue: 4200,
   revenueGoal: 200000,
@@ -40,6 +55,7 @@ const DEFAULT_DATA: BusinessData = {
   activeUsers: 45,
   conversion: 1.25,
   orders: INITIAL_ORDERS,
+  notifications: INITIAL_NOTIFICATIONS,
   chartData: [
     { name: "Mon", value: 620 },
     { name: "Tue", value: 940 },
@@ -98,6 +114,35 @@ export const getBusinessData = (): BusinessData => {
   }
 };
 
+export const addNotification = (notification: Omit<Notification, "id" | "time">) => {
+  const data = getBusinessData();
+  const newNotification: Notification = {
+    ...notification,
+    id: `n${Date.now()}`,
+    time: "Just now"
+  };
+  const newNotifications = [newNotification, ...data.notifications].slice(0, 10); // Keep only last 10
+  const updatedData = { ...data, notifications: newNotifications };
+  syncStore(updatedData);
+  window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: newNotification }));
+  return updatedData;
+};
+
+export const deleteNotification = (id: string) => {
+  const data = getBusinessData();
+  const newNotifications = data.notifications.filter(n => n.id !== id);
+  const updatedData = { ...data, notifications: newNotifications };
+  syncStore(updatedData);
+  return updatedData;
+};
+
+export const clearAllNotifications = () => {
+  const data = getBusinessData();
+  const updatedData = { ...data, notifications: [] };
+  syncStore(updatedData);
+  return updatedData;
+};
+
 export const syncStore = (data: BusinessData) => {
   localStorage.setItem("NexBiz_business_hub", JSON.stringify(data));
   window.dispatchEvent(new CustomEvent(BUSINESS_DATA_UPDATED, { detail: data }));
@@ -132,13 +177,22 @@ export const updateOrder = (orderId: string, status: Order["status"]) => {
     
     // Update Week Data (assuming Sun for now as a simple logic, or matching date)
     // In a real app we'd parse order.date
-    const dayName = order.date.split(',')[0]; // Simple attempt if format is "Mon, Jun 09"
-    // However the current format is "Jun 09, 2024"
-    // Let's just update the last entry of the current week for simplicity in this prototype
     const weekData = [...newChartDataPeriods.week];
     const dayIndex = 6; // Sunday
     weekData[dayIndex] = { ...weekData[dayIndex], value: weekData[dayIndex].value + order.rawTotal };
     newChartDataPeriods.week = weekData;
+    
+    // Add notification
+    addNotification({
+      text: `Order ${orderId} marked as Completed`,
+      dot: "bg-emerald-500"
+    });
+  } else if (oldStatus !== status) {
+    // Add notification for other status changes
+    addNotification({
+      text: `Order ${orderId} status updated to ${status}`,
+      dot: "bg-indigo-500"
+    });
   }
 
   return syncStore({
@@ -165,7 +219,7 @@ export const syncChartFromOrders = () => {
   const sunIdx = 6;
   newWeekData[sunIdx] = { ...newWeekData[sunIdx], value: newWeekData[sunIdx].value + totalRevenue };
 
-  return syncStore({
+  const updatedData = syncStore({
     ...data,
     revenue: totalRevenue,
     sales: totalSales,
@@ -174,6 +228,13 @@ export const syncChartFromOrders = () => {
       week: newWeekData
     }
   });
+  
+  addNotification({
+    text: "Chart data synced from orders",
+    dot: "bg-indigo-500"
+  });
+  
+  return updatedData;
 };
 
 export const addOrder = (order: Order) => {
@@ -182,11 +243,23 @@ export const addOrder = (order: Order) => {
     ...data,
     orders: [order, ...data.orders]
   };
+  
+  addNotification({
+    text: `New order ${order.id} received from ${order.customer}`,
+    dot: "bg-emerald-500"
+  });
+  
   return syncStore(newData);
 };
 
 export const deleteOrder = (orderId: string) => {
   const data = getBusinessData();
+  
+  addNotification({
+    text: `Order ${orderId} deleted`,
+    dot: "bg-rose-500"
+  });
+  
   return syncStore({
     ...data,
     orders: data.orders.filter(o => o.id !== orderId)
@@ -205,7 +278,7 @@ export const applyOptimization = () => {
     value: Math.round(d.value * 1.15)
   }));
 
-  return syncStore({
+  const updatedData = syncStore({
     ...data,
     revenue: newRevenue,
     conversion: Number(newConversion.toFixed(2)),
@@ -214,4 +287,11 @@ export const applyOptimization = () => {
       week: newWeekData
     }
   });
+  
+  addNotification({
+    text: "AI optimization applied! Revenue boosted by +$24,500",
+    dot: "bg-emerald-500"
+  });
+  
+  return updatedData;
 };

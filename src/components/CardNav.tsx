@@ -6,6 +6,7 @@ import ShinyText from './ShinyText';
 import { NXLogo } from './NXLogo';
 import { useTheme } from '../utils/ThemeContext';
 import { auth } from '../utils/auth';
+import { getBusinessData, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION, Notification, deleteNotification, clearAllNotifications } from "../utils/store";
 import './CardNav.css';
 
 type CardNavLink = {
@@ -31,12 +32,6 @@ export interface CardNavProps {
   menuColor?: string;
 }
 
-const notifications = [
-  { id: 1, text: "New order #2890 received", time: "2m ago", dot: "bg-emerald-500" },
-  { id: 2, text: "Monthly report is ready", time: "1h ago", dot: "bg-indigo-500" },
-  { id: 3, text: "Server usage at 82%", time: "3h ago", dot: "bg-amber-500" },
-];
-
 const CardNav: React.FC<CardNavProps> = ({
   logo,
   logoAlt = "Logo",
@@ -52,6 +47,12 @@ const CardNav: React.FC<CardNavProps> = ({
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<Notification[]>(() => {
+    const data = getBusinessData();
+    return data.notifications;
+  });
+  const [showToast, setShowToast] = useState(false);
+  const [latestNotification, setLatestNotification] = useState<string>("");
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("NexBiz_profile");
     const email = auth.getCurrentEmail();
@@ -66,6 +67,25 @@ const CardNav: React.FC<CardNavProps> = ({
     closeMenu();
     setShowNotifications(false);
   }, [location.pathname]);
+
+  // Listen for store updates and new notifications
+  useEffect(() => {
+    const handleStoreUpdate = () => {
+      const data = getBusinessData();
+      setNotifications(data.notifications);
+    };
+    const handleNewNotification = (event: CustomEvent<Notification>) => {
+      setLatestNotification(event.detail.text);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    };
+    window.addEventListener(BUSINESS_DATA_UPDATED, handleStoreUpdate);
+    window.addEventListener(NEW_NOTIFICATION, handleNewNotification as EventListener);
+    return () => {
+      window.removeEventListener(BUSINESS_DATA_UPDATED, handleStoreUpdate);
+      window.removeEventListener(NEW_NOTIFICATION, handleNewNotification as EventListener);
+    };
+  }, []);
 
   const navRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
@@ -293,30 +313,62 @@ const CardNav: React.FC<CardNavProps> = ({
                   <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
                     <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">3 New</span>
+                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">{notifications.length} New</span>
+                      {notifications.length > 0 && (
+                        <button onClick={() => clearAllNotifications()} className="text-xs font-bold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors px-2 py-1 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg">
+                          Clear All
+                        </button>
+                      )}
                       <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
-                  <div>
-                    {notifications.map((n) => (
-                      <button
-                        key={n.id}
-                        onClick={() => {
-                          console.log(`Notification clicked: ${n.text}`);
-                          setShowNotifications(false);
-                        }}
-                        className="w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left border-b border-slate-50 dark:border-slate-700/50 last:border-0"
-                      >
-                        <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
-                        <div>
-                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.text}</p>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifications.length > 0 ? (
+                      notifications.map((n) => (
+                        <div
+                          key={n.id}
+                          className="w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0"
+                        >
+                          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.text}</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteNotification(n.id);
+                            }}
+                            className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors p-1"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
                         </div>
-                      </button>
-                    ))}
+                      ))
+                    ) : (
+                      <div className="px-4 py-8 text-center">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">No notifications yet</p>
+                      </div>
+                    )}
                   </div>
+                </div>
+              )}
+
+              {/* Toast notification */}
+              {showToast && (
+                <div className="fixed top-20 right-4 z-[1000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{latestNotification}</p>
+                  </div>
+                  <button
+                    onClick={() => setShowToast(false)}
+                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors ml-2"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               )}
             </div>
@@ -344,7 +396,11 @@ const CardNav: React.FC<CardNavProps> = ({
               key={`${item.label}-${idx}`}
               className="nav-card"
               ref={setCardRef(idx)}
-              style={{ backgroundColor: item.bgColor, color: item.textColor }}
+              style={{ 
+                backgroundColor: item.bgColor, 
+                color: item.textColor,
+                border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)'
+              }}
             >
               <div className="nav-card-label">{item.label}</div>
               <div className="nav-card-links">

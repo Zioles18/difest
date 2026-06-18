@@ -22,7 +22,7 @@ export function DashboardLayout() {
   const cardNavItems = [
     {
       label: "Dashboard",
-      bgColor: isDark ? "#1e293b" : "#ffffff",
+      bgColor: isDark ? "#1e293b" : "#f1f5f9",
       textColor: isDark ? "#e2e8f0" : "#1e293b",
       links: [
         { label: "Overview", href: "/", ariaLabel: "Go to Overview page" },
