@@ -107,7 +107,8 @@ export const getBusinessData = (): BusinessData => {
     return {
       ...DEFAULT_DATA,
       ...parsed,
-      chartDataPeriods: parsed.chartDataPeriods || DEFAULT_DATA.chartDataPeriods
+      chartDataPeriods: parsed.chartDataPeriods || DEFAULT_DATA.chartDataPeriods,
+      notifications: parsed.notifications || DEFAULT_DATA.notifications
     };
   } catch {
     return DEFAULT_DATA;

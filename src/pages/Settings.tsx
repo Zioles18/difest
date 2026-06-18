@@ -31,7 +31,8 @@ import {
   updateBusinessData, 
   syncChartFromOrders,
   BUSINESS_DATA_UPDATED,
-  BusinessData
+  BusinessData,
+  addNotification
 } from "../utils/store";
 import { BarChart as BarChartIcon } from "lucide-react";
 
@@ -103,6 +104,7 @@ export function Settings() {
     setIsSaving(true);
     setTimeout(() => {
       localStorage.setItem("NexBiz_settings", JSON.stringify(settings));
+      addNotification({ text: `Settings saved — ${activeTab} tab`, dot: "bg-indigo-500" });
       setIsSaving(false);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
@@ -118,7 +120,7 @@ export function Settings() {
       setPaymentStep(2);
       setSettings(newSettings);
       localStorage.setItem("NexBiz_settings", JSON.stringify(newSettings));
-      // Add invoice to billing history and persist
+      addNotification({ text: "Upgraded to Business Premium — payment confirmed", dot: "bg-emerald-500" });
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
       const newInvId = `#INV-${now.getFullYear()}-${String(Math.floor(Math.random()*900)+100)}`;
@@ -152,6 +154,7 @@ export function Settings() {
     setIsSaving(true);
     setTimeout(() => {
       updateBusinessData(businessData);
+      addNotification({ text: "Business data updated — KPIs & chart synced", dot: "bg-amber-500" });
       setIsSaving(false);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);

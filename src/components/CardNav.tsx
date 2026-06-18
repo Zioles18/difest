@@ -1,7 +1,9 @@
 import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ArrowUpRight, Bell, Sun, Moon, X } from 'lucide-react';
+import { ArrowUpRight, Bell, Sun, Moon, X, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import ShinyText from './ShinyText';
 import { NXLogo } from './NXLogo';
 import { useTheme } from '../utils/ThemeContext';
@@ -47,10 +49,8 @@ const CardNav: React.FC<CardNavProps> = ({
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(() => {
-    const data = getBusinessData();
-    return data.notifications;
-  });
+  const [notifications, setNotifications] = useState<Notification[]>(() => getBusinessData().notifications);
+  const [unreadCount, setUnreadCount] = useState(() => getBusinessData().notifications.length);
   const [showToast, setShowToast] = useState(false);
   const [latestNotification, setLatestNotification] = useState<string>("");
   const [profile, setProfile] = useState(() => {
@@ -71,13 +71,13 @@ const CardNav: React.FC<CardNavProps> = ({
   // Listen for store updates and new notifications
   useEffect(() => {
     const handleStoreUpdate = () => {
-      const data = getBusinessData();
-      setNotifications(data.notifications);
+      setNotifications(getBusinessData().notifications);
     };
     const handleNewNotification = (event: CustomEvent<Notification>) => {
       setLatestNotification(event.detail.text);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setUnreadCount(c => c + 1);
+      setTimeout(() => setShowToast(false), 3500);
     };
     window.addEventListener(BUSINESS_DATA_UPDATED, handleStoreUpdate);
     window.addEventListener(NEW_NOTIFICATION, handleNewNotification as EventListener);
@@ -87,10 +87,14 @@ const CardNav: React.FC<CardNavProps> = ({
     };
   }, []);
 
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
+
   const navRef = useRef<HTMLDivElement | null>(null);
   const cardsRef = useRef<HTMLDivElement[]>([]);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const notifRef = useRef<HTMLDivElement | null>(null);
+  const bellRef = useRef<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const handleProfileUpdate = (e: any) => setProfile(e.detail);
@@ -100,7 +104,10 @@ const CardNav: React.FC<CardNavProps> = ({
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const insideBell = notifRef.current?.contains(target);
+      const insidePanel = panelRef.current?.contains(target);
+      if (!insideBell && !insidePanel) {
         setShowNotifications(false);
       }
     }
@@ -256,7 +263,7 @@ const CardNav: React.FC<CardNavProps> = ({
         backgroundColor: baseColor,
         transition: 'background-color 0.5s cubic-bezier(0.22,1,0.36,1)'
       }}>
-        <div className="card-nav-top">
+        <div className="card-nav-top overflow-visible">
           <div
             className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''}`}
             onClick={toggleMenu}
@@ -287,90 +294,166 @@ const CardNav: React.FC<CardNavProps> = ({
           <div className="flex items-center gap-3">
             {/* Theme Toggle */}
             <button
-              onClick={toggleTheme}
-              className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('Theme toggle clicked!');
+                toggleTheme();
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer pointer-events-auto z-40"
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Sun className="w-[18px] h-[18px]" /> : <Moon className="w-[18px] h-[18px]" />}
             </button>
 
             {/* Notifications */}
-            <div className="relative" ref={notifRef}>
+            <div className="relative z-50" ref={notifRef}>
               <button
-                onClick={() => {
+                type="button"
+                ref={bellRef}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (!showNotifications && bellRef.current) {
+                    const rect = bellRef.current.getBoundingClientRect();
+                    setDropdownPos({
+                      top: rect.bottom + 8,
+                      right: window.innerWidth - rect.right,
+                    });
+                    setUnreadCount(0);
+                  }
                   setShowNotifications((p) => !p);
                   closeMenu();
                 }}
-                className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
+                className="relative z-50 w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all cursor-pointer pointer-events-auto"
                 aria-label="Notifications"
               >
                 <Bell className="w-4.5 h-4.5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-0.5 bg-rose-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center leading-none">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </button>
 
-              {showNotifications && (
-                <div className="absolute right-0 top-12 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-50 overflow-hidden">
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
-                    <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">{notifications.length} New</span>
-                      {notifications.length > 0 && (
-                        <button onClick={() => clearAllNotifications()} className="text-xs font-bold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors px-2 py-1 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg">
-                          Clear All
+              {/* Notification Panel via Portal - escapes ALL overflow/transform constraints */}
+              {showNotifications && createPortal(
+                <AnimatePresence>
+                  <motion.div
+                    ref={panelRef}
+                    key="notif-panel"
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                    transition={{ duration: 0.15 }}
+                    style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right, zIndex: 9999 }}
+                    className="w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/15 dark:shadow-black/40 overflow-hidden"
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
+                      <div className="flex items-center gap-2">
+                        {notifications.length > 0 && (
+                          <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                            {notifications.length} {notifications.length === 1 ? 'Item' : 'Items'}
+                          </span>
+                        )}
+                        <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
+                          <X className="w-4 h-4" />
                         </button>
-                      )}
-                      <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
-                        <X className="w-4 h-4" />
-                      </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="max-h-80 overflow-y-auto">
-                    {notifications.length > 0 ? (
-                      notifications.map((n) => (
-                        <div
-                          key={n.id}
-                          className="w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0"
-                        >
-                          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.text}</p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteNotification(n.id);
-                            }}
-                            className="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors p-1"
+
+                    {/* List */}
+                    <div className="max-h-[280px] overflow-y-auto">
+                      <AnimatePresence initial={false}>
+                        {notifications.length === 0 ? (
+                          <motion.div
+                            key="empty"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="px-4 py-8 text-center"
                           >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="px-4 py-8 text-center">
-                        <p className="text-sm text-slate-500 dark:text-slate-400">No notifications yet</p>
+                            <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center">
+                              <Bell className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                            </div>
+                            <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
+                          </motion.div>
+                        ) : (
+                          notifications.map((n) => (
+                            <motion.div
+                              key={n.id}
+                              initial={{ opacity: 0, x: 10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 40, transition: { duration: 0.18 } }}
+                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group"
+                            >
+                              <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
+                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteNotification(n.id);
+                                }}
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 transition-all rounded-md flex-shrink-0"
+                                aria-label="Dismiss notification"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </motion.div>
+                          ))
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Footer */}
+                    {notifications.length > 0 && (
+                      <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                        <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                          {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
+                        </span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            clearAllNotifications();
+                            setShowNotifications(false);
+                          }}
+                          className="flex items-center gap-1.5 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          Clear all
+                        </button>
                       </div>
                     )}
-                  </div>
-                </div>
+                  </motion.div>
+                </AnimatePresence>,
+                document.body
               )}
 
               {/* Toast notification */}
-              {showToast && (
-                <div className="fixed top-20 right-4 z-[1000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{latestNotification}</p>
-                  </div>
-                  <button
-                    onClick={() => setShowToast(false)}
-                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors ml-2"
+              <AnimatePresence>
+                {showToast && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="fixed top-20 right-4 z-[2000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-xs"
                   >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 flex-1 min-w-0 truncate">{latestNotification}</p>
+                    <button
+                      onClick={() => setShowToast(false)}
+                      className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex-shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Profile avatar */}

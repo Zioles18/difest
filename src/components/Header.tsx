@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon } from "lucide-react";
+import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
+import { getBusinessData, deleteNotification, clearAllNotifications, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION } from "../utils/store";
 
 interface HeaderProps {
   setSidebarOpen: (isOpen: boolean) => void;
@@ -12,11 +13,7 @@ interface HeaderProps {
   activeTab: string;
 }
 
-const notifications = [
-  { id: 1, text: "New order #2890 received", time: "2m ago", dot: "bg-emerald-500" },
-  { id: 2, text: "Monthly report is ready", time: "1h ago", dot: "bg-indigo-500" },
-  { id: 3, text: "Server usage at 82%", time: "3h ago", dot: "bg-amber-500" },
-];
+
 
 export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
@@ -26,6 +23,8 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [notifications, setNotifications] = useState(() => getBusinessData().notifications);
+  const [unreadCount, setUnreadCount] = useState(() => getBusinessData().notifications.length);
   const notifRef = useRef<HTMLDivElement>(null);
 
   const handleSearchNav = (path: string) => {
@@ -51,6 +50,41 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
     window.addEventListener("NexBiz_modal_state", handleModalState);
     return () => window.removeEventListener("NexBiz_modal_state", handleModalState);
   }, []);
+
+  // Sync notifications from store
+  useEffect(() => {
+    const syncNotifs = () => {
+      const fresh = getBusinessData().notifications;
+      setNotifications(fresh);
+    };
+    const handleNew = () => {
+      syncNotifs();
+      setUnreadCount(c => c + 1);
+    };
+    window.addEventListener(BUSINESS_DATA_UPDATED, syncNotifs);
+    window.addEventListener(NEW_NOTIFICATION, handleNew);
+    return () => {
+      window.removeEventListener(BUSINESS_DATA_UPDATED, syncNotifs);
+      window.removeEventListener(NEW_NOTIFICATION, handleNew);
+    };
+  }, []);
+
+  // Reset unread count when bell is opened
+  const handleToggleNotifications = () => {
+    setShowNotifications(p => !p);
+    if (!showNotifications) setUnreadCount(0);
+  };
+
+  const handleDismiss = (id: string) => {
+    const updated = deleteNotification(id);
+    setNotifications(updated.notifications);
+  };
+
+  const handleClearAll = () => {
+    const updated = clearAllNotifications();
+    setNotifications(updated.notifications);
+    setShowNotifications(false);
+  };
 
   // Close notifications when clicking outside
   useEffect(() => {
@@ -221,12 +255,16 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
         {/* Notifications */}
         <div className="relative" ref={notifRef}>
           <button
-            onClick={() => setShowNotifications((p) => !p)}
+            onClick={handleToggleNotifications}
             className="relative w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-all"
             aria-label="Notifications"
           >
             <Bell className="w-4.5 h-4.5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[9px] font-extrabold rounded-full flex items-center justify-center leading-none">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </button>
 
           <AnimatePresence>
@@ -241,41 +279,70 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
                   <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">3 New</span>
+                    {notifications.length > 0 && (
+                      <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                        {notifications.length} {notifications.length === 1 ? "Item" : "Items"}
+                      </span>
+                    )}
                     <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
-                <div>
-                  {notifications.map((n) => (
+                <div className="max-h-[280px] overflow-y-auto">
+                  <AnimatePresence initial={false}>
+                    {notifications.length === 0 ? (
+                      <motion.div
+                        key="empty"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="px-4 py-8 text-center"
+                      >
+                        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center">
+                          <Bell className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                        </div>
+                        <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
+                      </motion.div>
+                    ) : (
+                      notifications.map((n) => (
+                        <motion.div
+                          key={n.id}
+                          initial={{ opacity: 0, x: 10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, x: 40, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group"
+                        >
+                          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                          </div>
+                          <button
+                            onClick={() => handleDismiss(n.id)}
+                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 transition-all rounded-md flex-shrink-0"
+                            aria-label="Dismiss"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </motion.div>
+                      ))
+                    )}
+                  </AnimatePresence>
+                </div>
+                {notifications.length > 0 && (
+                  <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                    <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{notifications.length} notification{notifications.length !== 1 ? "s" : ""}</span>
                     <button
-                      key={n.id}
-                      onClick={() => {
-                        console.log(`Notification clicked: ${n.text}`);
-                        setShowNotifications(false);
-                      }}
-                      className="w-full flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left border-b border-slate-50 dark:border-slate-700/50 last:border-0"
+                      onClick={handleClearAll}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
                     >
-                      <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
-                      <div>
-                        <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{n.text}</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
-                      </div>
+                      <Trash2 className="w-3 h-3" />
+                      Clear all
                     </button>
-                  ))}
-                </div>
-                <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/50">
-                  <button 
-                    onClick={() => {
-                      console.log("View all notifications clicked");
-                      setShowNotifications(false);
-                    }}
-                    className="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
-                  >
-                    View all →
-                  </button>
-                </div>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

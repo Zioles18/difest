@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import React, { useState, useRef } from "react";
 import { auth } from "../utils/auth";
+import { addNotification } from "../utils/store";
 
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -46,10 +47,8 @@ export function Profile() {
       setIsEditing(false);
       setShowSavedToast(true);
       localStorage.setItem("NexBiz_profile", JSON.stringify(profile));
-      
-      // Dispatch custom event for global sync
       window.dispatchEvent(new CustomEvent("NexBiz_profile_updated", { detail: profile }));
-      
+      addNotification({ text: `Profile updated — ${profile.name}`, dot: "bg-indigo-500" });
       setTimeout(() => setShowSavedToast(false), 3000);
     }, 1000);
   };
@@ -61,11 +60,11 @@ export function Profile() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // In a real app we'd upload and get a URL, here we'll use URL.createObjectURL for simulation
       const url = URL.createObjectURL(file);
       setProfile({...profile, avatar: url});
       localStorage.setItem("NexBiz_profile", JSON.stringify({...profile, avatar: url}));
       window.dispatchEvent(new CustomEvent("NexBiz_profile_updated", { detail: {...profile, avatar: url} }));
+      addNotification({ text: "Profile photo updated", dot: "bg-emerald-500" });
     }
   };
 

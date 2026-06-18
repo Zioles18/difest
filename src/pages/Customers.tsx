@@ -183,7 +183,7 @@ export function Customers() {
               animate={{ opacity: 1, y: 0 }}
             >
               <SpotlightCard className="p-0 overflow-hidden">
-                <div className="p-6 z-10 relative">
+                <div className="p-6 z-10 relative pointer-events-auto">
                   <div className="flex justify-between items-start mb-6">
                     <div className="relative">
                       <img 
@@ -216,12 +216,18 @@ export function Customers() {
                     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium break-all">{customer.email}</p>
                   </div>
 
-                  <div className="mt-6">
+                  <div className="mt-6 z-50 relative">
                     <button 
-                      onClick={() => setSelectedCustomer(customer)}
-                      className="w-full flex items-center justify-center gap-2 py-2.5 bg-slate-50 dark:bg-slate-800/50 hover:bg-indigo-50 text-slate-600 dark:text-slate-300 hover:text-indigo-600 text-xs font-bold rounded-xl transition-all border border-transparent hover:border-indigo-100"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        console.log('View Profile clicked', customer);
+                        setSelectedCustomer(customer);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-3 bg-white dark:bg-slate-800/70 hover:bg-indigo-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm font-bold rounded-2xl transition-all border border-slate-200 dark:border-slate-700/50 hover:border-indigo-200 dark:hover:border-indigo-500/30 shadow-sm cursor-pointer pointer-events-auto"
                     >
-                      <ExternalLink className="w-3.5 h-3.5" /> View Profile
+                      <ExternalLink className="w-4 h-4" /> View Profile
                     </button>
                   </div>
                 </div>

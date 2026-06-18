@@ -34,7 +34,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { KPICard } from "../components/KPICard";
 import { SpotlightCard } from "../components/SpotlightCard";
-import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED } from "../utils/store";
+import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED, addNotification } from "../utils/store";
 import { useTheme } from "../utils/ThemeContext";
 
 export function Dashboard() {
@@ -97,6 +97,7 @@ export function Dashboard() {
 
   const saveChartData = () => {
     updateBusinessData({ chartDataPeriods: draftData });
+    addNotification({ text: `Revenue chart data updated (${editorTab} view)`, dot: "bg-indigo-500" });
     setChartEditorOpen(false);
   };
 
