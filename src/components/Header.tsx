@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2 } from "lucide-react";
+import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
@@ -19,6 +19,7 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -26,6 +27,7 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
   const [notifications, setNotifications] = useState(() => getBusinessData().notifications);
   const [unreadCount, setUnreadCount] = useState(() => getBusinessData().notifications.length);
   const notifRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const handleSearchNav = (path: string) => {
     setSearchQuery("");
@@ -86,18 +88,26 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
     setShowNotifications(false);
   };
 
+  const handleSignOut = () => {
+    auth.logout();
+    navigate("/login");
+  };
+
   // Close notifications when clicking outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
       }
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setShowProfileDropdown(false);
+      }
     }
-    if (showNotifications) {
+    if (showNotifications || showProfileDropdown) {
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showNotifications]);
+  }, [showNotifications, showProfileDropdown]);
 
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("NexBiz_profile");
@@ -348,22 +358,94 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
           </AnimatePresence>
         </div>
 
-        {/* Profile avatar */}
-        <NavLink to="/profile" aria-label="Go to profile">
-          {({ isActive }) => (
-            <div
-              className={`w-9 h-9 rounded-full overflow-hidden border-2 cursor-pointer transition-all hover:scale-105 ${
-                isActive ? "border-indigo-500 ring-2 ring-indigo-200 dark:ring-indigo-900" : "border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-400"
-              }`}
-            >
+        {/* Profile dropdown */}
+        <div className="relative" ref={profileRef}>
+          <button
+            onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+            className="flex items-center gap-2 p-1 pr-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700"
+          >
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-slate-200 dark:border-slate-700">
               <img
                 src={profile.avatar}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>
-          )}
-        </NavLink>
+            <ChevronDown className={`w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`} />
+          </button>
+
+          <AnimatePresence>
+            {showProfileDropdown && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-11 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 z-50 overflow-hidden"
+              >
+                {/* Profile info */}
+                <div className="p-4 border-b border-slate-100 dark:border-slate-700/50">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700">
+                      <img
+                        src={profile.avatar}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
+                        {profile.name || "User"}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                        {auth.getCurrentEmail() || "user@example.com"}
+                      </p>
+                    </div>
+                  </div>
+                  <NavLink
+                    to="/profile"
+                    onClick={() => setShowProfileDropdown(false)}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>My Profile</span>
+                  </NavLink>
+                </div>
+
+                {/* Quick actions */}
+                <div className="p-2 space-y-1 border-b border-slate-100 dark:border-slate-700/50">
+                  <button
+                    onClick={toggleTheme}
+                    className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
+                  >
+                    <div className="flex items-center gap-2">
+                      {theme === "light" ? (
+                        <Sun className="w-4 h-4" />
+                      ) : (
+                        <Moon className="w-4 h-4" />
+                      )}
+                      <span>{theme === "light" ? "Light Mode" : "Dark Mode"}</span>
+                    </div>
+                    <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === "light" ? "bg-indigo-500" : "bg-slate-600"}`}>
+                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${theme === "light" ? "left-5" : "left-0.5"}`} />
+                    </div>
+                  </button>
+                </div>
+
+                {/* Sign out */}
+                <div className="p-2">
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
       </div>
     </header>

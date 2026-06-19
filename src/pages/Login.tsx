@@ -195,7 +195,10 @@ export function Login() {
             <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
               Created by <span className="text-indigo-500 dark:text-indigo-400">I Putu Ganendra Danadyaksa</span>
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-slate-500">SMK TI BALI GLOBAL DENPASAR</p>
+            <div className="flex items-center justify-center gap-2 mt-1">
+              <img src="/logo_sekolah.png" alt="Logo SMK TI Bali Global Denpasar" className="w-5 h-5 object-contain" />
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">SMK TI BALI GLOBAL DENPASAR</p>
+            </div>
           </div>
       </div>
 

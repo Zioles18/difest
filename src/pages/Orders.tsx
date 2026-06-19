@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { SpotlightCard } from "../components/SpotlightCard";
+import { RotatingText } from "../components/RotatingText";
 import { getBusinessData, updateOrder, addOrder, deleteOrder, BUSINESS_DATA_UPDATED, Order } from "../utils/store";
 
 export function Orders() {
@@ -111,11 +112,27 @@ export function Orders() {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6"
       >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Orders Hub</h1>
-          <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">Integrated Data Center • Persistent Order State</p>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100">
+              Orders
+            </h1>
+            <div className="relative inline-flex items-center">
+              <div className="absolute inset-0 bg-indigo-500/10 dark:bg-indigo-400/20 rounded-lg blur-sm"></div>
+              <RotatingText
+                texts={["Hub", "Center", "Dashboard", "System"]}
+                mainClassName="text-2xl sm:text-3xl font-bold text-indigo-600 dark:text-indigo-400 relative z-10"
+                staggerDuration={0.02}
+                rotationInterval={2800}
+                splitBy="characters"
+              />
+            </div>
+          </div>
+          <p className="text-slate-500 dark:text-slate-400 font-medium tracking-tight">
+            Integrated Data Center • Persistent Order State
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <button

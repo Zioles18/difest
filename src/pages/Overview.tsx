@@ -5,6 +5,7 @@ import { KPICard } from "../components/KPICard";
 import { DashboardChart } from "../components/DashboardChart";
 import { ActionItems } from "../components/ActionItems";
 import { SplitText } from "../components/SplitText";
+import { RotatingText } from "../components/RotatingText";
 import type { DateRange } from "../layouts/DashboardLayout";
 import { auth } from "../utils/auth";
 
@@ -51,13 +52,41 @@ export function Overview() {
             show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
           }}
         >
-          <SplitText
-            text={`Good morning, ${greetingName}.`}
-            className="font-display text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100 mb-2"
-            delay={0.05}
-          />
+          <div className="flex items-center flex-wrap gap-2 mb-3">
+            <SplitText
+              text="Good"
+              className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100"
+              delay={0.05}
+            />
+            <div className="relative inline-flex items-center">
+              <div className="absolute inset-0 bg-indigo-500/10 dark:bg-indigo-400/20 rounded-xl blur-sm"></div>
+              <RotatingText
+                texts={["morning", "afternoon", "evening", "day"]}
+                mainClassName="font-display text-3xl sm:text-4xl font-bold tracking-tight text-indigo-600 dark:text-indigo-400 relative z-10"
+                staggerDuration={0.03}
+                staggerFrom="last"
+                rotationInterval={3500}
+                splitBy="characters"
+              />
+            </div>
+            <SplitText
+              text={", " + greetingName + "!"}
+              className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100"
+              delay={0.05}
+            />
+          </div>
           <p className="text-slate-500 dark:text-slate-400 text-base font-medium">
-            Here's what's happening with your business today.
+            Here's what's happening with your{" "}
+            <span className="inline-flex items-center gap-1">
+              <RotatingText
+                texts={["business", "team", "revenue", "growth"]}
+                mainClassName="text-base font-bold text-indigo-600 dark:text-indigo-400"
+                staggerDuration={0.02}
+                rotationInterval={2800}
+                splitBy="characters"
+              />
+            </span>{" "}
+            today.
           </p>
         </motion.div>
       </div>
