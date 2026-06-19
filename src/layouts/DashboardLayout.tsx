@@ -88,6 +88,12 @@ export function DashboardLayout() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
           <Outlet context={{ dateRange, activeTab }} />
         </div>
+        <div className="pb-4 text-center">
+          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
+            Created by <span className="text-indigo-500 dark:text-indigo-400">I Putu Ganendra Danadyaksa</span>
+          </p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500">SMK TI BALI GLOBAL DENPASAR</p>
+        </div>
       </main>
       
       <AIChat />

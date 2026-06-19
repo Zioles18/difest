@@ -15,9 +15,12 @@ import {
   Github,
   Upload
 } from "lucide-react";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { auth } from "../utils/auth";
 import { addNotification } from "../utils/store";
+import Shuffle from "../components/Shuffle";
 
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -38,6 +41,17 @@ export function Profile() {
       avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email || "user"}&backgroundColor=6366f1&textColor=ffffff`
     };
   });
+
+  // Trigger Shuffle animation on mount (bypass ScrollTrigger issue with elements at top of page)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      ScrollTrigger.refresh();
+      // Small scroll bump to force onEnter for elements already at viewport top
+      window.scrollTo(0, 1);
+      requestAnimationFrame(() => window.scrollTo(0, 0));
+    }, 300);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleSave = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -110,13 +124,47 @@ export function Profile() {
         className="relative mb-6 sm:mb-8"
       >
         {/* Cover image */}
-        <div className="h-36 sm:h-52 md:h-64 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-2xl shadow-indigo-500/10">
+        <div className="h-36 sm:h-52 md:h-64 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 dark:from-indigo-950 dark:via-purple-950 dark:to-pink-950 relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-2xl shadow-indigo-500/10">
           <img 
             src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80&w=2000" 
-            className="w-full h-full object-cover mix-blend-overlay opacity-40"
+            className="w-full h-full object-cover mix-blend-overlay opacity-20 dark:opacity-30"
             alt="Cover"
           />
-          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute inset-0 bg-white/20 dark:bg-black/20"></div>
+
+          {/* Shuffle text on cover */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center px-6">
+            <Shuffle
+              text={profile.name.toUpperCase()}
+              tag="h2"
+              shuffleDirection="right"
+              loop={true}
+              loopDelay={3}
+              duration={0.6}
+              shuffleTimes={2}
+              className="text-xl sm:text-3xl md:text-4xl font-bold text-indigo-800 dark:text-indigo-200"
+              textAlign="center"
+              triggerOnHover={false}
+              triggerOnce={false}
+              threshold={1}
+              rootMargin="0px"
+            />
+            <Shuffle
+              text={profile.role.toUpperCase()}
+              tag="p"
+              shuffleDirection="left"
+              loop={true}
+              loopDelay={3}
+              duration={0.6}
+              shuffleTimes={2}
+              className="text-xs sm:text-sm md:text-base font-semibold text-indigo-600/70 dark:text-indigo-300/70 mt-2 tracking-widest"
+              textAlign="center"
+              triggerOnHover={false}
+              triggerOnce={false}
+              threshold={1}
+              rootMargin="0px"
+            />
+          </div>
         </div>
 
         {/* Info bar — positioned below the cover, no overflow-hidden */}
@@ -186,6 +234,7 @@ export function Profile() {
                 </button>
               )}
             </div>
+
           </div>
         </div>
       </motion.div>

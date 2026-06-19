@@ -213,6 +213,16 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
           <LogOut className="w-4 h-4" />
           <span>Sign Out</span>
         </button>
+
+        {/* Creator credit */}
+        <div className="mt-3 px-3 pt-3 border-t border-slate-100 dark:border-slate-700/50">
+          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 text-center leading-relaxed">
+            Created by <span className="text-indigo-500 dark:text-indigo-400">I Putu Ganendra Danadyaksa</span>
+          </p>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center">
+            SMK TI BALI GLOBAL DENPASAR
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -171,6 +171,8 @@ export const updateOrder = (orderId: string, status: Order["status"]) => {
   let newSales = data.sales;
   let newChartDataPeriods = { ...data.chartDataPeriods };
 
+  let newNotification: Omit<Notification, "id" | "time"> | null = null;
+
   // If newly approved
   if (oldStatus !== "Completed" && status === "Completed") {
     newRevenue += order.rawTotal;
@@ -183,17 +185,22 @@ export const updateOrder = (orderId: string, status: Order["status"]) => {
     weekData[dayIndex] = { ...weekData[dayIndex], value: weekData[dayIndex].value + order.rawTotal };
     newChartDataPeriods.week = weekData;
     
-    // Add notification
-    addNotification({
+    newNotification = {
       text: `Order ${orderId} marked as Completed`,
       dot: "bg-emerald-500"
-    });
+    };
   } else if (oldStatus !== status) {
-    // Add notification for other status changes
-    addNotification({
+    newNotification = {
       text: `Order ${orderId} status updated to ${status}`,
       dot: "bg-indigo-500"
-    });
+    };
+  }
+
+  let newNotifications = data.notifications;
+  if (newNotification) {
+    const notification: Notification = { ...newNotification, id: `n${Date.now()}`, time: "Just now" };
+    newNotifications = [notification, ...data.notifications].slice(0, 10);
+    window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
   }
 
   return syncStore({
@@ -201,7 +208,8 @@ export const updateOrder = (orderId: string, status: Order["status"]) => {
     orders: newOrders,
     revenue: newRevenue,
     sales: newSales,
-    chartDataPeriods: newChartDataPeriods
+    chartDataPeriods: newChartDataPeriods,
+    notifications: newNotifications
   });
 };
 
@@ -240,31 +248,38 @@ export const syncChartFromOrders = () => {
 
 export const addOrder = (order: Order) => {
   const data = getBusinessData();
+  const notification: Notification = {
+    id: `n${Date.now()}`,
+    text: `New order ${order.id} received from ${order.customer}`,
+    time: "Just now",
+    dot: "bg-emerald-500"
+  };
   const newData = {
     ...data,
-    orders: [order, ...data.orders]
+    orders: [order, ...data.orders],
+    notifications: [notification, ...data.notifications].slice(0, 10)
   };
-  
-  addNotification({
-    text: `New order ${order.id} received from ${order.customer}`,
-    dot: "bg-emerald-500"
-  });
-  
-  return syncStore(newData);
+  syncStore(newData);
+  window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
+  return newData;
 };
 
 export const deleteOrder = (orderId: string) => {
   const data = getBusinessData();
-  
-  addNotification({
+  const notification: Notification = {
+    id: `n${Date.now()}`,
     text: `Order ${orderId} deleted`,
+    time: "Just now",
     dot: "bg-rose-500"
-  });
-  
-  return syncStore({
+  };
+  const newData = {
     ...data,
-    orders: data.orders.filter(o => o.id !== orderId)
-  });
+    orders: data.orders.filter(o => o.id !== orderId),
+    notifications: [notification, ...data.notifications].slice(0, 10)
+  };
+  syncStore(newData);
+  window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
+  return newData;
 };
 
 export const applyOptimization = () => {

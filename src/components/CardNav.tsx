@@ -53,6 +53,7 @@ const CardNav: React.FC<CardNavProps> = ({
   const [unreadCount, setUnreadCount] = useState(() => getBusinessData().notifications.length);
   const [showToast, setShowToast] = useState(false);
   const [latestNotification, setLatestNotification] = useState<string>("");
+  const toastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [profile, setProfile] = useState(() => {
     const saved = localStorage.getItem("NexBiz_profile");
     const email = auth.getCurrentEmail();
@@ -77,13 +78,15 @@ const CardNav: React.FC<CardNavProps> = ({
       setLatestNotification(event.detail.text);
       setShowToast(true);
       setUnreadCount(c => c + 1);
-      setTimeout(() => setShowToast(false), 3500);
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+      toastTimeoutRef.current = setTimeout(() => setShowToast(false), 3500);
     };
     window.addEventListener(BUSINESS_DATA_UPDATED, handleStoreUpdate);
     window.addEventListener(NEW_NOTIFICATION, handleNewNotification as EventListener);
     return () => {
       window.removeEventListener(BUSINESS_DATA_UPDATED, handleStoreUpdate);
       window.removeEventListener(NEW_NOTIFICATION, handleNewNotification as EventListener);
+      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     };
   }, []);
 
@@ -386,7 +389,8 @@ const CardNav: React.FC<CardNavProps> = ({
                               initial={{ opacity: 0, x: 10 }}
                               animate={{ opacity: 1, x: 0 }}
                               exit={{ opacity: 0, x: 40, transition: { duration: 0.18 } }}
-                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group"
+                              onClick={() => deleteNotification(n.id)}
+                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group cursor-pointer"
                             >
                               <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
                               <div className="flex-1 min-w-0">
@@ -441,7 +445,19 @@ const CardNav: React.FC<CardNavProps> = ({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="fixed top-20 right-4 z-[2000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-xs"
+                    onClick={() => {
+                      if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+                      setShowToast(false);
+                      setShowNotifications(true);
+                      if (bellRef.current) {
+                        const rect = bellRef.current.getBoundingClientRect();
+                        setDropdownPos({
+                          top: rect.bottom + 8,
+                          right: window.innerWidth - rect.right,
+                        });
+                      }
+                    }}
+                    className="fixed top-20 right-4 z-[2000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-xs cursor-pointer"
                   >
                     <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                     <p className="text-sm font-medium text-slate-800 dark:text-slate-200 flex-1 min-w-0 truncate">{latestNotification}</p>

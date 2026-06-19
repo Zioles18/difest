@@ -1,0 +1,13 @@
+.shuffle-parent {
+  display: inline-block;
+}
+
+.shuffle-parent.is-ready {
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shuffle-parent .shuffle-char {
+    transition: none !important;
+  }
+}

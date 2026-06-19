@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { SpotlightCard } from "../components/SpotlightCard";
+import { addNotification } from "../utils/store";
 
 const initialCustomers = [
   { id: 1, name: "Alex Rivera", email: "alex@example.com", phone: "+1 (555) 123-4567", location: "New York, USA", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", spend: "$4,250", orders: 12, rating: 5, role: "Founder & CEO", joined: "Jan 2022" },
@@ -90,6 +91,7 @@ export function Customers() {
         ...prev,
         [customerId]: [...(prev[customerId] || []), reply]
       }));
+      addNotification({ text: `${activeMessenger.name} replied: "${reply.text}"`, dot: "bg-indigo-500" });
     }, 1500);
   };
 
@@ -123,6 +125,7 @@ export function Customers() {
     setCustomers([newCustomer, ...customers]);
     setIsAddingCustomer(false);
     setCustomerAvatarPreview(null);
+    addNotification({ text: `New customer ${name} joined`, dot: "bg-emerald-500" });
   };
 
   const currentMessages = activeMessenger ? (customerMessages[activeMessenger.id] || []) : [];
