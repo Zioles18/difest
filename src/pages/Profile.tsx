@@ -107,9 +107,10 @@ export function Profile() {
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden mb-6 sm:mb-8 shadow-2xl shadow-indigo-500/10"
+        className="relative mb-6 sm:mb-8"
       >
-        <div className="h-52 sm:h-72 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative">
+        {/* Cover image */}
+        <div className="h-36 sm:h-52 md:h-64 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-2xl shadow-indigo-500/10">
           <img 
             src="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80&w=2000" 
             className="w-full h-full object-cover mix-blend-overlay opacity-40"
@@ -117,70 +118,79 @@ export function Profile() {
           />
           <div className="absolute inset-0 bg-black/10"></div>
         </div>
-        
-        <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent p-5 sm:p-8 md:p-10 flex flex-col md:flex-row items-center md:items-end gap-5 sm:gap-6">
-          <div className="relative group">
-            <div 
-              onClick={handleAvatarClick}
-              className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 rounded-[1.5rem] sm:rounded-[2rem] border-4 border-white dark:border-slate-700/50 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 transition-transform group-hover:scale-[1.02] cursor-pointer"
-            >
-              <img
-                src={profile.avatar}
-                alt={profile.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
-                <Upload className="w-8 h-8" />
+
+        {/* Info bar — positioned below the cover, no overflow-hidden */}
+        <div className="bg-slate-900/95 dark:bg-slate-900/95 rounded-[1.5rem] sm:rounded-[2rem] shadow-2xl shadow-indigo-500/10 px-5 sm:px-8 md:px-10 pb-5 sm:pb-8 mt-2">
+          {/* Avatar row */}
+          <div className="flex flex-col md:flex-row items-center md:items-end gap-4 sm:gap-6">
+            {/* Avatar — overhangs the cover via negative margin */}
+            <div className="relative group flex-shrink-0 -mt-12 sm:-mt-14 md:-mt-16 self-center md:self-auto">
+              <div 
+                onClick={handleAvatarClick}
+                className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-[1.5rem] sm:rounded-[2rem] border-4 border-slate-900 shadow-2xl overflow-hidden bg-white dark:bg-slate-900 transition-transform group-hover:scale-[1.02] cursor-pointer relative"
+              >
+                <img
+                  src={profile.avatar}
+                  alt={profile.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                  <Upload className="w-8 h-8" />
+                </div>
               </div>
+              <button 
+                onClick={handleAvatarClick}
+                className="absolute -bottom-1 -right-1 p-2.5 sm:p-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-xl border border-slate-100 dark:border-slate-700 transform translate-y-1 group-hover:translate-y-0"
+              >
+                <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
             </div>
-            <button 
-              onClick={handleAvatarClick}
-              className="absolute -bottom-1 -right-1 p-2.5 sm:p-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded-xl sm:rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all shadow-xl border border-slate-100 dark:border-slate-700/50 transform translate-y-1 group-hover:translate-y-0"
-            >
-              <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
-            </button>
-          </div>
-          
-          <div className="flex-1 pb-2 text-center md:text-left">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 mb-2">
-              <h1 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-white tracking-tight">{profile.name}</h1>
-              {isEditing && (
-                <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full">Editing Mode</span>
+
+            {/* Name + info */}
+            <div className="flex-1 text-center md:text-left pt-3 md:pt-0 md:pb-2">
+              <div className="flex flex-col sm:flex-row items-center md:items-end justify-center md:justify-start gap-2 sm:gap-3 mb-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white tracking-tight">{profile.name}</h1>
+                {isEditing && (
+                  <span className="px-3 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full">Editing Mode</span>
+                )}
+              </div>
+              <p className="text-slate-400 dark:text-slate-400 font-medium flex flex-wrap items-center justify-center md:justify-start gap-x-4 sm:gap-x-6 gap-y-2 text-xs sm:text-sm">
+                <span className="flex items-center gap-2"><Briefcase className="w-4 h-4 opacity-70" /> {profile.role}</span>
+                <span className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /> {profile.location}</span>
+              </p>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto md:pb-2">
+              {isEditing ? (
+                <>
+                  <button 
+                    onClick={() => setIsEditing(false)}
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 bg-white/10 text-white font-bold rounded-xl sm:rounded-2xl hover:bg-white/20 transition-all border border-white/20 text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={() => handleSave()}
+                    className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 bg-indigo-600 text-white font-bold rounded-xl sm:rounded-2xl hover:bg-indigo-700 transition-all shadow-lg text-sm"
+                  >
+                    <Save className="w-4 h-4" /> Save
+                  </button>
+                </>
+              ) : (
+                <button 
+                  onClick={() => setIsEditing(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-bold rounded-xl sm:rounded-2xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all shadow-xl group border border-transparent hover:border-indigo-100 dark:hover:border-indigo-500/30 text-sm"
+                >
+                  <Edit2 className="w-4 h-4 transition-transform group-hover:rotate-12" /> Edit Profile
+                </button>
               )}
             </div>
-            <p className="text-indigo-100/90 font-medium flex flex-wrap items-center justify-center md:justify-start gap-x-4 sm:gap-x-6 gap-y-2 text-xs sm:text-sm md:text-base">
-              <span className="flex items-center gap-2"><Briefcase className="w-4 h-4 opacity-70" /> {profile.role}</span>
-              <span className="flex items-center gap-2"><MapPin className="w-4 h-4 opacity-70" /> {profile.location}</span>
-            </p>
-          </div>
-          
-          <div className="pb-2 flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto">
-            {isEditing ? (
-              <>
-                <button 
-                  onClick={() => setIsEditing(false)}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 bg-white/10 backdrop-blur-md text-white font-bold rounded-xl sm:rounded-2xl hover:bg-white/20 transition-all border border-white/20 text-sm"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={() => handleSave()}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-2.5 sm:py-3 bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl sm:rounded-2xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all shadow-xl shadow-white/10 text-sm"
-                >
-                  <Save className="w-4 h-4" /> Save
-                </button>
-              </>
-            ) : (
-              <button 
-                onClick={() => setIsEditing(true)}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 sm:py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-bold rounded-xl sm:rounded-2xl hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-all shadow-xl group border border-transparent hover:border-indigo-100 dark:hover:border-indigo-500/30 text-sm"
-              >
-                <Edit2 className="w-4 h-4 transition-transform group-hover:rotate-12" /> Edit Profile
-              </button>
-            )}
           </div>
         </div>
       </motion.div>
+
+
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

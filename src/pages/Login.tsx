@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowRight, Mail, Lock, Sun, Moon } from "lucide-react";
 import { NXLogo } from "../components/NXLogo";
 import ShinyText from "../components/ShinyText";
-import Lightfall from "../components/Lightfall";
+import Ferrofluid from "../components/Ferrofluid";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 
@@ -58,24 +58,24 @@ export function Login() {
     }, 1500);
   };
 
+  const isDark = theme === 'dark';
+
   return (
     <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
-      <Lightfall
+      <Ferrofluid
         className="absolute inset-0 z-0"
         colors={['#0ea5e9', '#6366f1', '#7c3aed']}
-        backgroundColor={theme === 'dark' ? '#0f172a' : '#f8fafc'}
         speed={0.4}
-        streakCount={3}
-        density={0.7}
-        glow={0.8}
-        opacity={0.6}
-        backgroundGlow={0.3}
+        scale={1.6}
+        turbulence={1}
+        fluidity={0.1}
+        rimWidth={0.2}
+        sharpness={2.5}
+        shimmer={1.5}
+        glow={isDark ? 0.8 : 0.9}
+        opacity={isDark ? 0.6 : 0.7}
+        mixBlendMode={isDark ? 'screen' : 'multiply'}
       />
-      {/* Floating Blobs for extra depth */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-pink-500/10 rounded-full blur-[120px]" />
-      </div>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">

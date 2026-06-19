@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
-import { ArrowUpRight, Bell, Sun, Moon, X, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Bell, Sun, Moon, X, Trash2, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import ShinyText from './ShinyText';
 import { NXLogo } from './NXLogo';
@@ -470,6 +470,20 @@ const CardNav: React.FC<CardNavProps> = ({
                 />
               </div>
             </NavLink>
+
+            {/* Sign Out */}
+            <button
+              type="button"
+              onClick={() => {
+                auth.logout();
+                navigate('/login');
+              }}
+              title="Sign out"
+              aria-label="Sign out"
+              className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-all cursor-pointer pointer-events-auto z-40"
+            >
+              <LogOut className="w-[18px] h-[18px]" />
+            </button>
           </div>
         </div>
 
