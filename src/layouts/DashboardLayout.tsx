@@ -85,10 +85,10 @@ export function DashboardLayout() {
       </div>
 
       <main className={`flex-1 w-full relative transition-all duration-300 ${isModalActive ? 'overflow-hidden' : 'overflow-y-auto'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 sm:pb-32">
           <Outlet context={{ dateRange, activeTab }} />
         </div>
-        <div className="pb-4 text-center">
+        <div className="pb-4 sm:pb-10 text-center">
           <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">
             Created by <span className="text-indigo-500 dark:text-indigo-400">I Putu Ganendra Danadyaksa</span>
           </p>

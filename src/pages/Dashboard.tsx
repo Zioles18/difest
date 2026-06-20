@@ -54,6 +54,13 @@ export function Dashboard() {
     month: { name: string; value: number }[];
     year: { name: string; value: number }[];
   }>({ week: [], month: [], year: [] });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Sync the chart period with the global header date filter
   useEffect(() => {
@@ -289,7 +296,7 @@ export function Dashboard() {
       >
         {/* Revenue Chart with Glassmorphism */}
         <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }} className="lg:col-span-2">
-          <SpotlightCard allowOverflow={true} className="p-5 sm:p-8 lg:p-10 bg-white/70 dark:bg-slate-800/15 border border-slate-200/70 dark:border-slate-700/30">
+          <SpotlightCard allowOverflow={true} className="p-4 sm:p-8 lg:p-10 bg-white/70 dark:bg-slate-800/15 border border-slate-200/70 dark:border-slate-700/30">
           <div className="absolute top-0 right-0 p-8 opacity-10">
              <TrendingUp className="w-32 h-32 text-indigo-600 dark:text-indigo-400" />
           </div>
@@ -331,10 +338,13 @@ export function Dashboard() {
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 700 }}
+                  tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: isMobile ? 9 : 11, fontWeight: 700 }}
                   dy={15}
+                  interval={isMobile ? "preserveStart" : "preserveStartEnd"}
+                  minTickGap={isMobile ? 35 : 30}
                 />
                 <YAxis 
+                  hide={isMobile}
                   axisLine={false} 
                   tickLine={false} 
                   tick={{ fill: theme === 'dark' ? '#94a3b8' : '#64748b', fontSize: 11, fontWeight: 700 }}
@@ -475,7 +485,7 @@ export function Dashboard() {
                             type="number"
                             value={point.value}
                             onChange={e => updateDraftValue(editorTab, idx, e.target.value)}
-                            className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-3 py-2 text-sm font-bold text-slate-900 dark:text-slate-100 outline-none transition-all"
+                            className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-3 py-2 text-sm font-bold text-slate-900 dark:text-slate-100 outline-none transition-all no-spin"
                           />
                         </div>
                       </div>

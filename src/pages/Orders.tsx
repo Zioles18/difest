@@ -15,7 +15,9 @@ import {
   DollarSign,
   Package,
   Check,
-  Ban
+  Ban,
+  Minus,
+  ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { SpotlightCard } from "../components/SpotlightCard";
@@ -427,25 +429,62 @@ export function Orders() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Amount</label>
-                      <div className="relative">
-                        <DollarSign className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-                        <input required name="total" type="number" step="0.01" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="0.00" />
+                      <div className="relative group">
+                        <DollarSign className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
+                        <input required name="total" type="number" step="0.01" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 no-spin" placeholder="0.00" />
                       </div>
                     </div>
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Product Qty</label>
-                      <div className="relative">
-                        <Package className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500" />
-                        <input required name="items" type="number" min="1" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="1" />
+                      <div className="relative group flex items-center">
+                        <Package className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors pointer-events-none" />
+                        <input 
+                          id="items-input"
+                          required 
+                          name="items" 
+                          type="number" 
+                          min="1" 
+                          defaultValue="1"
+                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-20 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 no-spin" 
+                        />
+                        <div className="absolute right-2 flex items-center gap-1">
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const input = document.getElementById('items-input') as HTMLInputElement;
+                              if (input && parseInt(input.value) > 1) {
+                                input.value = (parseInt(input.value) - 1).toString();
+                              }
+                            }}
+                            className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-indigo-500 transition-all shadow-sm"
+                          >
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              const input = document.getElementById('items-input') as HTMLInputElement;
+                              if (input) {
+                                input.value = (parseInt(input.value || "0") + 1).toString();
+                              }
+                            }}
+                            className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-indigo-500 transition-all shadow-sm"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Initial Status</label>
-                      <select name="status" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 appearance-none cursor-pointer">
-                        <option value="Pending">Pending</option>
-                        <option value="Processing">Processing</option>
-                        <option value="Completed">Completed</option>
-                      </select>
+                      <div className="relative group">
+                        <select name="status" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 appearance-none cursor-pointer">
+                          <option value="Pending">Pending</option>
+                          <option value="Processing">Processing</option>
+                          <option value="Completed">Completed</option>
+                        </select>
+                        <ChevronDown className="absolute right-6 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 pointer-events-none transition-colors" />
+                      </div>
                     </div>
                   </div>
                   <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4">

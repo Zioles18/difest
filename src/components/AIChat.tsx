@@ -83,7 +83,7 @@ export function AIChat() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 sm:bottom-10 sm:right-10 z-[100]">
+    <div className="fixed bottom-4 right-4 sm:bottom-10 sm:right-10 z-[100]">
       <AnimatePresence>
         {isOpen && (
           <motion.div

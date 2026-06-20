@@ -58,6 +58,15 @@ html, body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+  .no-spin::-webkit-outer-spin-button,
+  .no-spin::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0 !important;
+  }
+  .no-spin {
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+  }
 }
 
 /* Custom Scrollbar Styling */

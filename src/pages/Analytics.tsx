@@ -193,14 +193,14 @@ export function Analytics() {
                 </div>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Device Share</h3>
              </div>
-             <div className="h-[200px] w-full">
+             <div className="h-[180px] sm:h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={deviceData}
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={8}
+                      innerRadius={40}
+                      outerRadius={60}
+                      paddingAngle={5}
                       dataKey="value"
                     >
                       {deviceData.map((entry, index) => (

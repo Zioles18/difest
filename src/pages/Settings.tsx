@@ -369,37 +369,59 @@ export function Settings() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
                        <div className="space-y-2">
                           <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Revenue ($)</label>
-                           <input 
-                             type="number" 
-                             value={businessData.revenue}
-                             onChange={(e) => setBusinessData({...businessData, revenue: Number(e.target.value)})}
-                             className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
-                           />
+                          <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">$</span>
+                            <input 
+                              type="text"
+                              inputMode="numeric"
+                              value={businessData.revenue}
+                              onChange={(e) => {
+                                const val = e.target.value.replace(/[^0-9]/g, '');
+                                setBusinessData({...businessData, revenue: val ? Number(val) : 0})
+                              }}
+                              className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 pl-8 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Revenue Goal ($)</label>
-                           <input 
-                             type="number" 
-                             value={businessData.revenueGoal}
-                             onChange={(e) => setBusinessData({...businessData, revenueGoal: Number(e.target.value)})}
-                             className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
-                           />
+                           <div className="relative">
+                             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">$</span>
+                             <input 
+                               type="text"
+                               inputMode="numeric"
+                               value={businessData.revenueGoal}
+                               onChange={(e) => {
+                                 const val = e.target.value.replace(/[^0-9]/g, '');
+                                 setBusinessData({...businessData, revenueGoal: val ? Number(val) : 0})
+                               }}
+                               className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 pl-8 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
+                             />
+                           </div>
                         </div>
                         <div className="space-y-2">
                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Sales</label>
                            <input 
-                             type="number" 
+                             type="text"
+                             inputMode="numeric"
                              value={businessData.sales}
-                             onChange={(e) => setBusinessData({...businessData, sales: Number(e.target.value)})}
+                             onChange={(e) => {
+                               const val = e.target.value.replace(/[^0-9]/g, '');
+                               setBusinessData({...businessData, sales: val ? Number(val) : 0})
+                             }}
                              className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
                            />
                         </div>
                         <div className="space-y-2">
                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Active Users</label>
                            <input 
-                             type="number" 
+                             type="text"
+                             inputMode="numeric"
                              value={businessData.activeUsers}
-                             onChange={(e) => setBusinessData({...businessData, activeUsers: Number(e.target.value)})}
+                             onChange={(e) => {
+                               const val = e.target.value.replace(/[^0-9]/g, '');
+                               setBusinessData({...businessData, activeUsers: val ? Number(val) : 0})
+                             }}
                              className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
                            />
                        </div>
@@ -430,19 +452,23 @@ export function Settings() {
                           {businessData.chartDataPeriods.week.map((d, i) => (
                              <div key={d.name} className="space-y-1.5">
                                 <label className="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase text-center block">{d.name}</label>
-                                <input 
-                                  type="number"
-                                  value={d.value}
-                                  onChange={(e) => {
-                                     const newWeek = [...businessData.chartDataPeriods.week];
-                                     newWeek[i] = { ...newWeek[i], value: Number(e.target.value) };
-                                     setBusinessData({
-                                        ...businessData,
-                                        chartDataPeriods: { ...businessData.chartDataPeriods, week: newWeek }
-                                     });
-                                  }}
-                                   className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 rounded-lg px-2 py-2 text-[10px] font-bold text-center focus:ring-2 focus:ring-indigo-500/10 outline-none text-slate-900 dark:text-slate-100"
-                                />
+                                <div className="relative">
+                                  <input 
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={d.value}
+                                    onChange={(e) => {
+                                       const val = e.target.value.replace(/[^0-9]/g, '');
+                                       const newWeek = [...businessData.chartDataPeriods.week];
+                                       newWeek[i] = { ...newWeek[i], value: val ? Number(val) : 0 };
+                                       setBusinessData({
+                                          ...businessData,
+                                          chartDataPeriods: { ...businessData.chartDataPeriods, week: newWeek }
+                                       });
+                                    }}
+                                     className="w-full bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-700/50 rounded-lg px-2 py-3 text-[11px] font-bold text-center focus:ring-2 focus:ring-indigo-500/10 outline-none text-slate-900 dark:text-slate-100 transition-all hover:border-indigo-200 dark:hover:border-indigo-600"
+                                  />
+                                </div>
                              </div>
                           ))}
                        </div>
