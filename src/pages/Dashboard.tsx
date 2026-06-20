@@ -199,7 +199,13 @@ export function Dashboard() {
               />
             </div>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 font-semibold mt-1">Real-time business intelligence • <span className="text-emerald-500 dark:text-emerald-400">System Live</span></p>
+          <div className="text-slate-500 dark:text-slate-400 font-semibold mt-1 flex items-center gap-1.5 flex-wrap">
+            <span className="hidden sm:inline">Real-time business intelligence •</span>
+            <span className="flex items-center gap-1.5 inline-flex bg-emerald-500/5 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+              <span className="text-emerald-500 dark:text-emerald-400">System Live</span>
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
           <div className="flex items-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 rounded-2xl shadow-sm text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300">
@@ -361,7 +367,7 @@ export function Dashboard() {
         </motion.div>
 
         {/* Sync-Ready Activity feed - Redesigned to Light/Glass */}
-        <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }}>
+        <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } } }} className="lg:col-span-1">
           <SpotlightCard className="p-5 sm:p-8 lg:p-10 bg-white/80 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-700/50 relative overflow-hidden">
            <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-indigo-500/10 rounded-full blur-[80px]"></div>
            

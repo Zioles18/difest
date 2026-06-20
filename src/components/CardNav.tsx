@@ -143,16 +143,23 @@ const CardNav: React.FC<CardNavProps> = ({
         const topBar = 60;
         const padding = 16;
         const contentHeight = contentEl.scrollHeight;
-
+        
         contentEl.style.visibility = wasVisible;
         contentEl.style.pointerEvents = wasPointerEvents;
         contentEl.style.position = wasPosition;
         contentEl.style.height = wasHeight;
 
-        return topBar + contentHeight + padding;
+        // Add extra padding/buffer to prevent cutoff
+        return topBar + contentHeight + 40; 
+      }
+    } else {
+      // Desktop also needs a dynamic height now that we added a card
+      const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement;
+      if (contentEl) {
+        return 60 + contentEl.scrollHeight + 32;
       }
     }
-    return 260;
+    return 300; // Increased base height
   };
 
   const createTimeline = () => {
@@ -167,7 +174,10 @@ const CardNav: React.FC<CardNavProps> = ({
     tl.to(navEl, {
       height: calculateHeight,
       duration: 0.2,
-      ease
+      ease,
+      onComplete: () => {
+        gsap.set(navEl, { overflow: 'visible' });
+      }
     });
 
     tl.to(cardsRef.current, { y: 0, opacity: 1, duration: 0.15, ease, stagger: 0.05 }, '-=0.1');

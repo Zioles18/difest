@@ -154,7 +154,7 @@ export function Orders() {
           </button>
           <button
             onClick={() => setIsAddingOrder(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 text-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-md text-sm"
           >
             <Plus className="w-4 h-4" /> Create Order
           </button>
@@ -395,7 +395,7 @@ export function Orders() {
               >
                 <div className="flex items-center justify-between mb-6 sm:mb-10">
                   <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-indigo-500/20">
+                    <div className="w-14 h-14 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg">
                       <Plus className="w-8 h-8" />
                     </div>
                     <div>
@@ -450,7 +450,7 @@ export function Orders() {
                   </div>
                   <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4">
                     <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm">Discard</button>
-                    <button type="submit" className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 text-sm">Submit Order</button>
+                    <button type="submit" className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg text-sm">Submit Order</button>
                   </div>
                 </form>
               </motion.div>
@@ -480,7 +480,7 @@ export function Orders() {
                 <div className="p-6 sm:p-10 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
                   <div className="flex justify-between items-start mb-8">
                     <div className="flex items-center gap-5">
-                      <img src={selectedOrder.avatar} className="w-16 h-16 rounded-2xl border-4 border-white dark:border-slate-700/50 shadow-xl object-cover" alt="" />
+                      <img src={selectedOrder.avatar} className="w-16 h-16 rounded-2xl border-4 border-white dark:border-slate-700/50 shadow-md object-cover" alt="" />
                       <div>
                         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">{selectedOrder.customer}</h2>
                         <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">Order {selectedOrder.id}</p>
@@ -525,7 +525,7 @@ export function Orders() {
                               updateOrder(selectedOrder.id, "Processing");
                               setSelectedOrder(null);
                             }}
-                            className="w-full py-3 sm:py-4 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 flex items-center justify-center gap-2"
+                            className="w-full py-3 sm:py-4 bg-indigo-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-indigo-700 transition-all shadow-lg flex items-center justify-center gap-2"
                           >
                             <Clock className="w-4 h-4 flex-shrink-0" /> Start Processing
                           </button>
@@ -533,7 +533,7 @@ export function Orders() {
                         <div className="grid grid-cols-2 gap-3">
                           <button
                             onClick={() => handleApprove(selectedOrder.id)}
-                            className="py-3 sm:py-4 bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2"
+                            className="py-3 sm:py-4 bg-emerald-600 text-white text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all shadow-lg flex items-center justify-center gap-2"
                           >
                             <Check className="w-4 h-4 flex-shrink-0" /> Approve
                           </button>
