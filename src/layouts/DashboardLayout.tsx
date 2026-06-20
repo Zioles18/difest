@@ -4,6 +4,7 @@ import { AIChat } from "../components/AIChat";
 import Ferrofluid from "../components/Ferrofluid";
 import CardNav from "../components/CardNav";
 import { useTheme } from "../utils/ThemeContext";
+import { Toast } from "../components/Toast";
 
 export type DateRange = "7d" | "30d" | "12m";
 
@@ -100,6 +101,7 @@ export function DashboardLayout() {
       </main>
       
       <AIChat />
+      <Toast />
     </div>
   );
 }

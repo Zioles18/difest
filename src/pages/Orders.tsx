@@ -22,6 +22,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { RotatingText } from "../components/RotatingText";
+import { NumberInput } from "../components/NumberInput";
 import { getBusinessData, updateOrder, addOrder, deleteOrder, BUSINESS_DATA_UPDATED, Order } from "../utils/store";
 
 export function Orders() {
@@ -33,6 +34,8 @@ export function Orders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string | "All">("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -82,22 +85,28 @@ export function Orders() {
 
   const handleCreateOrder = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const amount = parseFloat(formData.get("total") as string) || 0;
-    const customer = formData.get("customer") as string;
-    const newOrder: Order = {
-      id: `#${Math.floor(2900 + Math.random() * 1000)}`,
-      customer,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-      total: `$${amount.toFixed(2)}`,
-      rawTotal: amount,
-      status: (formData.get("status") as Order["status"]) || "Pending",
-      items: parseInt(formData.get("items") as string) || 1,
-      avatar: orderAvatarPreview || `https://ui-avatars.com/api/?name=${customer}&background=random`
-    };
-    addOrder(newOrder);
-    setIsAddingOrder(false);
-    setOrderAvatarPreview(null);
+    setIsSubmitting(true);
+    
+    // Simulate network delay for UX
+    setTimeout(() => {
+      const formData = new FormData(e.currentTarget);
+      const amount = parseFloat(formData.get("total") as string) || 0;
+      const customer = formData.get("customer") as string;
+      const newOrder: Order = {
+        id: `#${Math.floor(2900 + Math.random() * 1000)}`,
+        customer,
+        date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+        total: `$${amount.toFixed(2)}`,
+        rawTotal: amount,
+        status: (formData.get("status") as Order["status"]) || "Pending",
+        items: parseInt(formData.get("items") as string) || 1,
+        avatar: orderAvatarPreview || `https://ui-avatars.com/api/?name=${customer}&background=random`
+      };
+      addOrder(newOrder);
+      setIsAddingOrder(false);
+      setOrderAvatarPreview(null);
+      setIsSubmitting(false);
+    }, 800);
   };
 
   return (
@@ -332,7 +341,7 @@ export function Orders() {
                             <Eye className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleDeleteOrder(order.id); }}
+                            onClick={(e) => { e.stopPropagation(); setOrderToDelete(order.id); }}
                             className="p-2.5 hover:bg-white dark:hover:bg-slate-800 text-slate-400 dark:text-slate-500 hover:text-rose-500 dark:hover:text-rose-400 rounded-xl shadow-sm transition-all"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -427,54 +436,22 @@ export function Orders() {
                     <input required name="customer" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600" placeholder="e.g. Elena Smith" />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Amount</label>
-                      <div className="relative group">
-                        <DollarSign className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors" />
-                        <input required name="total" type="number" step="0.01" className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-6 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 no-spin" placeholder="0.00" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Product Qty</label>
-                      <div className="relative group flex items-center">
-                        <Package className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 transition-colors pointer-events-none" />
-                        <input 
-                          id="items-input"
-                          required 
-                          name="items" 
-                          type="number" 
-                          min="1" 
-                          defaultValue="1"
-                          className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-12 pr-20 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all text-slate-900 dark:text-slate-100 placeholder:text-slate-300 dark:placeholder:text-slate-600 no-spin" 
-                        />
-                        <div className="absolute right-2 flex items-center gap-1">
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const input = document.getElementById('items-input') as HTMLInputElement;
-                              if (input && parseInt(input.value) > 1) {
-                                input.value = (parseInt(input.value) - 1).toString();
-                              }
-                            }}
-                            className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-indigo-500 transition-all shadow-sm"
-                          >
-                            <Minus className="w-3.5 h-3.5" />
-                          </button>
-                          <button 
-                            type="button"
-                            onClick={() => {
-                              const input = document.getElementById('items-input') as HTMLInputElement;
-                              if (input) {
-                                input.value = (parseInt(input.value || "0") + 1).toString();
-                              }
-                            }}
-                            className="p-2 hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-400 hover:text-indigo-500 transition-all shadow-sm"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <NumberInput
+                      label="Total Amount"
+                      name="total"
+                      step={0.01}
+                      required
+                      placeholder="0.00"
+                      icon={DollarSign}
+                    />
+                    <NumberInput
+                      label="Product Qty"
+                      name="items"
+                      defaultValue={1}
+                      min={1}
+                      required
+                      icon={Package}
+                    />
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Initial Status</label>
                       <div className="relative group">
@@ -488,8 +465,15 @@ export function Orders() {
                     </div>
                   </div>
                   <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4">
-                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm">Discard</button>
-                    <button type="submit" className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg text-sm">Submit Order</button>
+                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm" disabled={isSubmitting}>Discard</button>
+                    <button type="submit" disabled={isSubmitting} className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg text-sm flex items-center justify-center gap-2">
+                      {isSubmitting ? (
+                        <>
+                          <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                          Saving...
+                        </>
+                      ) : "Submit Order"}
+                    </button>
                   </div>
                 </form>
               </motion.div>
@@ -627,6 +611,54 @@ export function Orders() {
                     className="flex-1 py-3 sm:py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-black transition-all shadow-xl text-sm flex items-center justify-center gap-2"
                   >
                     <Download className="w-4 h-4" /> Download PDF
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {orderToDelete && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setOrderToDelete(null)}
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[1300]"
+            />
+            <div className="fixed inset-0 z-[1400] flex items-center justify-center p-4 pointer-events-none">
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 w-full max-w-sm shadow-2xl pointer-events-auto border border-slate-200 dark:border-slate-700"
+              >
+                <div className="w-12 h-12 bg-rose-100 dark:bg-rose-500/20 rounded-2xl flex items-center justify-center text-rose-600 dark:text-rose-400 mb-5">
+                  <Trash2 className="w-6 h-6" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">Delete Order?</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">
+                  This action cannot be undone. This order will be permanently removed from the business hub.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setOrderToDelete(null)}
+                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleDeleteOrder(orderToDelete);
+                      setOrderToDelete(null);
+                    }}
+                    className="flex-1 py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-700 transition-colors text-sm shadow-lg shadow-rose-500/20"
+                  >
+                    Delete Now
                   </button>
                 </div>
               </motion.div>

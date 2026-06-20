@@ -34,6 +34,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { KPICard } from "../components/KPICard";
 import { SpotlightCard } from "../components/SpotlightCard";
+import { NumberInput } from "../components/NumberInput";
 import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED, addNotification } from "../utils/store";
 import { useTheme } from "../utils/ThemeContext";
 import { RotatingText } from "../components/RotatingText";
@@ -55,6 +56,7 @@ export function Dashboard() {
     year: { name: string; value: number }[];
   }>({ week: [], month: [], year: [] });
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -104,9 +106,14 @@ export function Dashboard() {
   };
 
   const saveChartData = () => {
-    updateBusinessData({ chartDataPeriods: draftData });
-    addNotification({ text: `Revenue chart data updated (${editorTab} view)`, dot: "bg-indigo-500" });
-    setChartEditorOpen(false);
+    setIsSaving(true);
+    // Simulate delay for UX
+    setTimeout(() => {
+      updateBusinessData({ chartDataPeriods: draftData });
+      addNotification({ text: `Revenue chart data updated (${editorTab} view)`, dot: "bg-indigo-500" });
+      setChartEditorOpen(false);
+      setIsSaving(false);
+    }, 800);
   };
 
   const updateDraftValue = (period: "week" | "month" | "year", idx: number, val: string) => {
@@ -475,20 +482,16 @@ export function Dashboard() {
                 <div className="overflow-y-auto flex-1 pr-1">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     {draftData[editorTab].map((point, idx) => (
-                      <div key={idx} className="flex items-center gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-600/10 flex items-center justify-center flex-shrink-0">
-                          <span className="text-xs font-extrabold text-indigo-600 dark:text-indigo-400">{point.name}</span>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">{point.name}</label>
-                          <input
-                            type="number"
-                            value={point.value}
-                            onChange={e => updateDraftValue(editorTab, idx, e.target.value)}
-                            className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20 rounded-xl px-3 py-2 text-sm font-bold text-slate-900 dark:text-slate-100 outline-none transition-all no-spin"
-                          />
-                        </div>
-                      </div>
+                      <NumberInput
+                        key={`${editorTab}-${idx}`}
+                        label={point.name}
+                        name={`value-${idx}`}
+                        value={point.value}
+                        onChange={(val) => updateDraftValue(editorTab, idx, val)}
+                        step={editorTab === 'year' ? 1000 : 100}
+                        className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-700/50 !space-y-2"
+                        showMultiplier={true}
+                      />
                     ))}
                   </div>
                 </div>
@@ -498,14 +501,25 @@ export function Dashboard() {
                   <button
                     onClick={() => setChartEditorOpen(false)}
                     className="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm"
+                    disabled={isSaving}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={saveChartData}
+                    disabled={isSaving}
                     className="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/20 dark:shadow-indigo-500/10 text-sm flex items-center justify-center gap-2"
                   >
-                    <Save className="w-4 h-4" /> Save Changes
+                    {isSaving ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" /> Save Changes
+                      </>
+                    )}
                   </button>
                 </div>
               </motion.div>
