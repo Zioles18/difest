@@ -36,6 +36,7 @@ import { KPICard } from "../components/KPICard";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED, addNotification } from "../utils/store";
 import { useTheme } from "../utils/ThemeContext";
+import { RotatingText } from "../components/RotatingText";
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -184,7 +185,20 @@ export function Dashboard() {
       {/* Header section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">Enterprise Overview</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+              Enterprise
+            </h1>
+            <div className="relative inline-flex items-center">
+              <RotatingText
+                texts={["Overview", "Intelligence", "Insights", "Metrics"]}
+                mainClassName="text-2xl sm:text-3xl font-bold text-slate-500 dark:text-slate-400 relative z-10"
+                staggerDuration={0.02}
+                rotationInterval={3500}
+                splitBy="characters"
+              />
+            </div>
+          </div>
           <p className="text-slate-500 dark:text-slate-400 font-semibold mt-1">Real-time business intelligence • <span className="text-emerald-500 dark:text-emerald-400">System Live</span></p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">

@@ -87,8 +87,7 @@ export function Login() {
         >
           <div className="flex items-center gap-3 mb-10">
             <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="shadow-xl shadow-indigo-500/30"
+              whileHover={{ scale: 1.05 }}
             >
               <NXLogo size={48} />
             </motion.div>

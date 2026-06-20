@@ -120,12 +120,11 @@ export function Orders() {
               Orders
             </h1>
             <div className="relative inline-flex items-center">
-              <div className="absolute inset-0 bg-indigo-500/10 dark:bg-indigo-400/20 rounded-lg blur-sm"></div>
               <RotatingText
-                texts={["Hub", "Center", "Dashboard", "System"]}
-                mainClassName="text-2xl sm:text-3xl font-bold text-indigo-600 dark:text-indigo-400 relative z-10"
+                texts={["Pipeline", "Analytics", "Intelligence", "History"]}
+                mainClassName="text-2xl sm:text-3xl font-bold text-slate-500 dark:text-slate-400 relative z-10"
                 staggerDuration={0.02}
-                rotationInterval={2800}
+                rotationInterval={3500}
                 splitBy="characters"
               />
             </div>

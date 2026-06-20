@@ -33,6 +33,7 @@ import { useState, useEffect } from "react";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { getBusinessData, BUSINESS_DATA_UPDATED, applyOptimization } from "../utils/store";
 import { useTheme } from "../utils/ThemeContext";
+import { RotatingText } from "../components/RotatingText";
 
 export function Analytics() {
   const { theme } = useTheme();
@@ -106,7 +107,20 @@ export function Analytics() {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
       >
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Advanced Analytics</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Advanced
+            </h1>
+            <div className="relative inline-flex items-center">
+              <RotatingText
+                texts={["Analytics", "Insights", "Growth", "Trends"]}
+                mainClassName="text-xl sm:text-2xl font-bold text-slate-500 dark:text-slate-400 relative z-10"
+                staggerDuration={0.02}
+                rotationInterval={3500}
+                splitBy="characters"
+              />
+            </div>
+          </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Real-time data synchronization across all business units.</p>
         </div>
         <div className="flex items-center gap-3">

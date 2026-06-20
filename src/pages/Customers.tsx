@@ -22,6 +22,7 @@ import {
 import React, { useState, useRef, useEffect } from "react";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { addNotification } from "../utils/store";
+import { RotatingText } from "../components/RotatingText";
 
 const initialCustomers = [
   { id: 1, name: "Alex Rivera", email: "alex@example.com", phone: "+1 (555) 123-4567", location: "New York, USA", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", spend: "$4,250", orders: 12, rating: 5, role: "Founder & CEO", joined: "Jan 2022" },
@@ -146,7 +147,20 @@ export function Customers() {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
       >
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Customers</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Customers
+            </h1>
+            <div className="relative inline-flex items-center">
+              <RotatingText
+                texts={["Database", "Directory", "Relations", "Growth"]}
+                mainClassName="text-xl sm:text-2xl font-bold text-slate-500 dark:text-slate-400 relative z-10"
+                staggerDuration={0.02}
+                rotationInterval={3500}
+                splitBy="characters"
+              />
+            </div>
+          </div>
           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">View and manage your customer relationship.</p>
         </div>
         <button 
