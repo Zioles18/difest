@@ -78,6 +78,12 @@
   min-width: 0;
 }
 
+.card-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .logo {
   height: 32px;
   width: auto;
@@ -150,9 +156,21 @@
   }
 }
 
+@media (max-width: 640px) {
+  .card-nav-top {
+    gap: 4px;
+  }
+  .card-nav-actions {
+    gap: 4px;
+  }
+  .logo-container {
+    justify-content: center;
+  }
+}
+
 @media (max-width: 480px) {
   .card-nav-top {
-    gap: 8px;
+    gap: 4px;
   }
 
   .hamburger-menu {
@@ -163,5 +181,9 @@
 
   .hamburger-line {
     width: 20px;
+  }
+  
+  .card-nav-actions {
+    gap: 2px;
   }
 }

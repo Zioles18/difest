@@ -282,7 +282,7 @@ const CardNav: React.FC<CardNavProps> = ({
           <div className="logo-container">
             <div className="flex items-center gap-3">
               <NXLogo size={40} />
-              <span className="font-display font-bold text-2xl tracking-tighter">
+              <span className="font-display font-bold text-xl sm:text-2xl tracking-tighter">
                 <ShinyText 
                   text="NexBiz" 
                   color={theme === "dark" ? "#e2e8f0" : "#1e293b"} 
