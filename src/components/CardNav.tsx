@@ -328,9 +328,10 @@ const CardNav: React.FC<CardNavProps> = ({
                   e.stopPropagation();
                   if (!showNotifications && bellRef.current) {
                     const rect = bellRef.current.getBoundingClientRect();
+                    const isMobile = window.innerWidth < 640;
                     setDropdownPos({
                       top: rect.bottom + 8,
-                      right: window.innerWidth - rect.right,
+                      right: isMobile ? 16 : window.innerWidth - rect.right,
                     });
                     setUnreadCount(0);
                   }
@@ -358,8 +359,13 @@ const CardNav: React.FC<CardNavProps> = ({
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.96 }}
                     transition={{ duration: 0.15 }}
-                    style={{ position: 'fixed', top: dropdownPos.top, right: dropdownPos.right, zIndex: 9999 }}
-                    className="w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/15 dark:shadow-black/40 overflow-hidden"
+                    style={{ 
+                      position: 'fixed', 
+                      top: dropdownPos.top, 
+                      right: dropdownPos.right, 
+                      zIndex: 9999 
+                    }}
+                    className="w-[320px] max-w-[calc(100vw-32px)] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/15 dark:shadow-black/40 overflow-hidden"
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
