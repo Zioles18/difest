@@ -465,7 +465,7 @@ export function Orders() {
                     </div>
                   </div>
                   <div className="pt-4 sm:pt-6 flex gap-3 sm:gap-4">
-                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm" disabled={isSubmitting}>Discard</button>
+                    <button type="button" onClick={() => setIsAddingOrder(false)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all text-sm shadow-sm dark:shadow-xl dark:shadow-black/20" disabled={isSubmitting}>Discard</button>
                     <button type="submit" disabled={isSubmitting} className="flex-1 py-3 sm:py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-lg text-sm flex items-center justify-center gap-2">
                       {isSubmitting ? (
                         <>
@@ -565,7 +565,7 @@ export function Orders() {
                               handleDeleteOrder(selectedOrder.id);
                               setSelectedOrder(null);
                             }}
-                            className="py-3 sm:py-4 bg-white dark:bg-slate-800 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20 text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all flex items-center justify-center gap-2"
+                            className="py-3 sm:py-4 bg-white dark:bg-white/5 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-widest rounded-2xl hover:bg-rose-50 dark:hover:bg-white/10 transition-all flex items-center justify-center gap-2"
                           >
                             <X className="w-4 h-4 flex-shrink-0" /> Reject
                           </button>
@@ -598,7 +598,7 @@ export function Orders() {
                 </div>
 
                 <div className="p-6 sm:p-10 border-t border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 sm:gap-4 bg-slate-50/30 dark:bg-slate-800/30">
-                  <button onClick={() => setSelectedOrder(null)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm shadow-sm">
+                  <button onClick={() => setSelectedOrder(null)} className="flex-1 py-3 sm:py-4 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-50 dark:hover:bg-white/10 transition-all text-sm shadow-sm dark:shadow-xl dark:shadow-black/20">
                     Discard
                   </button>
                   <button
@@ -647,7 +647,7 @@ export function Orders() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setOrderToDelete(null)}
-                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-sm"
+                    className="flex-1 py-3 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-sm shadow-sm dark:shadow-lg dark:shadow-black/20"
                   >
                     Cancel
                   </button>

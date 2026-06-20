@@ -72,7 +72,7 @@ export function NumberInput({
             {label}
           </label>
           {showMultiplier && (
-            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl gap-1 transition-all">
+            <div className="flex bg-slate-100 dark:bg-white/5 p-1 rounded-xl gap-1 border border-transparent dark:border-white/5 dark:border-t-white/10 backdrop-blur-md transition-all">
               {([1, 10, 100] as const).map(m => (
                 <button
                   key={m}
@@ -80,7 +80,7 @@ export function NumberInput({
                   onClick={() => setMultiplier(m)}
                   className={`px-3 py-1 text-[11px] font-black rounded-lg transition-all ${
                     multiplier === m 
-                      ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm" 
+                      ? "bg-white dark:bg-white/10 text-indigo-600 dark:text-indigo-400 shadow-sm dark:shadow-lg dark:shadow-black/20 border-t border-transparent dark:border-t-white/20" 
                       : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                   }`}
                 >
@@ -114,7 +114,7 @@ export function NumberInput({
           <button
             type="button"
             onClick={handleDecrement}
-            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 dark:hover:border-indigo-900 hover:shadow-md transition-all active:scale-90"
+            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 dark:hover:bg-white/10 hover:shadow-md dark:shadow-lg dark:shadow-black/20 transition-all active:scale-90"
             aria-label="Decrease"
           >
             <Minus className="w-5 h-5" />
@@ -122,7 +122,7 @@ export function NumberInput({
           <button
             type="button"
             onClick={handleIncrement}
-            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 dark:hover:border-indigo-900 hover:shadow-md transition-all active:scale-90"
+            className="w-12 h-12 flex items-center justify-center bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 dark:border-t-white/20 backdrop-blur-md rounded-2xl text-slate-400 hover:text-indigo-500 hover:border-indigo-200 dark:hover:bg-white/10 hover:shadow-md dark:shadow-lg dark:shadow-black/20 transition-all active:scale-90"
             aria-label="Increase"
           >
             <Plus className="w-5 h-5" />
