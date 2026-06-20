@@ -486,20 +486,6 @@ const CardNav: React.FC<CardNavProps> = ({
                 />
               </div>
             </NavLink>
-
-            {/* Sign Out */}
-            <button
-              type="button"
-              onClick={() => {
-                auth.logout();
-                navigate('/login');
-              }}
-              title="Sign out"
-              aria-label="Sign out"
-              className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-rose-50 dark:hover:bg-rose-500/10 text-slate-500 dark:text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-all cursor-pointer pointer-events-auto z-40"
-            >
-              <LogOut className="w-[18px] h-[18px]" />
-            </button>
           </div>
         </div>
 
@@ -533,6 +519,28 @@ const CardNav: React.FC<CardNavProps> = ({
               </div>
             </div>
           ))}
+
+          {/* Sign Out Section in Menu */}
+          <div 
+            className="nav-card nav-logout-card"
+            style={{ 
+              backgroundColor: theme === 'dark' ? 'rgba(244, 63, 94, 0.1)' : '#fff1f2',
+              color: theme === 'dark' ? '#fb7185' : '#e11d48',
+              border: theme === 'dark' ? '1px solid rgba(244, 63, 94, 0.2)' : '1px solid #fecdd3'
+            }}
+          >
+            <div className="nav-card-label">Session</div>
+            <button
+              onClick={() => {
+                auth.logout();
+                navigate('/login');
+              }}
+              className="nav-card-link font-bold"
+            >
+              <LogOut className="nav-card-link-icon" />
+              Sign Out from NexBiz
+            </button>
+          </div>
         </div>
       </nav>
     </div>

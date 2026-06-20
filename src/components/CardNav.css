@@ -187,3 +187,21 @@
     gap: 2px;
   }
 }
+
+.nav-logout-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-logout-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
+}
+
+.nav-logout-card .nav-card-link {
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+  width: 100%;
+}
