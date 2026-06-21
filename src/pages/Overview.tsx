@@ -27,6 +27,32 @@ export function Overview() {
   })();
   const greetingName = profile.name || auth.getCurrentEmail()?.split("@")[0] || "User";
 
+  // Revenue
+  const prevRevenue = data.previousRevenue !== undefined ? data.previousRevenue : (data.revenue * 0.9);
+  const revenueDiff = data.revenue - prevRevenue;
+  const revenuePct = prevRevenue !== 0 ? (revenueDiff / prevRevenue) * 100 : 0;
+  const revenueTrend = `${revenueDiff >= 0 ? "+" : ""}${revenuePct.toFixed(1)}% from last period`;
+  const revenueTrendPositive = revenueDiff >= 0;
+
+  // Sales
+  const prevSales = data.previousSales !== undefined ? data.previousSales : Math.max(0, data.sales - 1);
+  const salesDiff = data.sales - prevSales;
+  const salesPct = prevSales !== 0 ? (salesDiff / prevSales) * 100 : 0;
+  const salesTrend = `${salesDiff >= 0 ? "+" : ""}${salesPct.toFixed(1)}% from last period`;
+  const salesTrendPositive = salesDiff >= 0;
+
+  // Active Users (Active Customers in card)
+  const prevUsers = data.previousActiveUsers !== undefined ? data.previousActiveUsers : Math.max(1, data.activeUsers - 1);
+  const usersDiff = data.activeUsers - prevUsers;
+  const usersPct = prevUsers !== 0 ? (usersDiff / prevUsers) * 100 : 0;
+  const usersTrend = `${usersDiff >= 0 ? "+" : ""}${usersPct.toFixed(1)}% from last period`;
+  const usersTrendPositive = usersDiff >= 0;
+
+  // Conversion
+  const conversionDiff = data.conversion - (data.previousConversion !== undefined ? data.previousConversion : 4.0);
+  const conversionTrend = `${conversionDiff >= 0 ? "+" : ""}${conversionDiff.toFixed(1)}% from last period`;
+  const conversionTrendPositive = conversionDiff >= 0;
+
   return (
     <motion.div
       initial="hidden"
@@ -58,7 +84,7 @@ export function Overview() {
                 staggerFrom="last"
                 rotationInterval={3500}
                 splitBy="characters"
-              />
+                />
             </div>
             <SplitText
               text={", " + greetingName + "!"}
@@ -86,32 +112,32 @@ export function Overview() {
         <KPICard
           title="Total Revenue"
           value={`$${data.revenue.toLocaleString()}`}
-          trend="+12.5% from last period"
-          trendPositive={true}
+          trend={revenueTrend}
+          trendPositive={revenueTrendPositive}
           icon={DollarSign}
           sparklineData={[{ value: 20 }, { value: 30 }, { value: 45 }, { value: 35 }, { value: 50 }, { value: 65 }, { value: 75 }]}
         />
         <KPICard
           title="Total Sales"
           value={data.sales.toString()}
-          trend="+8.3% from last period"
-          trendPositive={true}
+          trend={salesTrend}
+          trendPositive={salesTrendPositive}
           icon={ShoppingCart}
           sparklineData={[{ value: 10 }, { value: 15 }, { value: 12 }, { value: 20 }, { value: 25 }, { value: 22 }, { value: 30 }]}
         />
         <KPICard
           title="Active Customers"
           value={data.activeUsers.toString()}
-          trend="+5.2% from last period"
-          trendPositive={true}
+          trend={usersTrend}
+          trendPositive={usersTrendPositive}
           icon={Users}
           sparklineData={[{ value: 5 }, { value: 8 }, { value: 6 }, { value: 10 }, { value: 12 }, { value: 15 }, { value: 18 }]}
         />
         <KPICard
           title="Conversion Rate"
           value={`${data.conversion.toFixed(1)}%`}
-          trend="+2.1% from last period"
-          trendPositive={true}
+          trend={conversionTrend}
+          trendPositive={conversionTrendPositive}
           icon={TrendingUp}
           sparklineData={[{ value: 60 }, { value: 55 }, { value: 62 }, { value: 50 }, { value: 45 }, { value: 40 }, { value: 35 }]}
         />

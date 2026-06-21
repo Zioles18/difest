@@ -26,6 +26,10 @@ export interface BusinessData {
   sales: number;
   activeUsers: number;
   conversion: number;
+  previousRevenue?: number;
+  previousSales?: number;
+  previousActiveUsers?: number;
+  previousConversion?: number;
   orders: Order[];
   notifications: Notification[];
   chartData: { name: string; value: number }[]; // Keeping for backward compatibility or Analytics
@@ -100,19 +104,27 @@ const DEFAULT_DATA: BusinessData = {
 
 export const getBusinessData = (): BusinessData => {
   const saved = localStorage.getItem("NexBiz_business_hub");
+  
+  // Get current customer count from database to initialize/sync
+  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
+
   if (!saved) {
     // Hitung data default dari initial orders
     const completedInitialOrders = INITIAL_ORDERS.filter(o => o.status === "Completed");
     const initialRevenue = completedInitialOrders.reduce((sum, o) => sum + o.rawTotal, 0);
     const initialSales = completedInitialOrders.length;
-    const uniqueCustomers = new Set(INITIAL_ORDERS.map(o => o.customer)).size;
     
     return {
       ...DEFAULT_DATA,
       revenue: initialRevenue,
       sales: initialSales,
-      activeUsers: uniqueCustomers,
-      conversion: 4.5 // nilai default yang wajar
+      activeUsers: customersCount,
+      conversion: 4.5, // nilai default yang wajar
+      previousRevenue: initialRevenue * 0.9,
+      previousSales: Math.max(0, initialSales - 1),
+      previousActiveUsers: Math.max(1, customersCount - 1),
+      previousConversion: 4.0
     };
   }
   try {
@@ -122,7 +134,6 @@ export const getBusinessData = (): BusinessData => {
     const completedOrders = (parsed.orders || []).filter((o: Order) => o.status === "Completed");
     const totalRevenue = completedOrders.reduce((sum: number, o: Order) => sum + (o.rawTotal || 0), 0);
     const totalSales = completedOrders.length;
-    const uniqueCustomers = new Set((parsed.orders || []).map((o: Order) => o.customer)).size;
     
     // Ensure new fields exist for old data
     return {
@@ -130,8 +141,12 @@ export const getBusinessData = (): BusinessData => {
       ...parsed,
       revenue: totalRevenue,
       sales: totalSales,
-      activeUsers: uniqueCustomers,
+      activeUsers: customersCount,
       conversion: parsed.conversion || 4.5, // Pakai parsed.conversion jika ada
+      previousRevenue: parsed.previousRevenue !== undefined ? parsed.previousRevenue : (totalRevenue * 0.9),
+      previousSales: parsed.previousSales !== undefined ? parsed.previousSales : Math.max(0, totalSales - 1),
+      previousActiveUsers: parsed.previousActiveUsers !== undefined ? parsed.previousActiveUsers : Math.max(1, customersCount - 1),
+      previousConversion: parsed.previousConversion !== undefined ? parsed.previousConversion : (parsed.conversion ? Math.max(1, parsed.conversion - 0.5) : 4.0),
       chartDataPeriods: parsed.chartDataPeriods || DEFAULT_DATA.chartDataPeriods,
       notifications: parsed.notifications || DEFAULT_DATA.notifications
     };
@@ -140,14 +155,17 @@ export const getBusinessData = (): BusinessData => {
     const completedInitialOrders = INITIAL_ORDERS.filter(o => o.status === "Completed");
     const initialRevenue = completedInitialOrders.reduce((sum, o) => sum + o.rawTotal, 0);
     const initialSales = completedInitialOrders.length;
-    const uniqueCustomers = new Set(INITIAL_ORDERS.map(o => o.customer)).size;
     
     return {
       ...DEFAULT_DATA,
       revenue: initialRevenue,
       sales: initialSales,
-      activeUsers: uniqueCustomers,
-      conversion: 4.5
+      activeUsers: customersCount,
+      conversion: 4.5,
+      previousRevenue: initialRevenue * 0.9,
+      previousSales: Math.max(0, initialSales - 1),
+      previousActiveUsers: Math.max(1, customersCount - 1),
+      previousConversion: 4.0
     };
   }
 };
@@ -189,7 +207,20 @@ export const syncStore = (data: BusinessData) => {
 
 export const updateBusinessData = (updates: Partial<BusinessData>) => {
   const data = getBusinessData();
-  return syncStore({ ...data, ...updates });
+  const nextData = { ...data, ...updates };
+  if (updates.conversion !== undefined && updates.conversion !== data.conversion) {
+    nextData.previousConversion = data.conversion;
+  }
+  if (updates.revenue !== undefined && updates.revenue !== data.revenue) {
+    nextData.previousRevenue = data.revenue;
+  }
+  if (updates.sales !== undefined && updates.sales !== data.sales) {
+    nextData.previousSales = data.sales;
+  }
+  if (updates.activeUsers !== undefined && updates.activeUsers !== data.activeUsers) {
+    nextData.previousActiveUsers = data.activeUsers;
+  }
+  return syncStore(nextData);
 };
 
 export const updateOrder = (orderId: string, status: Order["status"]) => {
@@ -240,14 +271,23 @@ export const updateOrder = (orderId: string, status: Order["status"]) => {
     window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
   }
 
-  return syncStore({
+  const nextData: BusinessData = {
     ...data,
     orders: newOrders,
     revenue: newRevenue,
     sales: newSales,
     chartDataPeriods: newChartDataPeriods,
     notifications: newNotifications
-  });
+  };
+
+  if (newRevenue !== data.revenue) {
+    nextData.previousRevenue = data.revenue;
+  }
+  if (newSales !== data.sales) {
+    nextData.previousSales = data.sales;
+  }
+
+  return syncStore(nextData);
 };
 
 export const syncChartFromOrders = () => {
@@ -265,7 +305,7 @@ export const syncChartFromOrders = () => {
   const sunIdx = 6;
   newWeekData[sunIdx] = { ...newWeekData[sunIdx], value: newWeekData[sunIdx].value + totalRevenue };
 
-  const updatedData = syncStore({
+  const nextData: BusinessData = {
     ...data,
     revenue: totalRevenue,
     sales: totalSales,
@@ -273,7 +313,16 @@ export const syncChartFromOrders = () => {
       ...data.chartDataPeriods,
       week: newWeekData
     }
-  });
+  };
+
+  if (totalRevenue !== data.revenue) {
+    nextData.previousRevenue = data.revenue;
+  }
+  if (totalSales !== data.sales) {
+    nextData.previousSales = data.sales;
+  }
+
+  const updatedData = syncStore(nextData);
   
   addNotification({
     text: "Chart data synced from orders",
@@ -291,14 +340,36 @@ export const addOrder = (order: Order) => {
     time: "Just now",
     dot: "bg-emerald-500"
   };
-  const newData = {
+  const newOrders = [order, ...data.orders];
+  const completedOrders = newOrders.filter(o => o.status === "Completed");
+  const newRevenue = completedOrders.reduce((sum, o) => sum + o.rawTotal, 0);
+  const newSales = completedOrders.length;
+  
+  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
+
+  const nextData: BusinessData = {
     ...data,
-    orders: [order, ...data.orders],
-    notifications: [notification, ...data.notifications].slice(0, 10)
+    orders: newOrders,
+    notifications: [notification, ...data.notifications].slice(0, 10),
+    revenue: newRevenue,
+    sales: newSales,
+    activeUsers: customersCount
   };
-  syncStore(newData);
+
+  if (newRevenue !== data.revenue) {
+    nextData.previousRevenue = data.revenue;
+  }
+  if (newSales !== data.sales) {
+    nextData.previousSales = data.sales;
+  }
+  if (customersCount !== data.activeUsers) {
+    nextData.previousActiveUsers = data.activeUsers;
+  }
+
+  syncStore(nextData);
   window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
-  return newData;
+  return nextData;
 };
 
 export const deleteOrder = (orderId: string) => {
@@ -309,14 +380,36 @@ export const deleteOrder = (orderId: string) => {
     time: "Just now",
     dot: "bg-rose-500"
   };
-  const newData = {
+  const newOrders = data.orders.filter(o => o.id !== orderId);
+  const completedOrders = newOrders.filter(o => o.status === "Completed");
+  const newRevenue = completedOrders.reduce((sum, o) => sum + o.rawTotal, 0);
+  const newSales = completedOrders.length;
+
+  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
+
+  const nextData: BusinessData = {
     ...data,
-    orders: data.orders.filter(o => o.id !== orderId),
-    notifications: [notification, ...data.notifications].slice(0, 10)
+    orders: newOrders,
+    notifications: [notification, ...data.notifications].slice(0, 10),
+    revenue: newRevenue,
+    sales: newSales,
+    activeUsers: customersCount
   };
-  syncStore(newData);
+
+  if (newRevenue !== data.revenue) {
+    nextData.previousRevenue = data.revenue;
+  }
+  if (newSales !== data.sales) {
+    nextData.previousSales = data.sales;
+  }
+  if (customersCount !== data.activeUsers) {
+    nextData.previousActiveUsers = data.activeUsers;
+  }
+
+  syncStore(nextData);
   window.dispatchEvent(new CustomEvent(NEW_NOTIFICATION, { detail: notification }));
-  return newData;
+  return nextData;
 };
 
 export const applyOptimization = () => {
@@ -335,6 +428,8 @@ export const applyOptimization = () => {
     ...data,
     revenue: newRevenue,
     conversion: Number(newConversion.toFixed(2)),
+    previousRevenue: data.revenue,
+    previousConversion: data.conversion,
     chartDataPeriods: {
       ...data.chartDataPeriods,
       week: newWeekData

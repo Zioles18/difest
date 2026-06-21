@@ -364,25 +364,9 @@ export function Settings() {
                 >
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Business Data Hub</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Manually update your business metrics or sync them with current orders.</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Manually update your business metrics (revenue goal and conversion rate) or configure weekly revenue chart points.</p>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Revenue ($)</label>
-                          <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">$</span>
-                            <input 
-                              type="text"
-                              inputMode="numeric"
-                              value={businessData.revenue}
-                              onChange={(e) => {
-                                const val = e.target.value.replace(/[^0-9]/g, '');
-                                setBusinessData({...businessData, revenue: val ? Number(val) : 0})
-                              }}
-                              className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 pl-8 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
-                            />
-                          </div>
-                        </div>
                         <div className="space-y-2">
                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Revenue Goal ($)</label>
                            <div className="relative">
@@ -399,32 +383,6 @@ export function Settings() {
                              />
                            </div>
                         </div>
-                        <div className="space-y-2">
-                           <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Total Sales</label>
-                           <input 
-                             type="text"
-                             inputMode="numeric"
-                             value={businessData.sales}
-                             onChange={(e) => {
-                               const val = e.target.value.replace(/[^0-9]/g, '');
-                               setBusinessData({...businessData, sales: val ? Number(val) : 0})
-                             }}
-                             className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
-                           />
-                        </div>
-                        <div className="space-y-2">
-                           <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Active Users</label>
-                           <input 
-                             type="text"
-                             inputMode="numeric"
-                             value={businessData.activeUsers}
-                             onChange={(e) => {
-                               const val = e.target.value.replace(/[^0-9]/g, '');
-                               setBusinessData({...businessData, activeUsers: val ? Number(val) : 0})
-                             }}
-                             className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
-                           />
-                       </div>
                         <div className="space-y-2">
                            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Conversion Rate (%)</label>
                            <div className="relative">
@@ -445,7 +403,6 @@ export function Settings() {
                            </div>
                        </div>
                     </div>
-
                     <div className="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100 dark:border-slate-700/50 mb-8">
                        <div className="flex items-center justify-between mb-6">
                           <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">Automation & Synchronization</h4>

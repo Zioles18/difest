@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import { SpotlightCard } from "../components/SpotlightCard";
-import { addNotification } from "../utils/store";
+import { addNotification, updateBusinessData } from "../utils/store";
 import { RotatingText } from "../components/RotatingText";
 
 const initialCustomers = [
@@ -51,9 +51,19 @@ export function Customers() {
     window.dispatchEvent(new CustomEvent("NexBiz_modal_state", { detail: { open: isModalOpen } }));
   }, [selectedCustomer, isAddingCustomer, activeMessenger]);
   
-  // Persist customers to localStorage
+  // Persist customers to localStorage and sync count
   useEffect(() => {
+    const savedCustomers = localStorage.getItem(CUSTOMERS_KEY);
+    const prevCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
+
     localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+    
+    if (prevCount !== customers.length) {
+      updateBusinessData({ 
+        activeUsers: customers.length,
+        previousActiveUsers: prevCount 
+      });
+    }
   }, [customers]);
 
   // Persist messages by customer ID

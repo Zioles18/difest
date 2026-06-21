@@ -131,13 +131,48 @@ export function Dashboard() {
     }, 1500);
   };
 
+  // Revenue calculations
+  const currRevenueVal = data.revenue * kpiMultiplier;
+  const prevRevenueValStored = data.previousRevenue !== undefined ? data.previousRevenue : (data.revenue * 0.9);
+  const prevRevenueVal = prevRevenueValStored * kpiMultiplier;
+  const revenueDiff = currRevenueVal - prevRevenueVal;
+  const revenueTrend = revenueDiff >= 0 ? "up" : "down";
+  const revenueChangePct = prevRevenueVal !== 0 ? (revenueDiff / prevRevenueVal) * 100 : 0;
+  const revenueChange = `${revenueChangePct >= 0 ? "+" : ""}${revenueChangePct.toFixed(1)}%`;
+
+  // Sales calculations
+  const currSalesVal = data.sales * kpiMultiplier;
+  const prevSalesValStored = data.previousSales !== undefined ? data.previousSales : Math.max(0, data.sales - 1);
+  const prevSalesVal = prevSalesValStored * kpiMultiplier;
+  const salesDiff = currSalesVal - prevSalesVal;
+  const salesTrend = salesDiff >= 0 ? "up" : "down";
+  const salesChangePct = prevSalesVal !== 0 ? (salesDiff / prevSalesVal) * 100 : 0;
+  const salesChange = `${salesChangePct >= 0 ? "+" : ""}${salesChangePct.toFixed(1)}%`;
+
+  // Active Users calculations
+  const currUsersVal = data.activeUsers * kpiMultiplier;
+  const prevUsersValStored = data.previousActiveUsers !== undefined ? data.previousActiveUsers : Math.max(1, data.activeUsers - 1);
+  const prevUsersVal = prevUsersValStored * kpiMultiplier;
+  const usersDiff = currUsersVal - prevUsersVal;
+  const usersTrend = usersDiff >= 0 ? "up" : "down";
+  const usersChangePct = prevUsersVal !== 0 ? (usersDiff / prevUsersVal) * 100 : 0;
+  const usersChange = `${usersChangePct >= 0 ? "+" : ""}${usersChangePct.toFixed(1)}%`;
+
+  // Conversion calculations
+  const currentConversion = data.conversion * (dateRange === "7d" ? 0.9 : dateRange === "30d" ? 1 : 1.08);
+  const prevConversionVal = data.previousConversion !== undefined ? data.previousConversion : 4.0;
+  const previousConversion = prevConversionVal * (dateRange === "7d" ? 0.9 : dateRange === "30d" ? 1 : 1.08);
+  const conversionDiff = currentConversion - previousConversion;
+  const conversionTrend = conversionDiff >= 0 ? "up" : "down";
+  const conversionChange = `${conversionDiff >= 0 ? "+" : ""}${conversionDiff.toFixed(2)}%`;
+
   const kpis = [
     { 
       id: "revenue",
       title: "Total Revenue", 
-      value: `$${Math.round(data.revenue * kpiMultiplier).toLocaleString()}`, 
-      change: activeChange.change, 
-      trend: activeChange.trend, 
+      value: `$${Math.round(currRevenueVal).toLocaleString()}`, 
+      change: revenueChange, 
+      trend: revenueTrend, 
       icon: TrendingUp, 
       color: "indigo",
       details: `Net revenue from all approved orders over the selected period. Growth is driven by high-value Enterprise plans.`
@@ -145,9 +180,9 @@ export function Dashboard() {
     { 
       id: "sales",
       title: "Total Sales", 
-      value: Math.round(data.sales * kpiMultiplier).toLocaleString(), 
-      change: activeChange.change, 
-      trend: activeChange.trend, 
+      value: Math.round(currSalesVal).toLocaleString(), 
+      change: salesChange, 
+      trend: salesTrend, 
       icon: ShoppingBag, 
       color: "violet",
       details: "Total volume of individual sales transactions in the selected timeframe."
@@ -155,9 +190,9 @@ export function Dashboard() {
     { 
       id: "users",
       title: "Active Users", 
-      value: Math.round(data.activeUsers * kpiMultiplier).toLocaleString(), 
-      change: activeChange.change, 
-      trend: activeChange.trend, 
+      value: Math.round(currUsersVal).toLocaleString(), 
+      change: usersChange, 
+      trend: usersTrend, 
       icon: Users, 
       color: "emerald",
       details: "Unique active users engaged with the platform in the selected period."
@@ -165,9 +200,9 @@ export function Dashboard() {
     { 
       id: "conversion",
       title: "Conversion", 
-      value: `${(data.conversion * (dateRange === "7d" ? 0.9 : dateRange === "30d" ? 1 : 1.08)).toFixed(2)}%`, 
-      change: dateRange === "12m" ? "+1.4%" : "-2.1%", 
-      trend: dateRange === "12m" ? "up" : "down", 
+      value: `${currentConversion.toFixed(2)}%`, 
+      change: conversionChange, 
+      trend: conversionTrend, 
       icon: Target, 
       color: "amber",
       details: "Ratio of visitors to successful checkouts. Trending toward target range."
