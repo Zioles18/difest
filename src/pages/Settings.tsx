@@ -425,6 +425,25 @@ export function Settings() {
                              className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
                            />
                        </div>
+                        <div className="space-y-2">
+                           <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Conversion Rate (%)</label>
+                           <div className="relative">
+                             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">%</span>
+                             <input 
+                               type="text"
+                               inputMode="decimal"
+                               value={businessData.conversion}
+                               onChange={(e) => {
+                                 const val = e.target.value.replace(/[^0-9.]/g, '');
+                                 // Ensure only one decimal point
+                                 const parts = val.split('.');
+                                 const sanitized = parts[0] + (parts[1] ? '.' + parts[1].slice(0, 2) : '');
+                                 setBusinessData({...businessData, conversion: sanitized ? Number(sanitized) : 0})
+                               }}
+                               className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 outline-none transition-all font-bold text-slate-900 dark:text-slate-100" 
+                             />
+                           </div>
+                       </div>
                     </div>
 
                     <div className="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-[1.5rem] sm:rounded-[2rem] border border-slate-100 dark:border-slate-700/50 mb-8">

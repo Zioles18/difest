@@ -1,4 +1,5 @@
-import { DollarSign, ShoppingCart, Activity } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { DollarSign, ShoppingCart, Users, TrendingUp } from "lucide-react";
 import { motion } from "motion/react";
 import { useOutletContext } from "react-router-dom";
 import { KPICard } from "../components/KPICard";
@@ -8,28 +9,18 @@ import { SplitText } from "../components/SplitText";
 import { RotatingText } from "../components/RotatingText";
 import type { DateRange } from "../layouts/DashboardLayout";
 import { auth } from "../utils/auth";
-
-const KPI_DATA = {
-  "7d": {
-    revenue: { value: "$8,432.00", trend: "+5.2% from last week", trendPositive: true },
-    orders: { value: "+142", trend: "+2% from last week", trendPositive: true },
-    engagement: { value: "28.1%", trend: "+1.4% from last week", trendPositive: true },
-  },
-  "30d": {
-    revenue: { value: "$45,231.89", trend: "+20.1% from last month", trendPositive: true },
-    orders: { value: "+2,350", trend: "+15% from last month", trendPositive: true },
-    engagement: { value: "24.5%", trend: "-2.4% from last month", trendPositive: false },
-  },
-  "12m": {
-    revenue: { value: "$542,000.00", trend: "+45% from last year", trendPositive: true },
-    orders: { value: "+28,400", trend: "+32% from last year", trendPositive: true },
-    engagement: { value: "32.4%", trend: "+5.2% from last year", trendPositive: true },
-  },
-};
+import { getBusinessData, BUSINESS_DATA_UPDATED, type BusinessData } from "../utils/store";
 
 export function Overview() {
   const { dateRange, activeTab } = useOutletContext<{ dateRange: DateRange; activeTab: string }>();
-  const currentKPI = KPI_DATA[dateRange];
+  
+  const [data, setData] = useState<BusinessData>(getBusinessData());
+
+  useEffect(() => {
+    const handleDataUpdate = () => setData(getBusinessData());
+    window.addEventListener(BUSINESS_DATA_UPDATED, handleDataUpdate);
+    return () => window.removeEventListener(BUSINESS_DATA_UPDATED, handleDataUpdate);
+  }, []);
 
   const profile = (() => {
     try { return JSON.parse(localStorage.getItem("NexBiz_profile") || "{}"); } catch { return {}; }
@@ -91,29 +82,37 @@ export function Overview() {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
         <KPICard
           title="Total Revenue"
-          value={currentKPI.revenue.value}
-          trend={currentKPI.revenue.trend}
-          trendPositive={currentKPI.revenue.trendPositive}
+          value={`$${data.revenue.toLocaleString()}`}
+          trend="+12.5% from last period"
+          trendPositive={true}
           icon={DollarSign}
           sparklineData={[{ value: 20 }, { value: 30 }, { value: 45 }, { value: 35 }, { value: 50 }, { value: 65 }, { value: 75 }]}
         />
         <KPICard
-          title="Active Orders"
-          value={currentKPI.orders.value}
-          trend={currentKPI.orders.trend}
-          trendPositive={currentKPI.orders.trendPositive}
+          title="Total Sales"
+          value={data.sales.toString()}
+          trend="+8.3% from last period"
+          trendPositive={true}
           icon={ShoppingCart}
           sparklineData={[{ value: 10 }, { value: 15 }, { value: 12 }, { value: 20 }, { value: 25 }, { value: 22 }, { value: 30 }]}
         />
         <KPICard
-          title="Engagement Rate"
-          value={currentKPI.engagement.value}
-          trend={currentKPI.engagement.trend}
-          trendPositive={currentKPI.engagement.trendPositive}
-          icon={Activity}
+          title="Active Customers"
+          value={data.activeUsers.toString()}
+          trend="+5.2% from last period"
+          trendPositive={true}
+          icon={Users}
+          sparklineData={[{ value: 5 }, { value: 8 }, { value: 6 }, { value: 10 }, { value: 12 }, { value: 15 }, { value: 18 }]}
+        />
+        <KPICard
+          title="Conversion Rate"
+          value={`${data.conversion.toFixed(1)}%`}
+          trend="+2.1% from last period"
+          trendPositive={true}
+          icon={TrendingUp}
           sparklineData={[{ value: 60 }, { value: 55 }, { value: 62 }, { value: 50 }, { value: 45 }, { value: 40 }, { value: 35 }]}
         />
       </div>

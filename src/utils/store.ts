@@ -100,18 +100,55 @@ const DEFAULT_DATA: BusinessData = {
 
 export const getBusinessData = (): BusinessData => {
   const saved = localStorage.getItem("NexBiz_business_hub");
-  if (!saved) return DEFAULT_DATA;
+  if (!saved) {
+    // Hitung data default dari initial orders
+    const completedInitialOrders = INITIAL_ORDERS.filter(o => o.status === "Completed");
+    const initialRevenue = completedInitialOrders.reduce((sum, o) => sum + o.rawTotal, 0);
+    const initialSales = completedInitialOrders.length;
+    const uniqueCustomers = new Set(INITIAL_ORDERS.map(o => o.customer)).size;
+    
+    return {
+      ...DEFAULT_DATA,
+      revenue: initialRevenue,
+      sales: initialSales,
+      activeUsers: uniqueCustomers,
+      conversion: 4.5 // nilai default yang wajar
+    };
+  }
   try {
     const parsed = JSON.parse(saved);
+    
+    // Hitung ulang semua data dari orders untuk menjaga konsistensi
+    const completedOrders = (parsed.orders || []).filter((o: Order) => o.status === "Completed");
+    const totalRevenue = completedOrders.reduce((sum: number, o: Order) => sum + (o.rawTotal || 0), 0);
+    const totalSales = completedOrders.length;
+    const uniqueCustomers = new Set((parsed.orders || []).map((o: Order) => o.customer)).size;
+    
     // Ensure new fields exist for old data
     return {
       ...DEFAULT_DATA,
       ...parsed,
+      revenue: totalRevenue,
+      sales: totalSales,
+      activeUsers: uniqueCustomers,
+      conversion: parsed.conversion || 4.5, // Pakai parsed.conversion jika ada
       chartDataPeriods: parsed.chartDataPeriods || DEFAULT_DATA.chartDataPeriods,
       notifications: parsed.notifications || DEFAULT_DATA.notifications
     };
   } catch {
-    return DEFAULT_DATA;
+    // Fallback ke default dengan perhitungan awal
+    const completedInitialOrders = INITIAL_ORDERS.filter(o => o.status === "Completed");
+    const initialRevenue = completedInitialOrders.reduce((sum, o) => sum + o.rawTotal, 0);
+    const initialSales = completedInitialOrders.length;
+    const uniqueCustomers = new Set(INITIAL_ORDERS.map(o => o.customer)).size;
+    
+    return {
+      ...DEFAULT_DATA,
+      revenue: initialRevenue,
+      sales: initialSales,
+      activeUsers: uniqueCustomers,
+      conversion: 4.5
+    };
   }
 };
 

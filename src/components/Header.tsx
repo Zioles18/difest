@@ -234,32 +234,14 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all group overflow-hidden relative"
+          className="w-10 h-10 flex items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
           aria-label="Toggle theme"
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {theme === "light" ? (
-              <motion.div
-                key="sun"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 20, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Sun className="w-[18px] h-[18px]" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="moon"
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 20, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Moon className="w-[18px] h-[18px]" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {theme === "light" ? (
+            <Moon className="w-5 h-5" />
+          ) : (
+            <Sun className="w-5 h-5" />
+          )}
         </button>
 
         {/* Notifications */}
@@ -420,14 +402,14 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
                   >
                     <div className="flex items-center gap-2">
                       {theme === "light" ? (
-                        <Sun className="w-4 h-4" />
-                      ) : (
                         <Moon className="w-4 h-4" />
+                      ) : (
+                        <Sun className="w-4 h-4" />
                       )}
                       <span>{theme === "light" ? "Light Mode" : "Dark Mode"}</span>
                     </div>
-                    <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === "light" ? "bg-indigo-500" : "bg-slate-600"}`}>
-                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${theme === "light" ? "left-5" : "left-0.5"}`} />
+                    <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === "light" ? "bg-slate-200" : "bg-indigo-500"}`}>
+                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${theme === "light" ? "translate-x-0.5" : "translate-x-5"}`} />
                     </div>
                   </button>
                 </div>

@@ -442,7 +442,7 @@ export function Orders() {
                       required
                       placeholder="0.00"
                       icon={DollarSign}
-                      showMultiplier={true}
+                      showControls={false}
                     />
                     <NumberInput
                       label="Product Qty"
@@ -451,7 +451,7 @@ export function Orders() {
                       min={1}
                       required
                       icon={Package}
-                      showMultiplier={true}
+                      showControls={false}
                     />
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Initial Status</label>
