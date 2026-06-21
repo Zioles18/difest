@@ -13,8 +13,6 @@ import {
   Zap,
   BarChart3,
   X,
-  CreditCard,
-  History,
   Activity,
   CheckSquare,
   Clock,
@@ -490,7 +488,7 @@ export function Dashboard() {
                         name={`value-${idx}`}
                         value={point.value}
                         onChange={(val) => updateDraftValue(editorTab, idx, val)}
-                        step={editorTab === 'year' ? 1000 : 100}
+                        step={1}
                         className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-700/50 !space-y-2"
                         showMultiplier={true}
                       />

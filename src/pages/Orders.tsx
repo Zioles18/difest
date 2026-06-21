@@ -1,22 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  ShoppingBag, 
   Search, 
   Plus, 
   Filter, 
-  MoreVertical, 
   Eye, 
   Trash2, 
   Download,
   AlertCircle,
   X,
-  CheckCircle2,
   Clock,
   DollarSign,
   Package,
   Check,
-  Ban,
-  Minus,
   ChevronDown
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -87,19 +82,23 @@ export function Orders() {
     e.preventDefault();
     setIsSubmitting(true);
     
+    // Capture FormData synchronously before React can recycle the synthetic event
+    const formData = new FormData(e.currentTarget);
+    const amount = parseFloat(formData.get("total") as string) || 0;
+    const customer = (formData.get("customer") as string) || "";
+    const status = (formData.get("status") as Order["status"]) || "Pending";
+    const items = parseInt(formData.get("items") as string) || 1;
+
     // Simulate network delay for UX
     setTimeout(() => {
-      const formData = new FormData(e.currentTarget);
-      const amount = parseFloat(formData.get("total") as string) || 0;
-      const customer = formData.get("customer") as string;
       const newOrder: Order = {
         id: `#${Math.floor(2900 + Math.random() * 1000)}`,
         customer,
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
         total: `$${amount.toFixed(2)}`,
         rawTotal: amount,
-        status: (formData.get("status") as Order["status"]) || "Pending",
-        items: parseInt(formData.get("items") as string) || 1,
+        status,
+        items,
         avatar: orderAvatarPreview || `https://ui-avatars.com/api/?name=${customer}&background=random`
       };
       addOrder(newOrder);
@@ -439,10 +438,11 @@ export function Orders() {
                     <NumberInput
                       label="Total Amount"
                       name="total"
-                      step={0.01}
+                      step={1}
                       required
                       placeholder="0.00"
                       icon={DollarSign}
+                      showMultiplier={true}
                     />
                     <NumberInput
                       label="Product Qty"
@@ -451,6 +451,7 @@ export function Orders() {
                       min={1}
                       required
                       icon={Package}
+                      showMultiplier={true}
                     />
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Initial Status</label>
