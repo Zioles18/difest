@@ -65,10 +65,22 @@ export function Settings() {
   const handleDeleteAccount = () => {
     if (deleteConfirmText !== "DELETE") return;
     // Clear all app data
-    localStorage.removeItem("NexBiz_settings");
-    localStorage.removeItem("NexBiz_business_hub");
+    const email = auth.getCurrentEmail();
+    if (email) {
+      localStorage.removeItem(`NexBiz_notifications_${email}`);
+      localStorage.removeItem(`NexBiz_settings_${email}`);
+      localStorage.removeItem(`NexBiz_business_hub_${email}`);
+      localStorage.removeItem(`NexBiz_invoices_${email}`);
+      localStorage.removeItem(`NexBiz_customers_${email}`);
+      localStorage.removeItem(`NexBiz_device_share_${email}`);
+    } else {
+      localStorage.removeItem("NexBiz_settings");
+      localStorage.removeItem("NexBiz_business_hub");
+      localStorage.removeItem("NexBiz_invoices");
+      localStorage.removeItem("NexBiz_customers");
+      localStorage.removeItem("NexBiz_device_share");
+    }
     localStorage.removeItem("NexBiz_profile");
-    localStorage.removeItem("NexBiz_invoices");
     localStorage.removeItem("NexBiz_orders");
     setShowDeleteConfirm(false);
     setDeleteConfirmText("");
@@ -77,7 +89,9 @@ export function Settings() {
 
   // Billing history - persisted to localStorage
   const [invoices, setInvoices] = useState(() => {
-    const saved = localStorage.getItem("NexBiz_invoices");
+    const email = auth.getCurrentEmail();
+    const key = email ? `NexBiz_invoices_${email}` : "NexBiz_invoices";
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [
       { id: "#INV-2024-001", date: "Jun 01, 2024", amount: "$49.00", status: "Paid" },
       { id: "#INV-2024-002", date: "May 01, 2024", amount: "$49.00", status: "Paid" },
@@ -85,8 +99,9 @@ export function Settings() {
   });
 
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem("NexBiz_settings");
     const email = auth.getCurrentEmail();
+    const key = email ? `NexBiz_settings_${email}` : "NexBiz_settings";
+    const saved = localStorage.getItem(key);
     const name = email ? email.split("@")[0] : "User";
     return saved ? JSON.parse(saved) : {
       firstName: name,
@@ -103,7 +118,13 @@ export function Settings() {
   const handleSave = () => {
     setIsSaving(true);
     setTimeout(() => {
-      localStorage.setItem("NexBiz_settings", JSON.stringify(settings));
+      const email = auth.getCurrentEmail();
+      const key = email ? `NexBiz_settings_${email}` : "NexBiz_settings";
+      localStorage.setItem(key, JSON.stringify(settings));
+      
+      // Dispatch settings updated custom event
+      window.dispatchEvent(new CustomEvent("NexBiz_settings_updated", { detail: settings }));
+
       addNotification({ text: `Settings saved — ${activeTab} tab`, dot: "bg-indigo-500" });
       setIsSaving(false);
       setShowToast(true);
@@ -119,14 +140,21 @@ export function Settings() {
       const newSettings = {...settings, plan: newPlan};
       setPaymentStep(2);
       setSettings(newSettings);
-      localStorage.setItem("NexBiz_settings", JSON.stringify(newSettings));
+      const email = auth.getCurrentEmail();
+      const settingsKey = email ? `NexBiz_settings_${email}` : "NexBiz_settings";
+      localStorage.setItem(settingsKey, JSON.stringify(newSettings));
+      
+      // Dispatch settings updated custom event
+      window.dispatchEvent(new CustomEvent("NexBiz_settings_updated", { detail: newSettings }));
+
       addNotification({ text: "Upgraded to Business Premium — payment confirmed", dot: "bg-emerald-500" });
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
       const newInvId = `#INV-${now.getFullYear()}-${String(Math.floor(Math.random()*900)+100)}`;
       setInvoices(prev => {
         const updated = [{ id: newInvId, date: dateStr, amount: "$99.00", status: "Paid" }, ...prev];
-        localStorage.setItem("NexBiz_invoices", JSON.stringify(updated));
+        const invoicesKey = email ? `NexBiz_invoices_${email}` : "NexBiz_invoices";
+        localStorage.setItem(invoicesKey, JSON.stringify(updated));
         return updated;
       });
     }, 3000);

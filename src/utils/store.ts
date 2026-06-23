@@ -1,6 +1,9 @@
+import { auth } from "./auth";
+
 // Centralized Integrated Data Hub
 export const BUSINESS_DATA_UPDATED = "NexBiz_business_data_updated";
 export const NEW_NOTIFICATION = "NexBiz_new_notification";
+
 
 export interface Order {
   id: string;
@@ -51,6 +54,36 @@ const INITIAL_NOTIFICATIONS: Notification[] = [
   { id: "n2", text: "Monthly report is ready", time: "1h ago", dot: "bg-indigo-500" },
   { id: "n3", text: "Server usage at 82%", time: "3h ago", dot: "bg-amber-500" },
 ];
+
+const getBusinessHubKey = () => {
+  const email = auth.getCurrentEmail();
+  return email ? `NexBiz_business_hub_${email}` : "NexBiz_business_hub";
+};
+
+const getCustomersKey = () => {
+  const email = auth.getCurrentEmail();
+  return email ? `NexBiz_customers_${email}` : "NexBiz_customers";
+};
+
+const getNotificationsForCurrentUser = (): Notification[] => {
+  const email = auth.getCurrentEmail();
+  const key = email ? `NexBiz_notifications_${email}` : "NexBiz_notifications_default";
+  const saved = localStorage.getItem(key);
+  if (!saved) {
+    return INITIAL_NOTIFICATIONS;
+  }
+  try {
+    return JSON.parse(saved);
+  } catch {
+    return INITIAL_NOTIFICATIONS;
+  }
+};
+
+const saveNotificationsForCurrentUser = (notifications: Notification[]) => {
+  const email = auth.getCurrentEmail();
+  const key = email ? `NexBiz_notifications_${email}` : "NexBiz_notifications_default";
+  localStorage.setItem(key, JSON.stringify(notifications));
+};
 
 const DEFAULT_DATA: BusinessData = {
   revenue: 4200,
@@ -103,10 +136,10 @@ const DEFAULT_DATA: BusinessData = {
 };
 
 export const getBusinessData = (): BusinessData => {
-  const saved = localStorage.getItem("NexBiz_business_hub");
+  const saved = localStorage.getItem(getBusinessHubKey());
   
   // Get current customer count from database to initialize/sync
-  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const savedCustomers = localStorage.getItem(getCustomersKey());
   const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
 
   if (!saved) {
@@ -124,7 +157,8 @@ export const getBusinessData = (): BusinessData => {
       previousRevenue: initialRevenue * 0.9,
       previousSales: Math.max(0, initialSales - 1),
       previousActiveUsers: Math.max(1, customersCount - 1),
-      previousConversion: 4.0
+      previousConversion: 4.0,
+      notifications: getNotificationsForCurrentUser()
     };
   }
   try {
@@ -148,7 +182,7 @@ export const getBusinessData = (): BusinessData => {
       previousActiveUsers: parsed.previousActiveUsers !== undefined ? parsed.previousActiveUsers : Math.max(1, customersCount - 1),
       previousConversion: parsed.previousConversion !== undefined ? parsed.previousConversion : (parsed.conversion ? Math.max(1, parsed.conversion - 0.5) : 4.0),
       chartDataPeriods: parsed.chartDataPeriods || DEFAULT_DATA.chartDataPeriods,
-      notifications: parsed.notifications || DEFAULT_DATA.notifications
+      notifications: getNotificationsForCurrentUser()
     };
   } catch {
     // Fallback ke default dengan perhitungan awal
@@ -165,7 +199,8 @@ export const getBusinessData = (): BusinessData => {
       previousRevenue: initialRevenue * 0.9,
       previousSales: Math.max(0, initialSales - 1),
       previousActiveUsers: Math.max(1, customersCount - 1),
-      previousConversion: 4.0
+      previousConversion: 4.0,
+      notifications: getNotificationsForCurrentUser()
     };
   }
 };
@@ -200,7 +235,11 @@ export const clearAllNotifications = () => {
 };
 
 export const syncStore = (data: BusinessData) => {
-  localStorage.setItem("NexBiz_business_hub", JSON.stringify(data));
+  const { notifications, ...restData } = data;
+  localStorage.setItem(getBusinessHubKey(), JSON.stringify(restData));
+  if (notifications) {
+    saveNotificationsForCurrentUser(notifications);
+  }
   window.dispatchEvent(new CustomEvent(BUSINESS_DATA_UPDATED, { detail: data }));
   return data;
 };
@@ -345,7 +384,7 @@ export const addOrder = (order: Order) => {
   const newRevenue = completedOrders.reduce((sum, o) => sum + o.rawTotal, 0);
   const newSales = completedOrders.length;
   
-  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const savedCustomers = localStorage.getItem(getCustomersKey());
   const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
 
   const nextData: BusinessData = {
@@ -385,7 +424,7 @@ export const deleteOrder = (orderId: string) => {
   const newRevenue = completedOrders.reduce((sum, o) => sum + o.rawTotal, 0);
   const newSales = completedOrders.length;
 
-  const savedCustomers = localStorage.getItem("NexBiz_customers");
+  const savedCustomers = localStorage.getItem(getCustomersKey());
   const customersCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
 
   const nextData: BusinessData = {

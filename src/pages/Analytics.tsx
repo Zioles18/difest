@@ -34,6 +34,7 @@ import { SpotlightCard } from "../components/SpotlightCard";
 import { getBusinessData, BUSINESS_DATA_UPDATED, applyOptimization } from "../utils/store";
 import { useTheme } from "../utils/ThemeContext";
 import { RotatingText } from "../components/RotatingText";
+import { auth } from "../utils/auth";
 
 export function Analytics() {
   const { theme } = useTheme();
@@ -54,7 +55,9 @@ export function Analytics() {
   };
 
   const [deviceData, setDeviceData] = useState(() => {
-    const saved = localStorage.getItem("NexBiz_device_share");
+    const email = auth.getCurrentEmail();
+    const key = email ? `NexBiz_device_share_${email}` : "NexBiz_device_share";
+    const saved = localStorage.getItem(key);
     return saved ? JSON.parse(saved) : [
       { name: "Desktop", value: 65, color: "#4f46e5" },
       { name: "Mobile", value: 25, color: "#10b981" },
@@ -74,7 +77,9 @@ export function Analytics() {
           ...d,
           value: Math.round((d.value / total) * 100)
         }));
-        localStorage.setItem("NexBiz_device_share", JSON.stringify(normalized));
+        const email = auth.getCurrentEmail();
+        const key = email ? `NexBiz_device_share_${email}` : "NexBiz_device_share";
+        localStorage.setItem(key, JSON.stringify(normalized));
         return normalized;
       });
     }, 4000);

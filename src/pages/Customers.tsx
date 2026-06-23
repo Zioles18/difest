@@ -30,11 +30,16 @@ const initialCustomers = [
   { id: 3, name: "Marcus Johnson", email: "marcus.j@example.com", phone: "+1 (555) 456-7890", location: "London, UK", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", spend: "$8,400", orders: 24, rating: 5, role: "CTO", joined: "Jun 2021" },
 ];
 
-const CUSTOMERS_KEY = "NexBiz_customers";
+import { auth } from "../utils/auth";
+
+const getCustomersKey = () => {
+  const email = auth.getCurrentEmail();
+  return email ? `NexBiz_customers_${email}` : "NexBiz_customers";
+};
 
 export function Customers() {
   const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem(CUSTOMERS_KEY);
+    const saved = localStorage.getItem(getCustomersKey());
     return saved ? JSON.parse(saved) : initialCustomers;
   });
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,10 +58,10 @@ export function Customers() {
   
   // Persist customers to localStorage and sync count
   useEffect(() => {
-    const savedCustomers = localStorage.getItem(CUSTOMERS_KEY);
+    const savedCustomers = localStorage.getItem(getCustomersKey());
     const prevCount = savedCustomers ? JSON.parse(savedCustomers).length : 3;
 
-    localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+    localStorage.setItem(getCustomersKey(), JSON.stringify(customers));
     
     if (prevCount !== customers.length) {
       updateBusinessData({ 

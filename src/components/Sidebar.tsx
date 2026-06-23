@@ -48,7 +48,9 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
   });
 
   const [isPremium, setIsPremium] = useState(() => {
-    const saved = localStorage.getItem("NexBiz_settings");
+    const email = auth.getCurrentEmail();
+    const key = email ? `NexBiz_settings_${email}` : "NexBiz_settings";
+    const saved = localStorage.getItem(key);
     if (!saved) return false;
     try {
       const parsed = JSON.parse(saved);
@@ -63,7 +65,9 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
     const handleBusinessUpdate = () => setData(getBusinessData());
     const handleModalState = (e: any) => setIsModalOpen(e.detail?.open ?? false);
     const handleSettingsUpdate = () => {
-       const saved = localStorage.getItem("NexBiz_settings");
+       const email = auth.getCurrentEmail();
+       const key = email ? `NexBiz_settings_${email}` : "NexBiz_settings";
+       const saved = localStorage.getItem(key);
        if (saved) {
          try {
            const parsed = JSON.parse(saved);
