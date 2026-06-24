@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { DollarSign, ShoppingCart, Users, TrendingUp } from "lucide-react";
-import { motion } from "motion/react";
-import { useOutletContext } from "react-router-dom";
+import { DollarSign, ShoppingCart, Users, TrendingUp } from "../components/Icons";
+import { useOutletContext } from "../lib/router";
 import { KPICard } from "../components/KPICard";
 import { DashboardChart } from "../components/DashboardChart";
 import { ActionItems } from "../components/ActionItems";
@@ -54,21 +53,9 @@ export function Overview() {
   const conversionTrendPositive = conversionDiff >= 0;
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      variants={{
-        hidden: { opacity: 0 },
-        show: { opacity: 1, transition: { staggerChildren: 0.1 } },
-      }}
-    >
+    <div className="animate-fade-in transition-all duration-300">
       <div className="mb-8">
-        <motion.div
-          variants={{
-            hidden: { opacity: 0, y: 10 },
-            show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-          }}
-        >
+        <div className="transition-all duration-300">
           <div className="flex items-center flex-wrap gap-2 mb-3">
             <SplitText
               text="Good"
@@ -105,7 +92,7 @@ export function Overview() {
             </span>{" "}
             today.
           </p>
-        </motion.div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
@@ -147,6 +134,6 @@ export function Overview() {
         <DashboardChart dateRange={dateRange} />
         <ActionItems />
       </div>
-    </motion.div>
+    </div>
   );
 }

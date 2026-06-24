@@ -1,10 +1,8 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "motion/react";
-import { ArrowRight, Mail, Lock, Sun, Moon } from "lucide-react";
+import { useNavigate } from "../lib/router";
+import { ArrowRight, Mail, Lock, Sun, Moon } from "../components/Icons";
 import { NXLogo } from "../components/NXLogo";
 import ShinyText from "../components/ShinyText";
-import Ferrofluid from "../components/Ferrofluid";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 
@@ -61,36 +59,15 @@ export function Login() {
   const isDark = theme === 'dark';
 
   return (
-    <div className="min-h-screen w-full flex bg-slate-50 dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden">
-      <Ferrofluid
-        className="absolute inset-0 z-0"
-        colors={['#0ea5e9', '#6366f1', '#7c3aed']}
-        speed={0.4}
-        scale={1.6}
-        turbulence={1}
-        fluidity={0.1}
-        rimWidth={0.2}
-        sharpness={2.5}
-        shimmer={1.5}
-        glow={isDark ? 0.8 : 0.9}
-        opacity={isDark ? 0.6 : 0.7}
-        mixBlendMode={isDark ? 'screen' : 'multiply'}
-      />
+    <div className="min-h-screen w-full flex bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-indigo-950 transition-colors duration-300 relative overflow-hidden">
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="mx-auto w-full max-w-sm lg:w-96"
-        >
+        <div className="mx-auto w-full max-w-sm lg:w-96 animate-fade-in transition-all duration-500">
           <div className="flex items-center gap-3 mb-10">
-            <motion.div 
-              whileHover={{ scale: 1.05 }}
-            >
+            <div className="transition-transform hover:scale-105 duration-300">
               <NXLogo size={48} />
-            </motion.div>
+            </div>
             <span className="font-display font-bold text-3xl tracking-tighter">
               <ShinyText 
                 text="NexBiz" 
@@ -171,15 +148,13 @@ export function Login() {
                     <span className={`text-white font-bold transition-all duration-300 ${isSubmitting ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
                       Access Terminal
                     </span>
-                    <ArrowRight className={`w-5 h-5 text-white transition-transform duration-300 group-hover:translate-x-1 ${isSubmitting ? 'opacity-0' : 'opacity-100'}`} />
+                    <div className={`transition-transform duration-300 group-hover:translate-x-1 ${isSubmitting ? 'opacity-0' : 'opacity-100'}`}>
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
                     
                     {isSubmitting && (
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-                          className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full"
-                        />
+                        <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       </div>
                     )}
                   </div>
@@ -187,7 +162,7 @@ export function Login() {
               </div>
             </form>
           </div>
-        </motion.div>
+        </div>
 
           {/* Creator credit */}
           <div className="mt-10 text-center">
@@ -203,23 +178,15 @@ export function Login() {
 
       {/* Decorative Right Side - Business Imagery */}
       <div className="hidden lg:block relative w-1/2 overflow-hidden bg-slate-900">
-        <motion.img
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 0.6 }}
-          transition={{ duration: 2 }}
-          className="absolute inset-0 h-full w-full object-cover mix-blend-luminosity"
+        <img
+          className="absolute inset-0 h-full w-full object-cover mix-blend-luminosity opacity-60 animate-fade-in transition-opacity duration-1000"
           src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
           alt="Modern Business Architecture"
         />
         <div className="absolute inset-0 bg-gradient-to-tr from-indigo-950/90 via-slate-900/60 to-transparent" />
         
         <div className="absolute inset-0 flex items-center justify-center p-20">
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 1 }}
-            className="backdrop-blur-xl bg-white/5 p-12 rounded-[40px] border border-white/10 shadow-2xl max-w-xl"
-          >
+          <div className="backdrop-blur-xl bg-white/5 p-12 rounded-[40px] border border-white/10 shadow-2xl max-w-xl animate-fade-in transition-all duration-1000">
             <div className="mb-6 inline-block rounded-full bg-indigo-500/20 px-4 py-1 border border-indigo-500/30">
                <span className="text-xs font-bold uppercase tracking-widest text-indigo-300">Enterprise Edition</span>
             </div>
@@ -237,7 +204,7 @@ export function Login() {
                </div>
                <p className="text-sm text-slate-400"><span className="text-white font-bold">500+</span> leaders trust NexBiz daily</p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
@@ -247,17 +214,9 @@ export function Login() {
         className="fixed bottom-6 right-6 z-[900] w-12 h-12 rounded-2xl shadow-xl shadow-slate-900/20 dark:shadow-indigo-500/10 flex items-center justify-center accent-gradient hover:scale-105 active:scale-95 transition-all duration-300 overflow-hidden"
         aria-label="Toggle dark mode"
       >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={theme}
-            initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-            transition={{ duration: 0.2 }}
-          >
-            {theme === "dark" ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />}
-          </motion.div>
-        </AnimatePresence>
+        <div className="transition-all duration-300">
+          {theme === "dark" ? <Sun className="w-5 h-5 text-white" /> : <Moon className="w-5 h-5 text-white" />}
+        </div>
       </button>
     </div>
   );

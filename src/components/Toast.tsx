@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { CheckCircle2, AlertCircle, Info, X, Bell } from "lucide-react";
+import { CheckCircle2, AlertCircle, Info, X } from "./Icons";
 import { NEW_NOTIFICATION } from "../utils/store";
 
 interface ToastMessage {
@@ -42,32 +41,27 @@ export function Toast() {
 
   return (
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 pointer-events-none">
-      <AnimatePresence>
-        {messages.map((msg) => (
-          <motion.div
-            key={msg.id}
-            initial={{ opacity: 0, x: 50, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 20, scale: 0.9, transition: { duration: 0.2 } }}
-            className="pointer-events-auto min-w-[320px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-2xl flex items-center gap-4 group"
+      {messages.map((msg) => (
+        <div
+          key={msg.id}
+          className="animate-fade-in pointer-events-auto min-w-[320px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-2xl flex items-center gap-4 group transition-all duration-300"
+        >
+          <div className="flex-shrink-0">
+            {getIcon(msg.dot)}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">
+              {msg.text}
+            </p>
+          </div>
+          <button
+            onClick={() => setMessages(prev => prev.filter(m => m.id !== msg.id))}
+            className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
           >
-            <div className="flex-shrink-0">
-              {getIcon(msg.dot)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">
-                {msg.text}
-              </p>
-            </div>
-            <button
-              onClick={() => setMessages(prev => prev.filter(m => m.id !== msg.id))}
-              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400 opacity-0 group-hover:opacity-100 transition-all"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
     </div>
   );
 }

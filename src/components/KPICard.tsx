@@ -1,13 +1,13 @@
-import { ArrowUpRight, ArrowDownRight, LucideIcon } from "lucide-react";
-import { AreaChart, Area, ResponsiveContainer } from "recharts";
+import { ArrowUpRight, ArrowDownRight } from "./Icons";
 import { SpotlightCard } from "./SpotlightCard";
+import React from "react";
 
 interface KPICardProps {
   title: string;
   value: string;
   trend: string;
   trendPositive: boolean;
-  icon: LucideIcon;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   sparklineData?: any[];
 }
 
@@ -19,12 +19,17 @@ export function KPICard({
   icon: Icon,
   sparklineData,
 }: KPICardProps) {
-  const accentColor = trendPositive ? "#6366f1" : "#f43f5e";
+  const accentColorClass = trendPositive ? "bg-indigo-500 dark:bg-indigo-400" : "bg-rose-500 dark:bg-rose-400";
+  
+  // Calculate max value for sparkline
+  const maxVal = sparklineData && sparklineData.length > 0 
+    ? Math.max(...sparklineData.map(d => d.value), 1) 
+    : 1;
 
   return (
     <SpotlightCard 
       onClick={() => console.log(`KPI Card clicked: ${title}`)}
-      className="flex flex-col h-full overflow-hidden cursor-pointer group"
+      className="flex flex-col h-full overflow-hidden cursor-pointer group relative"
     >
       <div className="flex justify-between items-start mb-3 sm:mb-5 w-full relative z-10">
         <div
@@ -59,25 +64,17 @@ export function KPICard({
       </div>
 
       {sparklineData && (
-        <div className="absolute bottom-0 left-0 right-0 h-20 opacity-25 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={sparklineData}>
-              <defs>
-                <linearGradient id={`sparkGrad-${title.replace(/ /g, "")}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={accentColor} stopOpacity={0.6} />
-                  <stop offset="95%" stopColor={accentColor} stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke={accentColor}
-                strokeWidth={2.5}
-                fill={`url(#sparkGrad-${title.replace(/ /g, "")})`}
-                dot={false}
+        <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-20 opacity-25 group-hover:opacity-50 transition-opacity duration-500 pointer-events-none flex items-end justify-between px-2 gap-[2px]">
+          {sparklineData.map((item, i) => {
+            const hPercent = (item.value / maxVal) * 100;
+            return (
+              <div 
+                key={i} 
+                className={`flex-1 rounded-t-sm opacity-50 ${accentColorClass}`}
+                style={{ height: `${hPercent}%` }}
               />
-            </AreaChart>
-          </ResponsiveContainer>
+            );
+          })}
         </div>
       )}
     </SpotlightCard>

@@ -1,17 +1,11 @@
-import { motion } from "motion/react";
-import { useOutletContext } from "react-router-dom";
-import { Construction } from "lucide-react";
+import { useOutletContext } from "../lib/router";
+import { Construction } from "../components/Icons";
 
 export function UnderDevelopment() {
   const { activeTab } = useOutletContext<{ dateRange: string; activeTab: string }>();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-col items-center justify-center py-28 px-4 bento-card"
-    >
+    <div className="flex flex-col items-center justify-center py-28 px-4 bento-card animate-fade-in">
       <div className="w-20 h-20 accent-gradient rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/20">
         <Construction className="w-10 h-10 text-white" />
       </div>
@@ -20,6 +14,6 @@ export function UnderDevelopment() {
         This section is currently under development. Please check back later for updates to the{" "}
         <span className="font-semibold text-slate-700 dark:text-slate-300">{activeTab}</span> module.
       </p>
-    </motion.div>
+    </div>
   );
 }

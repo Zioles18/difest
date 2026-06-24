@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "../lib/router";
 import {
   LayoutDashboard,
   Users,
@@ -12,7 +11,7 @@ import {
   ChevronRight,
   TrendingUp,
   Award
-} from "lucide-react";
+} from "./Icons";
 import { NXLogo } from "./NXLogo";
 import ShinyText from "./ShinyText";
 import { useTheme } from "../utils/ThemeContext";
@@ -158,17 +157,16 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
         <div className="mt-8 px-3">
            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700/50">
               <div className="flex items-center gap-2 mb-3">
-<TrendingUp className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <TrendingUp className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue Goal</span>
               </div>
               <div className="flex justify-between items-end mb-2">
-<span className="text-sm font-bold text-slate-900 dark:text-slate-100">${Math.round(data.revenue/1000)}k</span>
+                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100">${Math.round(data.revenue/1000)}k</span>
                   <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">${revenueGoal/1000}k</span>
               </div>
               <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                 <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(100, progress)}%` }}
+                 <div 
+                    style={{ width: `${Math.min(100, progress)}%`, transition: 'width 1s ease-in-out' }}
                     className="h-full bg-indigo-600 rounded-full"
                  />
               </div>
@@ -180,7 +178,7 @@ function SidebarContent({ setIsOpen }: { setIsOpen: (v: boolean) => void }) {
       {/* Profile section */}
       <div className="shrink-0 border-t border-slate-100 dark:border-slate-700/50 p-3">
         {isPremium && (
-<div className="mb-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg flex items-center gap-2">
+          <div className="mb-2 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg flex items-center gap-2">
               <Award className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Verified Business</span>
           </div>
@@ -241,31 +239,20 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       </aside>
 
       {/* Mobile: slide-in drawer */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[500] lg:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-            <motion.div
-              key="drawer"
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", stiffness: 350, damping: 35 }}
-              className="fixed top-0 left-0 h-full z-[600] lg:hidden shadow-2xl"
-            >
-              <SidebarContent setIsOpen={setIsOpen} />
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[500] lg:hidden transition-opacity duration-300"
+            onClick={() => setIsOpen(false)}
+          />
+          <div
+            className="fixed top-0 left-0 h-full z-[600] lg:hidden shadow-2xl transition-transform duration-300 translate-x-0"
+          >
+            <SidebarContent setIsOpen={setIsOpen} />
+          </div>
+        </>
+      )}
     </>
   );
 }
+

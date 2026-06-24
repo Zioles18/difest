@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from "motion/react";
 import { 
   User, 
   Lock, 
@@ -20,11 +19,12 @@ import {
   TrendingUp,
   AlertTriangle,
   Monitor,
-  LogOut
-} from "lucide-react";
+  LogOut,
+  BarChart as BarChartIcon
+} from "../components/Icons";
 import { useState, useEffect } from "react";
 import { auth } from "../utils/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "../lib/router";
 import { SpotlightCard } from "../components/SpotlightCard";
 import { 
   getBusinessData, 
@@ -34,7 +34,6 @@ import {
   BusinessData,
   addNotification
 } from "../utils/store";
-import { BarChart as BarChartIcon } from "lucide-react";
 
 export function Settings() {
   const navigate = useNavigate();
@@ -151,7 +150,7 @@ export function Settings() {
       const now = new Date();
       const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
       const newInvId = `#INV-${now.getFullYear()}-${String(Math.floor(Math.random()*900)+100)}`;
-      setInvoices(prev => {
+      setInvoices((prev: any[]) => {
         const updated = [{ id: newInvId, date: dateStr, amount: "$99.00", status: "Paid" }, ...prev];
         const invoicesKey = email ? `NexBiz_invoices_${email}` : "NexBiz_invoices";
         localStorage.setItem(invoicesKey, JSON.stringify(updated));
@@ -201,12 +200,7 @@ export function Settings() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-20"
-    >
+    <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 pb-20 animate-fade-in transition-all duration-300">
       <div className="px-1 sm:px-0">
         <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100">Settings</h1>
         <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Configure your workspace and account preferences.</p>
@@ -237,15 +231,9 @@ export function Settings() {
         {/* Content Area */}
         <div className="flex-1 px-1 sm:px-0">
           <SpotlightCard className="p-5 sm:p-8">
-            <AnimatePresence mode="wait">
+            <div className="relative">
               {activeTab === "general" && (
-                <motion.div
-                  key="general"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  className="space-y-8 z-10 relative"
-                >
+                <div className="space-y-8 z-10 relative animate-fade-in transition-all duration-300">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Profile Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -281,17 +269,11 @@ export function Settings() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
 
               {activeTab === "billing" && (
-                <motion.div
-                  key="billing"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  className="space-y-8 z-10 relative"
-                >
+                <div className="space-y-8 z-10 relative animate-fade-in transition-all duration-300">
                   <div className="p-5 sm:p-6 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-sm">
@@ -315,7 +297,7 @@ export function Settings() {
                   <div>
                      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Payment History</h3>
                      <div className="space-y-3">
-                        {invoices.map((inv) => (
+                        {invoices.map((inv: any) => (
                            <div key={inv.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50 group hover:border-indigo-100 transition-colors gap-4">
                               <div className="flex flex-col">
                                  <span className="text-sm font-bold text-slate-900 dark:text-slate-100">{inv.id}</span>
@@ -334,17 +316,11 @@ export function Settings() {
                         ))}
                      </div>
                   </div>
-                </motion.div>
+                </div>
               )}
 
               {activeTab === "notifications" && (
-                <motion.div
-                  key="notifications"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  className="space-y-8 z-10 relative"
-                >
+                <div className="space-y-8 z-10 relative animate-fade-in transition-all duration-300">
                    <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Notification Preferences</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Choose how you want to be notified about workspace updates.</p>
@@ -369,9 +345,8 @@ export function Settings() {
                                onClick={() => setSettings({...settings, [pref.id]: !settings[pref.id as keyof typeof settings]})}
                                className={`w-12 h-6 rounded-full relative transition-colors duration-200 self-end sm:self-center ${settings[pref.id as keyof typeof settings] ? "bg-indigo-600" : "bg-slate-300 dark:bg-slate-600"}`}
                              >
-                                <motion.div 
-                                  animate={{ x: settings[pref.id as keyof typeof settings] ? 26 : 4 }}
-                                  className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
+                                <div 
+                                  className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all duration-200 ${settings[pref.id as keyof typeof settings] ? 'translate-x-[22px]' : 'translate-x-1'}`}
                                 />
                              </button>
                           </div>
@@ -379,17 +354,11 @@ export function Settings() {
                       })}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
 
               {activeTab === "data" && (
-                <motion.div
-                  key="data"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  className="space-y-8 z-10 relative"
-                >
+                <div className="space-y-8 z-10 relative animate-fade-in transition-all duration-300">
                   <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-2">Business Data Hub</h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 font-medium">Manually update your business metrics (revenue goal and conversion rate) or configure weekly revenue chart points.</p>
@@ -478,17 +447,11 @@ export function Settings() {
                        </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
 
               {activeTab === "security" && (
-                <motion.div
-                  key="security"
-                  initial={{ opacity: 0, x: 10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  className="space-y-8 z-10 relative"
-                >
+                <div className="space-y-8 z-10 relative animate-fade-in transition-all duration-300">
                    <div>
                     <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 mb-6">Security Settings</h3>
                     <div className="p-5 sm:p-6 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -511,15 +474,12 @@ export function Settings() {
                     <div className="mb-6">
                       <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2"><Monitor className="w-4 h-4 text-slate-400 dark:text-slate-500" /> Active Sessions</h4>
                       <div className="space-y-3">
-                        <AnimatePresence>
                           {sessions.map(s => {
                             const Icon = s.icon;
                             return (
-                              <motion.div
+                              <div
                                 key={s.id}
-                                initial={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50 gap-4"
+                                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-slate-100 dark:border-slate-700/50 gap-4 transition-all duration-300"
                               >
                                 <div className="flex items-center gap-3">
                                   <div className="w-9 h-9 bg-white dark:bg-slate-900 rounded-xl flex items-center justify-center shadow-sm text-slate-400 dark:text-slate-500">
@@ -540,12 +500,11 @@ export function Settings() {
                                     title="Remove session"
                                   >
                                     <LogOut className="w-4 h-4" />
-                                  </button>
+                                 </button>
                                 )}
-                              </motion.div>
+                              </div>
                             );
                           })}
-                        </AnimatePresence>
                       </div>
                     </div>
 
@@ -556,9 +515,9 @@ export function Settings() {
                        <Trash2 className="w-4 h-4" /> Delete Account
                     </button>
                    </div>
-                </motion.div>
+                </div>
               )}
-            </AnimatePresence>
+            </div>
 
             <div className="mt-12 pt-8 border-t border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row justify-end items-center gap-3 z-10 relative">
                 <button className="w-full sm:w-auto px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-bold text-sm hover:text-slate-900 dark:hover:text-slate-100 transition-colors rounded-2xl">Discard Changes</button>
@@ -577,124 +536,94 @@ export function Settings() {
       </div>
 
       {/* Global Success Toast */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 dark:bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 dark:border-slate-700/50"
-          >
-            <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
-            <span className="font-bold tracking-tight">Settings updated successfully!</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {showToast && (
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 dark:bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 dark:border-slate-700/50 animate-fade-in transition-all duration-300">
+          <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+            <CheckCircle2 className="w-4 h-4" />
+          </div>
+          <span className="font-bold tracking-tight">Settings updated successfully!</span>
+        </div>
+      )}
 
       {/* Delete Account Confirmation Modal */}
-      <AnimatePresence>
-        {showDeleteConfirm && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
-              className="fixed inset-0 z-[1100]"
-            />
-            <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 pointer-events-none">
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl pointer-events-auto"
-              >
-                <div className="w-16 h-16 bg-rose-50 dark:bg-rose-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-rose-100 dark:border-rose-800/50">
-                  <AlertTriangle className="w-8 h-8 text-rose-500 dark:text-rose-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">Delete Account?</h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm text-center font-medium mb-8 leading-relaxed">
-                  This will permanently erase all your data, settings, and orders. This action <strong>cannot</strong> be undone.
-                </p>
-                <div className="space-y-3 mb-6">
-                  <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Type DELETE to confirm</label>
-                  <input
-                    type="text"
-                    value={deleteConfirmText}
-                    onChange={(e) => setDeleteConfirmText(e.target.value)}
-                    placeholder="DELETE"
-                    className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-bold focus:ring-4 focus:ring-rose-500/10 focus:border-rose-400 outline-none transition-all text-center tracking-widest text-slate-900 dark:text-slate-100"
-                  />
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
-                    className="flex-1 py-4 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleDeleteAccount}
-                    disabled={deleteConfirmText !== "DELETE"}
-                    className="flex-1 py-4 bg-rose-600 text-white font-bold rounded-2xl hover:bg-rose-700 transition-all shadow-xl shadow-rose-500/20 dark:shadow-rose-500/10 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Delete Forever
-                  </button>
-                </div>
-              </motion.div>
+      {showDeleteConfirm && (
+        <>
+          <div
+            onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+            className="fixed inset-0 z-[1100] bg-black/20 transition-opacity duration-300"
+          />
+          <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 pointer-events-none transition-all duration-300">
+            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-2xl pointer-events-auto">
+              <div className="w-16 h-16 bg-rose-50 dark:bg-rose-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-rose-100 dark:border-rose-800/50">
+                <AlertTriangle className="w-8 h-8 text-rose-500 dark:text-rose-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 text-center mb-2">Delete Account?</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm text-center font-medium mb-8 leading-relaxed">
+                This will permanently erase all your data, settings, and orders. This action <strong>cannot</strong> be undone.
+              </p>
+              <div className="space-y-3 mb-6">
+                <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-1">Type DELETE to confirm</label>
+                <input
+                  type="text"
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                  placeholder="DELETE"
+                  className="w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-bold focus:ring-4 focus:ring-rose-500/10 focus:border-rose-400 outline-none transition-all text-center tracking-widest text-slate-900 dark:text-slate-100"
+                />
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(""); }}
+                  className="flex-1 py-4 bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 font-bold rounded-2xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={deleteConfirmText !== "DELETE"}
+                  className="flex-1 py-4 bg-rose-600 text-white font-bold rounded-2xl hover:bg-rose-700 transition-all shadow-xl shadow-rose-500/20 dark:shadow-rose-500/10 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Delete Forever
+                </button>
+              </div>
             </div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+        </>
+      )}
 
       {/* Payment Processing Modal */}
-      <AnimatePresence>
-        {isPaying && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[1100]"
-            />
-            <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 pointer-events-none">
-              <motion.div
-                key={paymentStep}
-                initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 text-center shadow-2xl pointer-events-auto"
-              >
-               {paymentStep === 1 ? (
-                 <>
-                   <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
-                     <Loader2 className="w-10 h-10 text-indigo-600 dark:text-indigo-400 animate-spin" />
-                   </div>
-                   <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">Processing Payment</h3>
-                   <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Please wait while we secure your transaction and prepare your Business Premium workspace...</p>
-                 </>
-               ) : (
-                 <>
-                   <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-emerald-100 dark:border-emerald-800/50">
-                     <CheckCircle2 className="w-10 h-10 text-emerald-500 dark:text-emerald-400" />
-                   </div>
-                   <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">Payment Successful!</h3>
-                   <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">Welcome to NexBiz Business Premium. Your new features are now unlocked and ready to use.</p>
-                   <button 
-                    onClick={() => setIsPaying(false)}
-                    className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/30 dark:shadow-indigo-500/10"
-                   >
-                     Get Started
-                   </button>
-                 </>
-               )}
-              </motion.div>
+      {isPaying && (
+        <>
+          <div className="fixed inset-0 z-[1100] bg-black/20 transition-opacity duration-300" />
+          <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 pointer-events-none transition-all duration-300">
+            <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 text-center shadow-2xl pointer-events-auto">
+             {paymentStep === 1 ? (
+               <>
+                 <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                   <Loader2 className="w-10 h-10 text-indigo-600 dark:text-indigo-400 animate-spin" />
+                 </div>
+                 <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">Processing Payment</h3>
+                 <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">Please wait while we secure your transaction and prepare your Business Premium workspace...</p>
+               </>
+             ) : (
+               <>
+                 <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-emerald-100 dark:border-emerald-800/50">
+                   <CheckCircle2 className="w-10 h-10 text-emerald-500 dark:text-emerald-400" />
+                 </div>
+                 <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">Payment Successful!</h3>
+                 <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed mb-8">Welcome to NexBiz Business Premium. Your new features are now unlocked and ready to use.</p>
+                 <button 
+                  onClick={() => setIsPaying(false)}
+                  className="w-full py-4 bg-indigo-600 text-white font-bold rounded-2xl hover:bg-indigo-700 transition-all shadow-xl shadow-indigo-500/30 dark:shadow-indigo-500/10"
+                 >
+                   Get Started
+                 </button>
+               </>
+             )}
             </div>
-          </>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          </div>
+        </>
+      )}
+    </div>
   );
 }

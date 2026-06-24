@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { X, Bot, User, Sparkles, Loader2, Minimize2, Maximize2, MessageSquare } from 'lucide-react';
+import { X, Bot, User, Sparkles, Loader2, Minimize2, Maximize2, MessageSquare } from './Icons';
 
 interface Message {
   id: string;
@@ -84,20 +83,16 @@ export function AIChat() {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-10 sm:right-10 z-[100]">
-      <AnimatePresence>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col mb-4 ${
+          <div
+            className={`bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl flex flex-col mb-4 animate-fade-in transition-all duration-300 ${
               isExpanded 
                 ? 'w-[92vw] h-[70vh] sm:w-[90vw] sm:h-[80vh] max-w-[360px] sm:max-w-[500px] max-h-[700px]' 
                 : 'w-[92vw] h-[480px] sm:w-[90vw] sm:h-[550px] max-w-[360px] sm:max-w-[420px]'
             }`}
           >
             {/* Chat Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-t-2xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
                   <Bot className="w-5 h-5 text-white" />
@@ -127,11 +122,9 @@ export function AIChat() {
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-slate-50 dark:bg-slate-900/50">
               {messages.map((message) => (
-                <motion.div
+                <div
                   key={message.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex gap-3 animate-fade-in ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'ai' && (
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
@@ -154,14 +147,10 @@ export function AIChat() {
                       <User className="w-4 h-4 text-slate-700 dark:text-slate-300" />
                     </div>
                   )}
-                </motion.div>
+                </div>
               ))}
               {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex gap-3"
-                >
+                <div className="flex gap-3 animate-fade-in">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0">
                     <Bot className="w-4 h-4 text-white" />
                   </div>
@@ -172,61 +161,40 @@ export function AIChat() {
                       <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                   </div>
-                </motion.div>
+                </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
             {/* Question Buttons */}
-            <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+            <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-b-2xl">
               <div className="flex flex-wrap gap-2">
                 {QUESTION_RESPONSES.map((item, index) => (
-                  <motion.button
+                  <button
                     key={index}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => handleQuestionClick(item.question, item.response)}
                     disabled={isTyping}
-                    className="px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-2 py-1.5 sm:px-3 sm:py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95"
                   >
                     {item.question}
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
 
       {/* Floating Button */}
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 text-white"
+        className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform duration-300"
       >
-        <AnimatePresence mode="wait">
           {isOpen ? (
-            <motion.div
-              key="x"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
-            >
-              <X className="w-4 h-4" />
-            </motion.div>
+              <X className="w-4 h-4 animate-fade-in" />
           ) : (
-            <motion.div
-              key="sparkles"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-            >
-              <Sparkles className="w-4 h-4" />
-            </motion.div>
+              <Sparkles className="w-4 h-4 animate-fade-in" />
           )}
-        </AnimatePresence>
-      </motion.button>
+      </button>
     </div>
   );
 }

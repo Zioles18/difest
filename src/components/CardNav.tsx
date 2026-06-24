@@ -1,9 +1,7 @@
-import React, { useLayoutEffect, useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { gsap } from 'gsap';
-import { ArrowUpRight, Bell, Sun, Moon, X, Trash2, LogOut } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { NavLink, useNavigate, useLocation } from '../lib/router';
+import { ArrowUpRight, Bell, Sun, Moon, X, Trash2, LogOut } from './Icons';
 import ShinyText from './ShinyText';
 import { NXLogo } from './NXLogo';
 import { useTheme } from '../utils/ThemeContext';
@@ -39,7 +37,6 @@ const CardNav: React.FC<CardNavProps> = ({
   logoAlt = "Logo",
   items,
   className = "",
-  ease = "power4.out",
   baseColor = "#fff",
   menuColor,
 }) => {
@@ -63,9 +60,15 @@ const CardNav: React.FC<CardNavProps> = ({
     };
   });
 
+  const navRef = useRef<HTMLDivElement | null>(null);
+  const notifRef = useRef<HTMLDivElement | null>(null);
+  const bellRef = useRef<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+
   // Close menu when route changes
   useEffect(() => {
-    closeMenu();
+    setIsHamburgerOpen(false);
+    setIsExpanded(false);
     setShowNotifications(false);
   }, [location.pathname]);
 
@@ -92,13 +95,6 @@ const CardNav: React.FC<CardNavProps> = ({
 
   const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
 
-  const navRef = useRef<HTMLDivElement | null>(null);
-  const cardsRef = useRef<HTMLDivElement[]>([]);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const notifRef = useRef<HTMLDivElement | null>(null);
-  const bellRef = useRef<HTMLButtonElement | null>(null);
-  const panelRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     const handleProfileUpdate = (e: any) => setProfile(e.detail);
     window.addEventListener("NexBiz_profile_updated", handleProfileUpdate);
@@ -120,149 +116,21 @@ const CardNav: React.FC<CardNavProps> = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showNotifications]);
 
-  const calculateHeight = () => {
-    const navEl = navRef.current;
-    if (!navEl) return 260;
-
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
-    if (isMobile) {
-      const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement;
-      if (contentEl) {
-        const wasVisible = contentEl.style.visibility;
-        const wasPointerEvents = contentEl.style.pointerEvents;
-        const wasPosition = contentEl.style.position;
-        const wasHeight = contentEl.style.height;
-
-        contentEl.style.visibility = 'visible';
-        contentEl.style.pointerEvents = 'auto';
-        contentEl.style.position = 'static';
-        contentEl.style.height = 'auto';
-
-        contentEl.offsetHeight;
-
-        const topBar = 60;
-        const padding = 16;
-        const contentHeight = contentEl.scrollHeight;
-        
-        contentEl.style.visibility = wasVisible;
-        contentEl.style.pointerEvents = wasPointerEvents;
-        contentEl.style.position = wasPosition;
-        contentEl.style.height = wasHeight;
-
-        // Add extra padding/buffer to prevent cutoff
-        return topBar + contentHeight + 40; 
-      }
-    } else {
-      // Desktop also needs a dynamic height now that we added a card
-      const contentEl = navEl.querySelector('.card-nav-content') as HTMLElement;
-      if (contentEl) {
-        return 60 + contentEl.scrollHeight + 32;
-      }
-    }
-    return 300; // Increased base height
-  };
-
-  const createTimeline = () => {
-    const navEl = navRef.current;
-    if (!navEl) return null;
-
-    gsap.set(navEl, { height: 60, overflow: 'hidden' });
-    gsap.set(cardsRef.current, { y: 30, opacity: 0 });
-
-    const tl = gsap.timeline({ paused: true });
-
-    tl.to(navEl, {
-      height: calculateHeight,
-      duration: 0.2,
-      ease,
-      onComplete: () => {
-        gsap.set(navEl, { overflow: 'visible' });
-      }
-    });
-
-    tl.to(cardsRef.current, { y: 0, opacity: 1, duration: 0.15, ease, stagger: 0.05 }, '-=0.1');
-
-    return tl;
-  };
-
-  useLayoutEffect(() => {
-    const tl = createTimeline();
-    tlRef.current = tl;
-
-    return () => {
-      tl?.kill();
-      tlRef.current = null;
-    };
-  }, [ease, items]);
-
-  useLayoutEffect(() => {
-    const handleResize = () => {
-      if (!tlRef.current) return;
-
-      if (isExpanded) {
-        const newHeight = calculateHeight();
-        gsap.set(navRef.current, { height: newHeight });
-
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          newTl.progress(1);
-          tlRef.current = newTl;
-        }
-      } else {
-        tlRef.current.kill();
-        const newTl = createTimeline();
-        if (newTl) {
-          tlRef.current = newTl;
-        }
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isExpanded]);
-
   const toggleMenu = () => {
-    // Ensure timeline is fresh
-    const tl = createTimeline();
-    if (!tl) return;
-    tlRef.current = tl;
-
     if (!isExpanded) {
       setIsHamburgerOpen(true);
       setIsExpanded(true);
-      tl.play(0);
     } else {
       setIsHamburgerOpen(false);
-      tl.eventCallback('onReverseComplete', () => {
-        setIsExpanded(false);
-        if (navRef.current) {
-          gsap.set(navRef.current, { height: 60, overflow: 'hidden' });
-        }
-      });
-      tl.reverse(0);
+      setIsExpanded(false);
     }
   };
 
   const closeMenu = () => {
     if (isExpanded) {
       setIsHamburgerOpen(false);
-      const tl = tlRef.current;
-      if (tl) {
-        tl.eventCallback('onReverseComplete', () => {
-          setIsExpanded(false);
-          // Ensure the nav is reset properly
-          if (navRef.current) {
-            gsap.set(navRef.current, { height: 60, overflow: 'hidden' });
-          }
-        });
-        tl.reverse(0);
-      }
+      setIsExpanded(false);
     }
-  };
-
-  const setCardRef = (i: number) => (el: HTMLDivElement | null) => {
-    if (el) cardsRef.current[i] = el;
   };
 
   const handleLinkClick = () => {
@@ -272,11 +140,12 @@ const CardNav: React.FC<CardNavProps> = ({
 
   return (
     <div className={`card-nav-container ${className}`}>
-      <nav ref={navRef} className={`card-nav ${isExpanded ? 'open' : ''}`} style={{ 
+      <nav ref={navRef} className={`card-nav ${isExpanded ? 'open' : ''} transition-all duration-500`} style={{ 
         backgroundColor: baseColor,
-        transition: 'background-color 0.5s cubic-bezier(0.22,1,0.36,1)'
+        height: isExpanded ? 'auto' : '60px',
+        overflow: isExpanded ? 'visible' : 'hidden',
       }}>
-        <div className="card-nav-top overflow-visible">
+        <div className="card-nav-top overflow-visible h-[60px] flex items-center px-4">
           <div
             className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''}`}
             onClick={toggleMenu}
@@ -289,7 +158,7 @@ const CardNav: React.FC<CardNavProps> = ({
             <div className="hamburger-line" />
           </div>
 
-          <div className="logo-container">
+          <div className="logo-container ml-auto mr-auto sm:ml-4 sm:mr-auto">
             <div className="flex items-center gap-3">
               <NXLogo size={40} />
               <span className="font-display font-bold text-xl sm:text-2xl tracking-tighter">
@@ -304,13 +173,12 @@ const CardNav: React.FC<CardNavProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
             {/* Theme Toggle */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                console.log('Theme toggle clicked!');
                 toggleTheme();
               }}
               className="w-9 h-9 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all cursor-pointer pointer-events-auto z-40"
@@ -349,23 +217,17 @@ const CardNav: React.FC<CardNavProps> = ({
                 )}
               </button>
 
-              {/* Notification Panel via Portal - escapes ALL overflow/transform constraints */}
+              {/* Notification Panel via Portal */}
               {showNotifications && createPortal(
-                <AnimatePresence>
-                  <motion.div
+                  <div
                     ref={panelRef}
-                    key="notif-panel"
-                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.15 }}
                     style={{ 
                       position: 'fixed', 
                       top: dropdownPos.top, 
                       right: dropdownPos.right, 
                       zIndex: 9999 
                     }}
-                    className="w-[320px] max-w-[calc(100vw-32px)] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/15 dark:shadow-black/40 overflow-hidden"
+                    className="animate-fade-in w-[320px] max-w-[calc(100vw-32px)] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/15 dark:shadow-black/40 overflow-hidden"
                   >
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
@@ -384,29 +246,20 @@ const CardNav: React.FC<CardNavProps> = ({
 
                     {/* List */}
                     <div className="max-h-[280px] overflow-y-auto">
-                      <AnimatePresence initial={false}>
                         {notifications.length === 0 ? (
-                          <motion.div
-                            key="empty"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="px-4 py-8 text-center"
-                          >
+                          <div className="px-4 py-8 text-center animate-fade-in">
                             <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center">
                               <Bell className="w-5 h-5 text-slate-400 dark:text-slate-500" />
                             </div>
                             <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
                             <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
-                          </motion.div>
+                          </div>
                         ) : (
                           notifications.map((n) => (
-                            <motion.div
+                            <div
                               key={n.id}
-                              initial={{ opacity: 0, x: 10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 40, transition: { duration: 0.18 } }}
                               onClick={() => deleteNotification(n.id)}
-                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group cursor-pointer"
+                              className="animate-fade-in flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group cursor-pointer"
                             >
                               <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
                               <div className="flex-1 min-w-0">
@@ -423,10 +276,9 @@ const CardNav: React.FC<CardNavProps> = ({
                               >
                                 <X className="w-3.5 h-3.5" />
                               </button>
-                            </motion.div>
+                            </div>
                           ))
                         )}
-                      </AnimatePresence>
                     </div>
 
                     {/* Footer */}
@@ -448,19 +300,13 @@ const CardNav: React.FC<CardNavProps> = ({
                         </button>
                       </div>
                     )}
-                  </motion.div>
-                </AnimatePresence>,
+                  </div>,
                 document.body
               )}
 
               {/* Toast notification */}
-              <AnimatePresence>
                 {showToast && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
+                  <div
                     onClick={() => {
                       if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
                       setShowToast(false);
@@ -473,7 +319,7 @@ const CardNav: React.FC<CardNavProps> = ({
                         });
                       }
                     }}
-                    className="fixed top-20 right-4 z-[2000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-xs cursor-pointer"
+                    className="animate-fade-in fixed top-20 right-4 z-[2000] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl px-4 py-3 flex items-center gap-3 max-w-xs cursor-pointer"
                   >
                     <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                     <p className="text-sm font-medium text-slate-800 dark:text-slate-200 flex-1 min-w-0 truncate">{latestNotification}</p>
@@ -483,9 +329,8 @@ const CardNav: React.FC<CardNavProps> = ({
                     >
                       <X className="w-4 h-4" />
                     </button>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
             </div>
 
             {/* Profile avatar */}
@@ -505,12 +350,11 @@ const CardNav: React.FC<CardNavProps> = ({
           </div>
         </div>
 
-        <div className="card-nav-content" aria-hidden={!isExpanded}>
+        <div className={`card-nav-content transition-all duration-500 ease-out px-4 pb-4 ${isExpanded ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-4 invisible'}`} aria-hidden={!isExpanded}>
           {(items || []).slice(0, 3).map((item, idx) => (
             <div
               key={`${item.label}-${idx}`}
               className="nav-card"
-              ref={setCardRef(idx)}
               style={{ 
                 backgroundColor: item.bgColor, 
                 color: item.textColor,

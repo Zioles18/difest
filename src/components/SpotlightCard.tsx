@@ -1,5 +1,4 @@
 import React, { useRef, useState, ReactNode } from "react";
-import { motion } from "motion/react";
 
 interface SpotlightCardProps {
   children: ReactNode;
@@ -20,18 +19,13 @@ export function SpotlightCard({ children, className = "", onClick, allowOverflow
   };
 
   return (
-    <motion.div
+    <div
       ref={divRef}
       onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setOpacity(1)}
       onMouseLeave={() => setOpacity(0)}
-      whileTap={onClick ? { scale: 0.98 } : undefined}
-      variants={{
-        hidden: { opacity: 0, y: 20 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-      }}
-      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : "overflow-visible"} ${onClick ? "cursor-pointer" : ""} ${className}`}
+      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : "overflow-visible"} ${onClick ? "cursor-pointer active:scale-[0.98] transition-transform" : ""} animate-fade-in ${className}`}
     >
       {/* Background Spotlight Layer with its own clipping */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
@@ -47,6 +41,6 @@ export function SpotlightCard({ children, className = "", onClick, allowOverflow
       <div className="relative z-10 w-full h-full flex flex-col">
         {children}
       </div>
-    </motion.div>
+    </div>
   );
 }

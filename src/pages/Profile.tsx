@@ -1,4 +1,3 @@
-import { motion, AnimatePresence } from "motion/react";
 import { 
   Camera, 
   MapPin, 
@@ -7,20 +6,12 @@ import {
   Phone, 
   Edit2, 
   Save, 
-  X,
   Check,
-  Facebook,
-  Twitter,
-  Linkedin,
-  Github,
   Upload
-} from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+} from "../components/Icons";
+import React, { useState, useRef } from "react";
 import { auth } from "../utils/auth";
 import { addNotification } from "../utils/store";
-import Shuffle from "../components/Shuffle";
 
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -41,17 +32,6 @@ export function Profile() {
       avatar: `https://api.dicebear.com/9.x/initials/svg?seed=${email || "user"}&backgroundColor=6366f1&textColor=ffffff`
     };
   });
-
-  // Trigger Shuffle animation on mount (bypass ScrollTrigger issue with elements at top of page)
-  useEffect(() => {
-    const t = setTimeout(() => {
-      ScrollTrigger.refresh();
-      // Small scroll bump to force onEnter for elements already at viewport top
-      window.scrollTo(0, 1);
-      requestAnimationFrame(() => window.scrollTo(0, 0));
-    }, 300);
-    return () => clearTimeout(t);
-  }, []);
 
   const handleSave = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -83,15 +63,7 @@ export function Profile() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ 
-        staggerChildren: 0.1,
-        delayChildren: 0.1
-      }}
-      className="space-y-6 sm:space-y-8"
-    >
+    <div className="space-y-6 sm:space-y-8 animate-fade-in transition-all duration-300">
        <input 
          type="file" 
          ref={fileInputRef} 
@@ -101,28 +73,17 @@ export function Profile() {
        />
 
        {/* Saved Toast */}
-       <AnimatePresence>
         {showSavedToast && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 dark:bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 dark:border-slate-700"
-          >
+          <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] bg-slate-900 dark:bg-slate-900 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-800 dark:border-slate-700 animate-fade-in transition-all duration-300">
             <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
               <Check className="w-4 h-4" />
             </div>
             <span className="font-bold">Profile updated successfully!</span>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
 
       {/* Cover Profile */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative mb-6 sm:mb-8"
-      >
+      <div className="relative mb-6 sm:mb-8 animate-fade-in">
         {/* Cover image */}
         <div className="h-36 sm:h-52 md:h-64 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 dark:from-indigo-950 dark:via-purple-950 dark:to-pink-950 relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-2xl shadow-indigo-500/10">
           <img 
@@ -132,38 +93,14 @@ export function Profile() {
           />
           <div className="absolute inset-0 bg-white/20 dark:bg-black/20"></div>
 
-          {/* Shuffle text on cover */}
+          {/* Text on cover */}
           <div className="absolute inset-0 flex flex-col items-center justify-center px-6">
-            <Shuffle
-              text={profile.name.toUpperCase()}
-              tag="h2"
-              shuffleDirection="right"
-              loop={true}
-              loopDelay={3}
-              duration={0.6}
-              shuffleTimes={2}
-              className="text-xl sm:text-3xl md:text-4xl font-bold text-indigo-800 dark:text-indigo-200"
-              textAlign="center"
-              triggerOnHover={false}
-              triggerOnce={false}
-              threshold={1}
-              rootMargin="0px"
-            />
-            <Shuffle
-              text={profile.role.toUpperCase()}
-              tag="p"
-              shuffleDirection="left"
-              loop={true}
-              loopDelay={3}
-              duration={0.6}
-              shuffleTimes={2}
-              className="text-xs sm:text-sm md:text-base font-semibold text-indigo-600/70 dark:text-indigo-300/70 mt-2 tracking-widest"
-              textAlign="center"
-              triggerOnHover={false}
-              triggerOnce={false}
-              threshold={1}
-              rootMargin="0px"
-            />
+            <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-indigo-800 dark:text-indigo-200 tracking-widest text-center">
+              {profile.name.toUpperCase()}
+            </h2>
+            <p className="text-xs sm:text-sm md:text-base font-semibold text-indigo-600/70 dark:text-indigo-300/70 mt-2 tracking-widest text-center">
+              {profile.role.toUpperCase()}
+            </p>
           </div>
         </div>
 
@@ -237,15 +174,9 @@ export function Profile() {
 
           </div>
         </div>
-      </motion.div>
+      </div>
 
-
-
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8"
-      >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 animate-fade-in transition-all duration-500 delay-100">
         <div className="space-y-8">
           <div className="bento-card p-5 sm:p-8">
             <h3 className="font-bold text-xl mb-6 text-slate-900 dark:text-slate-100 font-display">Introduction</h3>
@@ -323,7 +254,7 @@ export function Profile() {
             </form>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

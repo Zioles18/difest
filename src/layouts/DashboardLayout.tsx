@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useSetOutletContext } from "../lib/router";
 import { AIChat } from "../components/AIChat";
-import Ferrofluid from "../components/Ferrofluid";
 import CardNav from "../components/CardNav";
 import { useTheme } from "../utils/ThemeContext";
 import { Toast } from "../components/Toast";
 
 export type DateRange = "7d" | "30d" | "12m";
 
-export function DashboardLayout() {
+export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { theme } = useTheme();
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [isModalActive, setIsModalActive] = useState(false);
@@ -19,6 +18,13 @@ export function DashboardLayout() {
   const activeTab = location.pathname === "/"
     ? "Overview"
     : location.pathname.replace("/", "").charAt(0).toUpperCase() + location.pathname.slice(1);
+
+  const setOutletCtx = useSetOutletContext();
+
+  // Pass context to children via router outlet context
+  useEffect(() => {
+    setOutletCtx({ dateRange, activeTab });
+  }, [dateRange, activeTab]);
 
   const cardNavItems = [
     {
@@ -57,24 +63,7 @@ export function DashboardLayout() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden font-sans">
-      <Ferrofluid
-        className="absolute inset-0 z-0"
-        colors={isDark 
-          ? ['#0ea5e9', '#6366f1', '#7c3aed'] 
-          : ['#0ea5e9', '#6366f1', '#7c3aed']}
-        speed={0.4}
-        scale={1.6}
-        turbulence={1}
-        fluidity={0.1}
-        rimWidth={0.2}
-        sharpness={2.5}
-        shimmer={1.5}
-        glow={isDark ? 0.8 : 0.9}
-        opacity={isDark ? 0.6 : 0.7}
-        mixBlendMode={isDark ? "screen" : "multiply"}
-      />
-      
+    <div className="flex flex-col h-screen overflow-hidden font-sans bg-slate-50 dark:bg-slate-950">
       <div className="relative z-10 p-4 sm:p-6">
         <CardNav
           logo="/logo.png"
@@ -87,7 +76,7 @@ export function DashboardLayout() {
 
       <main className={`flex-1 w-full relative transition-all duration-300 ${isModalActive ? 'overflow-hidden' : 'overflow-y-auto'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 sm:pb-32">
-          <Outlet context={{ dateRange, activeTab }} />
+          {children}
         </div>
         <div className="pb-4 sm:pb-10 text-center">
           <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">

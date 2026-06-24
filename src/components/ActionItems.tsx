@@ -1,5 +1,4 @@
-import { motion } from "motion/react";
-import { CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { CheckCircle2, Clock, AlertCircle } from "./Icons";
 import { useState } from "react";
 import { SpotlightCard } from "./SpotlightCard";
 
@@ -61,13 +60,10 @@ export function ActionItems() {
         {items.map((item, index) => {
           const Icon = item.icon;
           return (
-            <motion.div
+            <div
               key={item.id}
               onClick={() => toggleDone(item.id)}
-              whileHover={{ scale: 1.01, x: 4 }}
-              whileTap={{ scale: 0.99 }}
-              transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              className={`flex items-center gap-4 p-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 hover:shadow-[0_2px_10px_-4px_rgba(15,23,42,0.05)] dark:hover:shadow-none rounded-2xl transition-all cursor-pointer group border ${item.done ? "opacity-60 border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50 grayscale pt-3" : "border-transparent hover:border-slate-100 dark:hover:border-slate-700/50"}`}
+              className={`flex items-center gap-4 p-3.5 hover:bg-slate-50 dark:hover:bg-slate-700/30 hover:shadow-[0_2px_10px_-4px_rgba(15,23,42,0.05)] dark:hover:shadow-none rounded-2xl transition-all cursor-pointer group border active:scale-[0.99] ${item.done ? "opacity-60 border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-800/50 grayscale pt-3" : "border-transparent hover:border-slate-100 dark:hover:border-slate-700/50"}`}
             >
               <div
                 className={`mt-0.5 ${item.color} bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-100 dark:ring-slate-700/50 group-hover:ring-transparent group-hover:bg-opacity-10 p-2.5 rounded-xl transition-all duration-300`}
@@ -101,7 +97,7 @@ export function ActionItems() {
                   </svg>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>

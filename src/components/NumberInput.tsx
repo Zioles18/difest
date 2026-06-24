@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Minus, LucideIcon } from "lucide-react";
+import { Plus, Minus } from "./Icons";
 
 interface NumberInputProps {
   id?: string;
@@ -13,7 +13,7 @@ interface NumberInputProps {
   step?: number;
   placeholder?: string;
   required?: boolean;
-  icon?: LucideIcon;
+  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
   className?: string;
   showMultiplier?: boolean;
   showControls?: boolean;

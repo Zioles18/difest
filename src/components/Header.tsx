@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2, User, LogOut } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { NavLink, useNavigate } from "../lib/router";
+import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2, User, LogOut } from "./Icons";
 import { auth } from "../utils/auth";
 import { useTheme } from "../utils/ThemeContext";
 import { getBusinessData, deleteNotification, clearAllNotifications, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION } from "../utils/store";
@@ -12,8 +11,6 @@ interface HeaderProps {
   setDateRange: (range: "7d" | "30d" | "12m") => void;
   activeTab: string;
 }
-
-
 
 export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
@@ -188,47 +185,40 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
             />
           </div>
           
-          <AnimatePresence>
-            {(searchFocused && searchQuery) && (
-              <motion.div
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 5 }}
-                className="absolute top-12 left-0 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xl rounded-2xl overflow-hidden z-[1200] max-h-[60vh] overflow-y-auto"
-              >
-                {isSearching ? (
-                  <div className="p-4 flex items-center justify-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400">
-                     <svg className="animate-spin h-5 w-5 text-indigo-500 dark:text-indigo-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                     Searching records...
+          {(searchFocused && searchQuery) && (
+            <div className="absolute top-12 left-0 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700/50 shadow-2xl rounded-2xl overflow-hidden z-[1200] max-h-[60vh] overflow-y-auto">
+              {isSearching ? (
+                <div className="p-4 flex items-center justify-center gap-3 text-sm font-bold text-slate-500 dark:text-slate-400">
+                   <svg className="animate-spin h-5 w-5 text-indigo-500 dark:text-indigo-400" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                   Searching records...
+                </div>
+              ) : (
+                <div>
+                  <div className="px-4 py-2 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Results for "{searchQuery}"</span>
                   </div>
-                ) : (
-                  <div>
-                    <div className="px-4 py-2 border-b border-slate-50 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/50">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Results for "{searchQuery}"</span>
+                  <button onClick={() => handleSearchNav("/orders")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 text-left">
+                    <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400 flex-shrink-0">
+                      <ShoppingBag className="w-4 h-4" />
                     </div>
-                    <button onClick={() => handleSearchNav("/orders")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 text-left">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500 dark:text-indigo-400 flex-shrink-0">
-                        <ShoppingBag className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Orders matching "{searchQuery}"</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Go to Orders page</p>
-                      </div>
-                    </button>
-                    <button onClick={() => handleSearchNav("/customers")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left">
-                       <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400 flex-shrink-0">
-                         <Users className="w-4 h-4" />
-                       </div>
-                       <div>
-                         <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Customers matching "{searchQuery}"</p>
-                         <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Go to Customers page</p>
-                       </div>
-                    </button>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Orders matching "{searchQuery}"</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Go to Orders page</p>
+                    </div>
+                  </button>
+                  <button onClick={() => handleSearchNav("/customers")} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left">
+                     <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-500 dark:text-emerald-400 flex-shrink-0">
+                       <Users className="w-4 h-4" />
+                     </div>
+                     <div>
+                       <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-tight">Customers matching "{searchQuery}"</p>
+                       <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">Go to Customers page</p>
+                     </div>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Theme Toggle */}
@@ -259,85 +249,63 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
             )}
           </button>
 
-          <AnimatePresence>
-            {showNotifications && (
-              <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                transition={{ duration: 0.15 }}
-                className="absolute right-[-40px] sm:right-0 top-11 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 z-50 overflow-hidden"
-              >
-                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
-                  <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
-                  <div className="flex items-center gap-2">
-                    {notifications.length > 0 && (
-                      <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
-                        {notifications.length} {notifications.length === 1 ? "Item" : "Items"}
-                      </span>
-                    )}
-                    <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
+          {showNotifications && (
+            <div className="absolute right-[-40px] sm:right-0 top-11 w-[calc(100vw-2rem)] sm:w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 z-50 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 dark:border-slate-700/50">
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Notifications</h3>
+                <div className="flex items-center gap-2">
+                  {notifications.length > 0 && (
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-full">
+                      {notifications.length} {notifications.length === 1 ? "Item" : "Items"}
+                    </span>
+                  )}
+                  <button onClick={() => setShowNotifications(false)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors p-0.5">
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
-                <div className="max-h-[280px] overflow-y-auto">
-                  <AnimatePresence initial={false}>
-                    {notifications.length === 0 ? (
-                      <motion.div
-                        key="empty"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="px-4 py-8 text-center"
+              </div>
+              <div className="max-h-[280px] overflow-y-auto">
+                {notifications.length === 0 ? (
+                  <div className="px-4 py-8 text-center">
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
+                  </div>
+                ) : (
+                  notifications.map((n) => (
+                    <div key={n.id} className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group">
+                      <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                      </div>
+                      <button
+                        onClick={() => handleDismiss(n.id)}
+                        className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 transition-all rounded-md flex-shrink-0"
+                        aria-label="Dismiss"
                       >
-                        <div className="w-12 h-12 mx-auto mb-3 rounded-2xl bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center">
-                          <Bell className="w-5 h-5 text-slate-400 dark:text-slate-500" />
-                        </div>
-                        <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
-                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
-                      </motion.div>
-                    ) : (
-                      notifications.map((n) => (
-                        <motion.div
-                          key={n.id}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: 40, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
-                          transition={{ duration: 0.2 }}
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group"
-                        >
-                          <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`} />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
-                          </div>
-                          <button
-                            onClick={() => handleDismiss(n.id)}
-                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-600 hover:text-slate-500 dark:hover:text-slate-400 transition-all rounded-md flex-shrink-0"
-                            aria-label="Dismiss"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </motion.div>
-                      ))
-                    )}
-                  </AnimatePresence>
-                </div>
-                {notifications.length > 0 && (
-                  <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
-                    <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{notifications.length} notification{notifications.length !== 1 ? "s" : ""}</span>
-                    <button
-                      onClick={handleClearAll}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      Clear all
-                    </button>
-                  </div>
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))
                 )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+              {notifications.length > 0 && (
+                <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between">
+                  <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{notifications.length} notification{notifications.length !== 1 ? "s" : ""}</span>
+                  <button
+                    onClick={handleClearAll}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:text-rose-600 dark:hover:text-rose-300 transition-colors"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Clear all
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Profile dropdown */}
@@ -356,77 +324,69 @@ export function Header({ setSidebarOpen, dateRange, setDateRange, activeTab }: H
             <ChevronDown className={`w-4 h-4 text-slate-500 dark:text-slate-400 transition-transform duration-200 ${showProfileDropdown ? "rotate-180" : ""}`} />
           </button>
 
-          <AnimatePresence>
-            {showProfileDropdown && (
-              <motion.div
-                initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                transition={{ duration: 0.15 }}
-                className="absolute right-0 top-11 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 z-50 overflow-hidden"
-              >
-                {/* Profile info */}
-                <div className="p-4 border-b border-slate-100 dark:border-slate-700/50">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700">
-                      <img
-                        src={profile.avatar}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
-                        {profile.name || "User"}
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
-                        {auth.getCurrentEmail() || "user@example.com"}
-                      </p>
-                    </div>
+          {showProfileDropdown && (
+            <div className="absolute right-0 top-11 w-64 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 z-50 overflow-hidden">
+              {/* Profile info */}
+              <div className="p-4 border-b border-slate-100 dark:border-slate-700/50">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-200 dark:border-indigo-700">
+                    <img
+                      src={profile.avatar}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <NavLink
-                    to="/profile"
-                    onClick={() => setShowProfileDropdown(false)}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
-                  >
-                    <User className="w-4 h-4" />
-                    <span>My Profile</span>
-                  </NavLink>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
+                      {profile.name || "User"}
+                    </p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                      {auth.getCurrentEmail() || "user@example.com"}
+                    </p>
+                  </div>
                 </div>
+                <NavLink
+                  to="/profile"
+                  onClick={() => setShowProfileDropdown(false)}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  <span>My Profile</span>
+                </NavLink>
+              </div>
 
-                {/* Quick actions */}
-                <div className="p-2 space-y-1 border-b border-slate-100 dark:border-slate-700/50">
-                  <button
-                    onClick={toggleTheme}
-                    className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
-                  >
-                    <div className="flex items-center gap-2">
-                      {theme === "light" ? (
-                        <Moon className="w-4 h-4" />
-                      ) : (
-                        <Sun className="w-4 h-4" />
-                      )}
-                      <span>{theme === "light" ? "Light Mode" : "Dark Mode"}</span>
-                    </div>
-                    <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === "light" ? "bg-slate-200" : "bg-indigo-500"}`}>
-                      <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${theme === "light" ? "translate-x-0.5" : "translate-x-5"}`} />
-                    </div>
-                  </button>
-                </div>
+              {/* Quick actions */}
+              <div className="p-2 space-y-1 border-b border-slate-100 dark:border-slate-700/50">
+                <button
+                  onClick={toggleTheme}
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-all"
+                >
+                  <div className="flex items-center gap-2">
+                    {theme === "light" ? (
+                      <Moon className="w-4 h-4" />
+                    ) : (
+                      <Sun className="w-4 h-4" />
+                    )}
+                    <span>{theme === "light" ? "Light Mode" : "Dark Mode"}</span>
+                  </div>
+                  <div className={`w-10 h-5 rounded-full relative transition-colors ${theme === "light" ? "bg-slate-200" : "bg-indigo-500"}`}>
+                    <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${theme === "light" ? "translate-x-0.5" : "translate-x-5"}`} />
+                  </div>
+                </button>
+              </div>
 
-                {/* Sign out */}
-                <div className="p-2">
-                  <button
-                    onClick={handleSignOut}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              {/* Sign out */}
+              <div className="p-2">
+                <button
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       </div>
