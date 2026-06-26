@@ -8,7 +8,6 @@ interface Message {
   timestamp: Date;
 }
 
-// Predefined questions and their responses
 const QUESTION_RESPONSES = [
   {
     question: "Bagaimana strategi bisnis yang bagus?",
@@ -57,7 +56,6 @@ export function AIChat() {
   }, [messages, isOpen]);
 
   const handleQuestionClick = (question: string, response: string) => {
-    // Add user question
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -68,7 +66,6 @@ export function AIChat() {
     setMessages((prev) => [...prev, userMessage]);
     setIsTyping(true);
 
-    // Add AI response after delay
     setTimeout(() => {
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -91,7 +88,6 @@ export function AIChat() {
                 : 'w-[92vw] h-[480px] sm:w-[90vw] sm:h-[550px] max-w-[360px] sm:max-w-[420px]'
             }`}
           >
-            {/* Chat Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-t-2xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -119,7 +115,6 @@ export function AIChat() {
               </div>
             </div>
 
-            {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4 bg-slate-50 dark:bg-slate-900/50">
               {messages.map((message) => (
                 <div
@@ -166,7 +161,6 @@ export function AIChat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Question Buttons */}
             <div className="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-b-2xl">
               <div className="flex flex-wrap gap-2">
                 {QUESTION_RESPONSES.map((item, index) => (
@@ -184,7 +178,6 @@ export function AIChat() {
           </div>
         )}
 
-      {/* Floating Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-indigo-500/30 text-white hover:scale-105 active:scale-95 transition-transform duration-300"
