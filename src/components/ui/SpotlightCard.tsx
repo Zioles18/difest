@@ -1,46 +1,31 @@
 import React, { useRef, useState, ReactNode } from "react";
-
 interface SpotlightCardProps {
-  children: ReactNode;
-  className?: string;
-  onClick?: () => void;
-  allowOverflow?: boolean;
+    children: ReactNode;
+    className?: string;
+    onClick?: () => void;
+    allowOverflow?: boolean;
 }
-
 export function SpotlightCard({ children, className = "", onClick, allowOverflow = false }: SpotlightCardProps) {
-  const divRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = useState(0);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!divRef.current) return;
-    const rect = divRef.current.getBoundingClientRect();
-    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
-  return (
-    <div
-      ref={divRef}
-      onClick={onClick}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setOpacity(1)}
-      onMouseLeave={() => setOpacity(0)}
-      className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : "overflow-visible"} ${onClick ? "cursor-pointer active:scale-[0.98] transition-transform" : ""} animate-fade-in ${className}`}
-    >
-      {/* Background Spotlight Layer with its own clipping */}
+    const divRef = useRef<HTMLDivElement>(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [opacity, setOpacity] = useState(0);
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!divRef.current)
+            return;
+        const rect = divRef.current.getBoundingClientRect();
+        setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    };
+    return (<div ref={divRef} onClick={onClick} onMouseMove={handleMouseMove} onMouseEnter={() => setOpacity(1)} onMouseLeave={() => setOpacity(0)} className={`bento-card relative group ${!allowOverflow ? "overflow-hidden" : "overflow-visible"} ${onClick ? "cursor-pointer active:scale-[0.98] transition-transform" : ""} animate-fade-in ${className}`}>
+      
       <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-[inherit] z-0">
-        <div
-          className="pointer-events-none absolute -inset-px transition-opacity duration-300"
-          style={{
+        <div className="pointer-events-none absolute -inset-px transition-opacity duration-300" style={{
             opacity,
             background: `radial-gradient(600px circle at ${position.x}px ${position.y}px, rgba(99, 102, 241, 0.15), transparent 40%)`,
-          }}
-        />
+        }}/>
       </div>
 
       <div className="relative z-10 w-full h-full flex flex-col">
         {children}
       </div>
-    </div>
-  );
+    </div>);
 }
