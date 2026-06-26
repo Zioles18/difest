@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { NavLink, useNavigate, useLocation } from '../lib/router';
-import { ArrowUpRight, Bell, Sun, Moon, X, Trash2, LogOut } from './Icons';
-import ShinyText from './ShinyText';
-import { NXLogo } from './NXLogo';
-import { useTheme } from '../utils/ThemeContext';
-import { auth } from '../utils/auth';
-import { getBusinessData, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION, Notification, deleteNotification, clearAllNotifications } from "../utils/store";
+import { NavLink, useNavigate, useLocation } from '../../lib/router';
+import { ArrowUpRight, Bell, Sun, Moon, X, Trash2, LogOut } from '../Icons';
+import ShinyText from '../ui/ShinyText';
+import { NXLogo } from '../ui/NXLogo';
+import { useTheme } from '../../utils/ThemeContext';
+import { auth } from '../../utils/auth';
+import { getBusinessData, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION, Notification, deleteNotification, clearAllNotifications } from "../../utils/store";
 import './CardNav.css';
 
 type CardNavLink = {

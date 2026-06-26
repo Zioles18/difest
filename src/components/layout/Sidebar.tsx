@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "../lib/router";
+import { NavLink, useNavigate } from "../../lib/router";
 import {
   LayoutDashboard,
   Users,
@@ -11,12 +11,12 @@ import {
   ChevronRight,
   TrendingUp,
   Award
-} from "./Icons";
-import { NXLogo } from "./NXLogo";
-import ShinyText from "./ShinyText";
-import { useTheme } from "../utils/ThemeContext";
-import { getBusinessData, BUSINESS_DATA_UPDATED } from "../utils/store";
-import { auth } from "../utils/auth";
+} from "../Icons";
+import { NXLogo } from "../ui/NXLogo";
+import ShinyText from "../ui/ShinyText";
+import { useTheme } from "../../utils/ThemeContext";
+import { getBusinessData, BUSINESS_DATA_UPDATED } from "../../utils/store";
+import { auth } from "../../utils/auth";
 
 interface SidebarProps {
   isOpen: boolean;

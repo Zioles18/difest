@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { RouterProvider, useLocation, Navigate } from "./lib/router";
 import { DashboardLayout } from "./layouts/DashboardLayout";
-import { Login } from "./pages/Login";
-import { Dashboard } from "./pages/Dashboard";
-import { Profile } from "./pages/Profile";
-import { Orders } from "./pages/Orders";
-import { Customers } from "./pages/Customers";
-import { Analytics } from "./pages/Analytics";
-import { Settings } from "./pages/Settings";
+import { Login } from "./pages/auth/Login";
+import { Dashboard } from "./pages/dashboard/Dashboard";
+import { Profile } from "./pages/profile/Profile";
+import { Orders } from "./pages/orders/Orders";
+import { Customers } from "./pages/customers/Customers";
+import { Analytics } from "./pages/analytics/Analytics";
+import { Settings } from "./pages/settings/Settings";
 import { SplashScreen } from "./components/SplashScreen";
 import { auth } from "./utils/auth";
 

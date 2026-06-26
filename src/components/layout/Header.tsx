@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { NavLink, useNavigate } from "../lib/router";
-import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2, User, LogOut } from "./Icons";
-import { auth } from "../utils/auth";
-import { useTheme } from "../utils/ThemeContext";
-import { getBusinessData, deleteNotification, clearAllNotifications, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION } from "../utils/store";
+import { NavLink, useNavigate } from "../../lib/router";
+import { Bell, Search, Menu, ChevronDown, X, Users, ShoppingBag, Sun, Moon, Trash2, User, LogOut } from "../Icons";
+import { auth } from "../../utils/auth";
+import { useTheme } from "../../utils/ThemeContext";
+import { getBusinessData, deleteNotification, clearAllNotifications, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION } from "../../utils/store";
 
 interface HeaderProps {
   setSidebarOpen: (isOpen: boolean) => void;

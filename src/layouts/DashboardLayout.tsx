@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useSetOutletContext } from "../lib/router";
-import { AIChat } from "../components/AIChat";
-import CardNav from "../components/CardNav";
+import { AIChat } from "../components/layout/AIChat";
+import CardNav from "../components/layout/CardNav";
 import { useTheme } from "../utils/ThemeContext";
-import { Toast } from "../components/Toast";
+import { Toast } from "../components/layout/Toast";
 
 export type DateRange = "7d" | "30d" | "12m";
 

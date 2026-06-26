@@ -5,13 +5,13 @@ import {
   X,
   ArrowRight,
   PieChart as PieIcon
-} from "../components/Icons";
+} from "../../components/Icons";
 import { useState, useEffect } from "react";
-import { SpotlightCard } from "../components/SpotlightCard";
-import { getBusinessData, BUSINESS_DATA_UPDATED, applyOptimization } from "../utils/store";
-import { useTheme } from "../utils/ThemeContext";
-import { RotatingText } from "../components/RotatingText";
-import { auth } from "../utils/auth";
+import { SpotlightCard } from "../../components/ui/SpotlightCard";
+import { getBusinessData, BUSINESS_DATA_UPDATED, applyOptimization } from "../../utils/store";
+import { useTheme } from "../../utils/ThemeContext";
+import { RotatingText } from "../../components/ui/RotatingText";
+import { auth } from "../../utils/auth";
 
 export function Analytics() {
   const { theme } = useTheme();

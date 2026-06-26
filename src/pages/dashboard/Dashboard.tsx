@@ -17,15 +17,15 @@ import {
   Clock,
   Edit3,
   Save
-} from "../components/Icons";
+} from "../../components/Icons";
 import { useState, useEffect } from "react";
-import { useNavigate, useOutletContext } from "../lib/router";
-import { KPICard } from "../components/KPICard";
-import { SpotlightCard } from "../components/SpotlightCard";
-import { NumberInput } from "../components/NumberInput";
-import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED, addNotification } from "../utils/store";
-import { useTheme } from "../utils/ThemeContext";
-import { RotatingText } from "../components/RotatingText";
+import { useNavigate, useOutletContext } from "../../lib/router";
+import { KPICard } from "../../components/dashboard/KPICard";
+import { SpotlightCard } from "../../components/ui/SpotlightCard";
+import { NumberInput } from "../../components/ui/NumberInput";
+import { getBusinessData, updateBusinessData, BUSINESS_DATA_UPDATED, addNotification } from "../../utils/store";
+import { useTheme } from "../../utils/ThemeContext";
+import { RotatingText } from "../../components/ui/RotatingText";
 
 export function Dashboard() {
   const navigate = useNavigate();

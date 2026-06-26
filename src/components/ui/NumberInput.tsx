@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Minus } from "./Icons";
+import { Plus, Minus } from "../Icons";
 
 interface NumberInputProps {
   id?: string;

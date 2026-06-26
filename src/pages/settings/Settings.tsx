@@ -21,11 +21,11 @@ import {
   Monitor,
   LogOut,
   BarChart as BarChartIcon
-} from "../components/Icons";
+} from "../../components/Icons";
 import { useState, useEffect } from "react";
-import { auth } from "../utils/auth";
-import { useNavigate } from "../lib/router";
-import { SpotlightCard } from "../components/SpotlightCard";
+import { auth } from "../../utils/auth";
+import { useNavigate } from "../../lib/router";
+import { SpotlightCard } from "../../components/ui/SpotlightCard";
 import { 
   getBusinessData, 
   updateBusinessData, 
@@ -33,7 +33,7 @@ import {
   BUSINESS_DATA_UPDATED,
   BusinessData,
   addNotification
-} from "../utils/store";
+} from "../../utils/store";
 
 export function Settings() {
   const navigate = useNavigate();

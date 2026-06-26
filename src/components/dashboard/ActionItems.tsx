@@ -1,6 +1,6 @@
-import { CheckCircle2, Clock, AlertCircle } from "./Icons";
+import { CheckCircle2, Clock, AlertCircle } from "../Icons";
 import { useState } from "react";
-import { SpotlightCard } from "./SpotlightCard";
+import { SpotlightCard } from "../ui/SpotlightCard";
 
 export function ActionItems() {
   const [items, setItems] = useState([

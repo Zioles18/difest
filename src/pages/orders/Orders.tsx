@@ -13,11 +13,11 @@ import {
   Package,
   Check,
   ChevronDown
-} from "../components/Icons";
-import { SpotlightCard } from "../components/SpotlightCard";
-import { RotatingText } from "../components/RotatingText";
-import { NumberInput } from "../components/NumberInput";
-import { getBusinessData, updateOrder, addOrder, deleteOrder, BUSINESS_DATA_UPDATED, Order } from "../utils/store";
+} from "../../components/Icons";
+import { SpotlightCard } from "../../components/ui/SpotlightCard";
+import { RotatingText } from "../../components/ui/RotatingText";
+import { NumberInput } from "../../components/ui/NumberInput";
+import { getBusinessData, updateOrder, addOrder, deleteOrder, BUSINESS_DATA_UPDATED, Order } from "../../utils/store";
 
 export function Orders() {
   const [data, setData] = useState(getBusinessData());

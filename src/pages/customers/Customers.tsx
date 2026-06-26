@@ -10,12 +10,12 @@ import {
   MessageSquare,
   Plus,
   Trash2
-} from "../components/Icons";
+} from "../../components/Icons";
 import React, { useState, useRef, useEffect } from "react";
-import { SpotlightCard } from "../components/SpotlightCard";
-import { addNotification, updateBusinessData } from "../utils/store";
-import { RotatingText } from "../components/RotatingText";
-import { auth } from "../utils/auth";
+import { SpotlightCard } from "../../components/ui/SpotlightCard";
+import { addNotification, updateBusinessData } from "../../utils/store";
+import { RotatingText } from "../../components/ui/RotatingText";
+import { auth } from "../../utils/auth";
 
 const initialCustomers = [
   { id: 1, name: "Alex Rivera", email: "alex@example.com", phone: "+1 (555) 123-4567", location: "New York, USA", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80", spend: "$4,250", orders: 12, rating: 5, role: "Founder & CEO", joined: "Jan 2022" },

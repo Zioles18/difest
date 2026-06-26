@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { DollarSign, ShoppingCart, Users, TrendingUp } from "../components/Icons";
-import { useOutletContext } from "../lib/router";
-import { KPICard } from "../components/KPICard";
-import { DashboardChart } from "../components/DashboardChart";
-import { ActionItems } from "../components/ActionItems";
-import { SplitText } from "../components/SplitText";
-import { RotatingText } from "../components/RotatingText";
-import type { DateRange } from "../layouts/DashboardLayout";
-import { auth } from "../utils/auth";
-import { getBusinessData, BUSINESS_DATA_UPDATED, type BusinessData } from "../utils/store";
+import { DollarSign, ShoppingCart, Users, TrendingUp } from "../../components/Icons";
+import { useOutletContext } from "../../lib/router";
+import { KPICard } from "../../components/dashboard/KPICard";
+import { DashboardChart } from "../../components/dashboard/DashboardChart";
+import { ActionItems } from "../../components/dashboard/ActionItems";
+import { SplitText } from "../../components/ui/SplitText";
+import { RotatingText } from "../../components/ui/RotatingText";
+import type { DateRange } from "../../layouts/DashboardLayout";
+import { auth } from "../../utils/auth";
+import { getBusinessData, BUSINESS_DATA_UPDATED, type BusinessData } from "../../utils/store";
 
 export function Overview() {
   const { dateRange, activeTab } = useOutletContext<{ dateRange: DateRange; activeTab: string }>();

@@ -1,5 +1,5 @@
-import { ArrowUpRight, ArrowDownRight } from "./Icons";
-import { SpotlightCard } from "./SpotlightCard";
+import { ArrowUpRight, ArrowDownRight } from "../Icons";
+import { SpotlightCard } from "../ui/SpotlightCard";
 import React from "react";
 
 interface KPICardProps {

@@ -1,10 +1,10 @@
 import React, { useState, useRef } from "react";
-import { useNavigate } from "../lib/router";
-import { ArrowRight, Mail, Lock, Sun, Moon } from "../components/Icons";
-import { NXLogo } from "../components/NXLogo";
-import ShinyText from "../components/ShinyText";
-import { auth } from "../utils/auth";
-import { useTheme } from "../utils/ThemeContext";
+import { useNavigate } from "../../lib/router";
+import { ArrowRight, Mail, Lock, Sun, Moon } from "../../components/Icons";
+import { NXLogo } from "../../components/ui/NXLogo";
+import ShinyText from "../../components/ui/ShinyText";
+import { auth } from "../../utils/auth";
+import { useTheme } from "../../utils/ThemeContext";
 
 function getUsers(): Record<string, any> {
   try {

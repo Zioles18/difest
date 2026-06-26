@@ -8,10 +8,10 @@ import {
   Save, 
   Check,
   Upload
-} from "../components/Icons";
+} from "../../components/Icons";
 import React, { useState, useRef } from "react";
-import { auth } from "../utils/auth";
-import { addNotification } from "../utils/store";
+import { auth } from "../../utils/auth";
+import { addNotification } from "../../utils/store";
 
 export function Profile() {
   const [isEditing, setIsEditing] = useState(false);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { SpotlightCard } from "./SpotlightCard";
-import { getBusinessData, BUSINESS_DATA_UPDATED } from "../utils/store";
-import { useTheme } from "../utils/ThemeContext";
+import { SpotlightCard } from "../ui/SpotlightCard";
+import { getBusinessData, BUSINESS_DATA_UPDATED } from "../../utils/store";
+import { useTheme } from "../../utils/ThemeContext";
 
 // Map header dateRange keys → store chartDataPeriods keys
 const PERIOD_MAP: Record<"7d" | "30d" | "12m", "week" | "month" | "year"> = {

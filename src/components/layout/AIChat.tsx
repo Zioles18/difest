@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Bot, User, Sparkles, Loader2, Minimize2, Maximize2, MessageSquare } from './Icons';
+import { X, Bot, User, Sparkles, Loader2, Minimize2, Maximize2, MessageSquare } from '../Icons';
 
 interface Message {
   id: string;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from '../lib/router';
+import { Link } from '../../lib/router';
 import './PillNav.css';
 
 export type PillNavItem = { label: string; href: string; ariaLabel?: string; };

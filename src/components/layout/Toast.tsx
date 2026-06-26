@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { CheckCircle2, AlertCircle, Info, X } from "./Icons";
-import { NEW_NOTIFICATION } from "../utils/store";
+import { CheckCircle2, AlertCircle, Info, X } from "../Icons";
+import { NEW_NOTIFICATION } from "../../utils/store";
 
 interface ToastMessage {
   id: string;

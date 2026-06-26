@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { NXLogo } from "./NXLogo";
-import ShinyText from "./ShinyText";
+import { NXLogo } from "./ui/NXLogo";
+import ShinyText from "./ui/ShinyText";
 
 export function SplashScreen({ onComplete }: { onComplete: () => void }) {
   const [isVisible, setIsVisible] = useState(true);
