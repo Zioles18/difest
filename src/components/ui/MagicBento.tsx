@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import './MagicBento.css';
 export interface BentoProps {
     enableSpotlight?: boolean;
     spotlightRadius?: number;

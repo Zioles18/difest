@@ -7,7 +7,7 @@ import { NXLogo } from '../ui/NXLogo';
 import { useTheme } from '../../utils/ThemeContext';
 import { auth } from '../../utils/auth';
 import { getBusinessData, BUSINESS_DATA_UPDATED, NEW_NOTIFICATION, Notification, deleteNotification, clearAllNotifications } from "../../utils/store";
-import './CardNav.css';
+
 type CardNavLink = {
     label: string;
     href: string;
@@ -118,19 +118,19 @@ const CardNav: React.FC<CardNavProps> = ({ logo, logoAlt = "Logo", items, classN
         setShowNotifications(false);
         closeMenu();
     };
-    return (<div className={`card-nav-container ${className}`}>
-      <nav ref={navRef} className={`card-nav ${isExpanded ? 'open' : ''} transition-all duration-500`} style={{
+    return (<div className={`relative z-[10000] w-full ${className}`}>
+      <nav ref={navRef} className={`rounded-[8px] px-3 shadow-[0_4px_20px_rgba(0,0,0,0.08)] backdrop-blur-[10px] relative overflow-x-hidden overflow-y-visible transition-all duration-500 w-full box-border hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] ${isExpanded ? 'rounded-[12px] shadow-[0_10px_40px_rgba(0,0,0,0.15)]' : ''}`} style={{
             backgroundColor: baseColor,
             height: isExpanded ? 'auto' : '60px',
             overflow: isExpanded ? 'visible' : 'hidden',
         }}>
-        <div className="card-nav-top overflow-visible h-[60px] flex items-center px-4">
-          <div className={`hamburger-menu ${isHamburgerOpen ? 'open' : ''}`} onClick={toggleMenu} role="button" aria-label={isExpanded ? 'Close menu' : 'Open menu'} tabIndex={0} style={{ color: menuColor || '#000' }}>
-            <div className="hamburger-line"/>
-            <div className="hamburger-line"/>
+        <div className="flex items-center justify-between h-[60px] gap-3 w-full box-border overflow-visible px-4">
+          <div className="flex flex-col gap-[6px] cursor-pointer p-2 w-10 h-10 justify-center items-center transition-transform duration-300 ease-out shrink-0 hover:scale-110" onClick={toggleMenu} role="button" aria-label={isExpanded ? 'Close menu' : 'Open menu'} tabIndex={0} style={{ color: menuColor || '#000' }}>
+            <div className={`w-6 h-[2px] bg-current transition-all duration-300 ease-out rounded-[2px] ${isHamburgerOpen ? 'rotate-45 translate-y-[5px]' : ''}`}/>
+            <div className={`w-6 h-[2px] bg-current transition-all duration-300 ease-out rounded-[2px] ${isHamburgerOpen ? '-rotate-45 -translate-y-[5px]' : ''}`}/>
           </div>
 
-          <div className="logo-container ml-auto mr-auto sm:ml-4 sm:mr-auto">
+          <div className="flex-1 flex justify-center items-center min-w-0 ml-auto mr-auto sm:ml-4 sm:mr-auto">
             <div className="flex items-center gap-3">
               <NXLogo size={40}/>
               <span className="font-display font-bold text-xl sm:text-2xl tracking-tighter">
@@ -139,7 +139,7 @@ const CardNav: React.FC<CardNavProps> = ({ logo, logoAlt = "Logo", items, classN
             </div>
           </div>
 
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-3 sm:gap-3 max-sm:gap-1 max-[480px]:gap-[2px] ml-auto">
             
             <button type="button" onClick={(e) => {
             e.stopPropagation();
@@ -199,18 +199,18 @@ const CardNav: React.FC<CardNavProps> = ({ logo, logoAlt = "Logo", items, classN
                             <p className="text-sm font-semibold text-slate-500 dark:text-slate-400">All caught up!</p>
                             <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">No new notifications</p>
                           </div>) : (notifications.map((n) => (<div key={n.id} onClick={() => deleteNotification(n.id)} className="animate-fade-in flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-slate-50 dark:border-slate-700/50 last:border-0 group cursor-pointer">
-                              <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`}/>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
-                                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
-                              </div>
-                              <button onClick={(e) => {
+                                <span className={`mt-1.5 w-2 h-2 rounded-full flex-shrink-0 ${n.dot}`}/>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-tight">{n.text}</p>
+                                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{n.time}</p>
+                                </div>
+                                <button onClick={(e) => {
                     e.stopPropagation();
                     deleteNotification(n.id);
                 }} className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 dark:text-slate-600 hover:text-rose-500 dark:hover:text-rose-400 transition-all rounded-md flex-shrink-0" aria-label="Dismiss notification">
-                                <X className="w-3.5 h-3.5"/>
-                              </button>
-                            </div>)))}
+                                  <X className="w-3.5 h-3.5"/>
+                                </button>
+                              </div>)))}
                     </div>
 
                     
@@ -260,33 +260,33 @@ const CardNav: React.FC<CardNavProps> = ({ logo, logoAlt = "Logo", items, classN
           </div>
         </div>
 
-        <div className={`card-nav-content transition-all duration-500 ease-out px-4 pb-4 ${isExpanded ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-4 invisible'}`} aria-hidden={!isExpanded}>
-          {(items || []).slice(0, 3).map((item, idx) => (<div key={`${item.label}-${idx}`} className="nav-card" style={{
+        <div className={`grid grid-cols-1 md:grid-cols-4 gap-3 py-3 md:pb-3 max-md:pb-8 transition-all duration-500 ease-out px-4 pb-4 ${isExpanded ? 'opacity-100 translate-y-0 visible' : 'opacity-0 translate-y-4 invisible'}`} aria-hidden={!isExpanded}>
+          {(items || []).slice(0, 3).map((item, idx) => (<div key={`${item.label}-${idx}`} className="rounded-[4px] p-5 max-md:p-4 flex flex-col gap-3" style={{
                 backgroundColor: item.bgColor,
                 color: item.textColor,
                 border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)'
             }}>
-              <div className="nav-card-label">{item.label}</div>
-              <div className="nav-card-links">
-                {item.links?.map((lnk, i) => (<NavLink key={`${lnk.label}-${i}`} to={lnk.href} aria-label={lnk.ariaLabel} className="nav-card-link" end={lnk.href === "/"} onClick={handleLinkClick}>
-                    <ArrowUpRight className="nav-card-link-icon" aria-hidden="true"/>
+              <div className="text-sm font-semibold opacity-80">{item.label}</div>
+              <div className="flex flex-col gap-2">
+                {item.links?.map((lnk, i) => (<NavLink key={`${lnk.label}-${i}`} to={lnk.href} aria-label={lnk.ariaLabel} className="flex items-center gap-[6px] text-base font-medium no-underline text-inherit transition-all duration-200 ease-out hover:translate-x-1 hover:opacity-90" end={lnk.href === "/"} onClick={handleLinkClick}>
+                    <ArrowUpRight className="w-4 h-4" aria-hidden="true"/>
                     {lnk.label}
                   </NavLink>))}
               </div>
             </div>))}
 
           
-          <div className="nav-card nav-logout-card" style={{
+          <div className="rounded-[4px] p-5 max-md:p-4 flex flex-col gap-3 transition-all duration-300 ease-out cursor-pointer hover:-translate-y-[2px] hover:shadow-[0_4px_12px_rgba(244,63,94,0.15)]" style={{
             backgroundColor: theme === 'dark' ? 'rgba(244, 63, 94, 0.1)' : '#fff1f2',
             color: theme === 'dark' ? '#fb7185' : '#e11d48',
             border: theme === 'dark' ? '1px solid rgba(244, 63, 94, 0.2)' : '1px solid #fecdd3'
         }}>
-            <div className="nav-card-label">Session</div>
+            <div className="text-sm font-semibold opacity-80">Session</div>
             <button onClick={() => {
             auth.logout();
             navigate('/login');
-        }} className="nav-card-link font-bold">
-              <LogOut className="nav-card-link-icon"/>
+        }} className="border-none bg-none p-0 text-left w-full flex items-center gap-[6px] text-base font-medium no-underline text-inherit transition-all duration-200 ease-out hover:translate-x-1 hover:opacity-90 font-bold">
+              <LogOut className="w-4 h-4"/>
               Sign Out from NexBiz
             </button>
           </div>

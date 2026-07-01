@@ -1,5 +1,4 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import "./RotatingText.css";
 export interface RotatingTextRef {
     next: () => void;
     previous: () => void;
